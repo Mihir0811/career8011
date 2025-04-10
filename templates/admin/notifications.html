@@ -1,0 +1,193 @@
+j{% extends 'admin/base.html' %}
+{% block title %}Notifications - Admin Panel{% endblock %}
+{% block content %}
+<div id="confirmModal" 
+     style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; text-align: center; width: 300px;">
+        <p id="modalMessage">Notification sent successfully.</p>
+        <button id="confirmOk" 
+                style="background-color: #34A853; color: white; padding: 10px 20px; border: none; border-radius: 4px; margin-top: 10px; cursor: pointer;">
+            OK
+        </button>
+    </div>
+</div>
+
+    <h2 class="section-title">Notifications</h2>
+
+    <div class="notification-container">
+        <div class="notification-form">
+            <h3>Send New Notification</h3>
+            <form id="sendNotificationForm" method="post">
+                <div class="form-group">
+                    <label for="notificationTitle">Title</label>
+                    <input type="text" id="notificationTitle" placeholder="Enter notification title">
+                    <span id="err1" style="color: red; font-size: 14px;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="notificationMessage">Message</label>
+                    <textarea id="notificationMessage" placeholder="Enter notification message" rows="4"></textarea>
+                    <span id="err2" style="color: red;font-size: 15px;"></span>
+
+                </div>
+                <div class="form-group">
+                    <label for="notificationRecipients">Recipients</label>
+                    <select id="notificationRecipients" required>
+                        <!-- <option value="all">All Users</option> -->
+                        <option value="students">All Students</option>
+                        <option value="counselors">All Counselors</option>
+                        <option value="admins">All Admins</option>
+                    </select>
+                    <span id="err3" style="color: red;font-size: 15px;"></span>
+                </div>
+                <div class="form-group">
+                    <label for="notificationSchedule">Schedule</label>
+                    <div class="schedule-options">
+                        <div class="schedule-option">
+                            <input type="radio" id="sendNow" name="schedule" value="now" checked>
+                            <label for="sendNow">Send Now</label>
+                        </div>
+                        <div class="schedule-option">
+                            <input type="radio" id="sendLater" name="schedule" value="later">
+                            <label for="sendLater">Send Later</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group schedule-date-time" style="display: none;">
+                    <label for="scheduleDateTime">Date & Time</label>
+                    <input type="datetime-local" id="scheduleDateTime">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">Send Notification</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="notification-history">
+            <h3>Notification History</h3>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Message</th>
+                            <th>Recipients</th>
+                            <th>Date Sent</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if notifications %}
+                            {% for notification in notifications %}
+                            <tr>
+                                <td>{{ notification.title }}</td>
+                                <td>{{ notification.message }}</td>
+                                <td>{{ notification.recipients }}</td>
+                                <td>{{ notification.schedule_time.strftime('%b %d, %Y %H:%M:%S') if notification.schedule_time else 'N/A' }}</td>
+                                <td>
+                                    <span class="status-badge {{ 'sent' if notification.status == 'sent' else 'pending' }}">
+                                        {{ notification.status.capitalize() }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align: center;">No Notifications Available</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            document.getElementById('sendNotificationForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const title = document.getElementById('notificationTitle').value;
+            const message = document.getElementById('notificationMessage').value;
+            const recipients = document.getElementById('notificationRecipients').value;
+            const schedule = document.querySelector('input[name="schedule"]:checked').value;
+            const scheduleTimeInput = document.getElementById('scheduleDateTime');
+            const scheduleTime = schedule === 'later' ? scheduleTimeInput.value : null;
+
+            if (!title) {
+                document.getElementById('err1').innerHTML = '*Title Is Required';
+                return;
+            } else {
+                document.getElementById('err1').innerHTML = '';
+            }
+            if (!message) {
+                document.getElementById('err2').innerHTML = '*Message Is Required';
+                return;
+            } else {
+                document.getElementById('err2').innerHTML = '';
+            }
+            if (!recipients) {
+                document.getElementById('err3').innerHTML = '*Recipients Is Required';
+                return;
+            } else {
+                document.getElementById('err3').innerHTML = '';
+            }
+
+            if (schedule === 'later' && (!scheduleTime || new Date(scheduleTime) <= new Date())) {
+                alert("Please provide a valid future date and time for scheduling.");
+                return;
+            }   
+
+            fetch('http://127.0.0.1:5000/notifications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, message, recipients, schedule, schedule_time: scheduleTime })
+            })
+                .then(resp => resp.json())
+                .then(data => {
+                    if (data.msg) {
+                        document.getElementById('modalMessage').innerText = data.msg;
+                        document.getElementById('confirmModal').style.display = 'block';
+                        document.getElementById('sendNotificationForm').reset();
+                    }
+                })
+                .catch(err => {
+                    console.log('Error:', err);
+                    document.getElementById('modalMessage').innerText = 'Failed to send notification.';
+                    document.getElementById('confirmModal').style.display = 'block';
+                });
+        });
+
+            document.getElementById('confirmOk').addEventListener('click', function () {
+            document.getElementById('confirmModal').style.display = 'none';
+            location.reload(); 
+        });
+
+        // ----------
+
+        const scheduleOptions = document.querySelectorAll('input[name="schedule"]');
+        const scheduleDateTimeField = document.querySelector('.schedule-date-time');
+
+        scheduleOptions.forEach(option => {
+            option.addEventListener('change', function () {
+                if (this.value === 'later') {
+                    scheduleDateTimeField.style.display = 'block';
+                } else {
+                    scheduleDateTimeField.style.display = 'none';
+                }
+            });
+        });
+
+        // ------------
+        function checkNotifications() {
+            fetch('/send_scheduled_notifications')
+            .then(resp => resp.json())
+            .then(data => {
+            if (data.status === 'Updated') {
+                console.log("Updated! Reloading...");
+                location.reload();
+            }
+            })
+            .catch(err => console.error("Error:", err));
+        }
+
+        setInterval(checkNotifications, 30000);
+        </script>
+    </div>
+{% endblock %}

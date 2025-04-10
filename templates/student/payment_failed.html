@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed - Career Navigator</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        {% include 'landing_page/header.html' %}
+    </header>
+
+    <main class="failed-container">
+        <div class="container">
+            <div class="failed-card">
+                <div class="failed-animation">
+                    <svg class="error-circle" viewBox="0 0 100 100">
+                        <circle class="error-circle-bg" cx="50" cy="50" r="48"/>
+                        <path class="error-line1" d="M25,25 L75,75"/>
+                        <path class="error-line2" d="M75,25 L25,75"/>
+                    </svg>
+                </div>
+                
+                <h1>Payment Failed</h1>
+                <p class="failed-message">
+                    {% if status == 'cancelled' %}
+                    You cancelled the payment process. No charges were made to your account.
+                    {% elif status == 'requires_payment_method' %}
+                    Your payment method was declined. Please try again with a different payment method.
+                    {% elif status == 'requires_action' %}
+                    Additional verification is required. Please complete the verification steps.
+                    {% elif status == 'processing' %}
+                    Your payment is still being processed. We'll notify you once it's complete.
+                    {% elif status == 'error' %}
+                    There was an error processing your payment. Please try again.
+                    {% else %}
+                    We couldn't process your payment. Please try again or contact support.
+                    {% endif %}
+                </p>
+                
+                <div class="order-details">
+                    <div class="order-item">
+                        <div class="order-label">Package</div>
+                        <div class="order-value">{{ package|title }} Plan</div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-label">Status</div>
+                        <div class="order-value status-failed">{{ status|replace('_', ' ')|title }}</div>
+                    </div>
+                </div>
+                
+                <div class="help-info">
+                    <h3>Common issues:</h3>
+                    <ul>
+                        <li>Your card may have insufficient funds</li>
+                        <li>Your bank might have declined the transaction</li>
+                        <li>The payment information might be incorrect</li>
+                    </ul>
+                </div>
+                
+                <div class="action-buttons">
+                    <!-- Primary action: Try Again -->
+                    <form action="/create-checkout-session" method="POST" class="try-again-form">
+                        <input type="hidden" name="package" value="{{ package }}">
+                        <button type="submit" class="btn-try-again">
+                            Try Again
+                        </button>
+                    </form>
+                    
+                    <!-- Secondary action: Done (go to home page instead of dashboard) -->
+                    <a href="{{ url_for('home') }}" class="btn-done">
+                        Done
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .failed-container {
+            background-color: #f5f7fa;
+            min-height: 85vh;
+            padding: 80px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .failed-card {
+            background: white;
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 60px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+        }
+        
+        .failed-animation {
+            margin-bottom: 30px;
+        }
+        
+        .error-circle {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .error-circle-bg {
+            fill: none;
+            stroke: #FF5252;
+            stroke-width: 4;
+            stroke-dasharray: 301.59;
+            stroke-dashoffset: 301.59;
+            animation: stroke-error 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .error-line1, .error-line2 {
+            fill: none;
+            stroke: #FF5252;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 70;
+            stroke-dashoffset: 70;
+        }
+        
+        .error-line1 {
+            animation: stroke-error 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        .error-line2 {
+            animation: stroke-error 0.3s cubic-bezier(0.65, 0, 0.45, 1) 1s forwards;
+        }
+        
+        @keyframes stroke-error {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        h1 {
+            color: #2C3E50;
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .failed-message {
+            color: #7F8C8D;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .order-details {
+            background: #F8F9FA;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #E1E8ED;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-label {
+            font-weight: 600;
+            color: #7F8C8D;
+            font-size: 15px;
+        }
+        
+        .order-value {
+            color: #2C3E50;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        
+        .status-failed {
+            color: #FF5252;
+            font-weight: 700;
+        }
+        
+        .help-info {
+            background: #FFF8E1;
+            border-radius: 10px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .help-info h3 {
+            color: #FFA000;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .help-info ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .help-info li {
+            color: #7F8C8D;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .try-again-form {
+            margin: 0;
+        }
+        
+        .btn-try-again {
+            padding: 16px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-try-again:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+        }
+        
+        .btn-done {
+            padding: 16px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background: white;
+            color: #4A90E2;
+            border: 2px solid #4A90E2;
+            font-size: 16px;
+            display: inline-block;
+        }
+        
+        .btn-done:hover {
+            background: #F0F7FF;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .failed-card {
+                padding: 40px 25px;
+                margin: 0 20px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .failed-message {
+                font-size: 16px;
+            }
+            
+            .error-circle {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn-try-again, .btn-done {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</body>
+</html> 

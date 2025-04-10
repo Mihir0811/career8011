@@ -1,0 +1,155 @@
+{% extends 'counselor/counselor_base.html' %}
+{% block coun_content %}
+<section id="dashboard-section" class="content-section active">
+    <div class="welcome-section">
+        <h1>Welcome Back, {{ session['counselor_name'] | title }}</h1>
+        <p>Here's an overview of your appointments and activities</p>
+    </div>
+
+    <!-- Key Metrics Overview -->
+    <div class="metrics-cards">
+        <div class="metric-card">
+            <div class="metric-header">
+                <h3>Upcoming Appointments</h3>
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="metric-content">
+                <div class="metric-value">8</div>
+                <div class="metric-label">Today</div>
+                <div class="metric-progress">
+                    <div class="progress-bar" style="width: 60%"></div>
+                </div>
+            </div>
+            <button class="btn-primary">View Schedule</button>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <h3>Pending Requests</h3>
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="metric-content">
+                <div class="metric-value">5</div>
+                <div class="metric-label">Awaiting Response</div>
+                <div class="metric-progress warning">
+                    <div class="progress-bar" style="width: 40%"></div>
+                </div>
+            </div>
+            <button class="btn-warning">Review Requests</button>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <h3>Completed Sessions</h3>
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="metric-content">
+                <div class="metric-value">125</div>
+                <div class="metric-label">This Month</div>
+                <div class="metric-progress success">
+                    <div class="progress-bar" style="width: 85%"></div>
+                </div>
+            </div>
+            <button class="btn-success">View History</button>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="section-container">
+        <div class="section-header">
+            <h2>Quick Actions</h2>
+        </div>
+        <div class="quick-actions">
+            <button class="action-btn" data-target="appointments">
+                <i class="fas fa-check"></i>
+                <span>Approve Appointments</span>
+            </button>
+            <button class="action-btn" data-target="profile">
+                <i class="fas fa-user-edit"></i>
+                <span>View Profile</span>
+            </button>
+            <button class="action-btn" data-target="feedback">
+                <i class="fas fa-star"></i>
+                <span>View Feedback</span>
+            </button>
+            <button class="action-btn" data-target="resources">
+                <i class="fas fa-book"></i>
+                <span>Manage Resources</span>
+            </button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".action-btn").forEach(button => {
+        button.addEventListener("click", function () {
+                const target = this.getAttribute("data-target");
+
+                if (target) {
+                    let routes = {
+                        "appointments": "/coun_appointment",
+                        "profile": "/coun_profile",
+                        "feedback": "/coun_feedback",
+                        "resources": "/manage_resources",
+                    };
+
+                    if (routes[target]) {
+                        window.location.href = routes[target];
+                    }
+                }
+            });
+        });
+    });
+    </script>
+
+    <!-- Recent Activities Panel -->
+<div class="section-container">
+    <div class="section-header">
+        <h2>Recent Activities</h2>
+    </div>
+    <div class="activities-list">
+        {% for activity in recent_activities %}
+        <div class="activity-item">
+            <div class="activity-icon">
+                {% if activity.activity_type == "New Appointment Request" %}
+                    <i class="fas fa-calendar-plus"></i>
+                {% elif activity.activity_type == "New Feedback Received" %}
+                    <i class="fas fa-star"></i>
+                {% elif activity.activity_type == "Meeting Completed" %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif activity.activity_type == "Notification Received" %}
+                    <i class="fas fa-bell"></i>
+                {% else %}
+                    <i class="fas fa-info-circle"></i>
+                {% endif %}
+            </div>
+            <div class="activity-content">
+                <h4>{{ activity.activity_type }}</h4>
+                <p>{{ activity.activity_desc }}</p>
+                <span class="activity-time">
+                    {{ activity.created_at.strftime('%Y-%m-%d %H:%M') }}
+                </span>
+            </div>
+        </div>
+        {% else %}
+        <p>No recent activities.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+    <!-- Statistics -->
+    <div class="section-container">
+        <div class="section-header">
+            <h2>Monthly Statistics</h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stats-card">
+                <canvas id="appointmentsChart"></canvas>
+            </div>
+            <div class="stats-card">
+                <canvas id="feedbackChart"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

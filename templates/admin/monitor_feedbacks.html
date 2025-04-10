@@ -1,0 +1,101 @@
+{% extends 'admin/base.html' %}
+{% block title %}Monitor Feedbacks - Admin Panel{% endblock %}
+{% block content %}
+
+<div>
+    <h1 class="section-title">Monitor Feedbacks</h1>
+
+    <div class="table-actions">
+        <div class="search-filters">
+            <select class="filter-select">
+                <option value="all">All Star</option>
+                <option value="5">5 Star</option>
+                <option value="4">4 Star</option>
+                <option value="3">3 Star</option>
+                <option value="2">2 Star</option>
+                <option value="1">1 Star</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Counselor Name</th>
+                    <th>Student Name</th>
+                    <th>Description</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody id="feedback-table-body">
+                {% for feedback in feedbacks %}
+                <tr>
+                    <td>{{ feedback.counselor.full_name }}</td>
+                    <td style="white-space: nowrap;">{{ feedback.student.name }}</td>
+                    <td>{{ feedback.feedback_text }}</td>
+                    <td>
+                        <span style="white-space: nowrap;">
+                            {% for i in range(1, 6) %}
+                                {% if i <= feedback.rating %}
+                                    <i class="fas fa-star" style="color: #f59e0b"></i>
+                                {% else %}
+                                    <i class="far fa-star" style="color: #f59e0b;"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.querySelector('.filter-select').addEventListener('change', function () {
+        const selectedRating = this.value === 'all' ? '' : this.value; // Get selected rating or default
+        const url = `/monitor_feedbacks?rating=${selectedRating}&ajax=true`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(feedbacks => {
+                const tableBody = document.getElementById('feedback-table-body');
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                if (feedbacks.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="4">No feedbacks found.</td></tr>';
+                    return;
+                }
+
+                feedbacks.forEach(feedback => {
+                    const row = document.createElement('tr');
+
+                    // Generate star icons dynamically
+                    let starHTML = '';
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= feedback.rating) {
+                            starHTML += '<i class="fas fa-star" style="color: #f59e0b;"></i>';
+                        } else {
+                            starHTML += '<i class="far fa-star" style="color: #f59e0b;"></i>';
+                        }
+                    }
+
+                    row.innerHTML = `
+                        <td>${feedback.counselor_name}</td>
+                        <td>${feedback.student_name}</td>
+                        <td>${feedback.description}</td>
+                        <td>
+                            <span style="white-space: nowrap;">
+                                ${starHTML}
+                            </span>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching feedbacks:', error));
+    });
+</script>
+
+{% endblock %}

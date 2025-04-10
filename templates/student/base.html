@@ -1,0 +1,10 @@
+<li class="nav-item">
+    <a class="nav-link {% if active_page == 'appointments' %}active{% endif %}" href="{{ url_for('stud_appointments') }}">
+        <i class="fas fa-calendar-check"></i> Appointments
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if active_page == 'payment' %}active{% endif %}" href="{{ url_for('payment_page') }}">
+        <i class="fas fa-credit-card"></i> Book Session
+    </a>
+</li> 

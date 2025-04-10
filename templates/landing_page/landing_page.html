@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerConnect - Empowering Connections Between Counselors and Students</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style_landing.css')}}">
+    <!-- <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style.css')}}"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header class="header">
+        {% include 'landing_page/header.html' %}
+    </header>
+
+    
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Empowering Connections Between Counselors and Students</h1>
+                <p>Navigate your career journey with personalized guidance from experienced professionals. Our platform connects students with counselors for meaningful mentorship and career development.</p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('stud_dash') }}" class="btn btn-primary" style="cursor: pointer;">Get Started As Student</a>
+                    <a href="{{ url_for('counselor_dash') }}" class="btn btn-secondary" style="cursor: pointer;">Get Started As Counselor</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="{{url_for('static',filename='img/landing_page/2.jpg')}}" alt="Counseling Illustration">
+            </div>
+        </div>
+        <br>
+        <br>
+        <br><br><br><br><br><br><br>
+        <!-- <div class="hero-wave">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path fill="#f7f7f7" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div> -->
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stat-item">
+                <div class="stat-number" data-count="500">0</div>
+                <div class="stat-label">Counselors</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="10000">0</div>
+                <div class="stat-label">Students</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="25000">0</div>
+                <div class="stat-label">Sessions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="95">0</div>
+                <div class="stat-label">Satisfaction Rate</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Key Features</h2>
+                <p>Discover how CareerConnect helps bridge the gap between counselors and students</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background-color: rgba(74, 144, 226, 0.1);">
+                        <i class="fas fa-calendar-check" style="color: #4A90E2;"></i>
+                    </div>
+                    <h3>Easy Appointment Scheduling</h3>
+                    <p>Book sessions with counselors at your convenience with our intuitive scheduling system.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background-color: rgba(80, 227, 194, 0.1);">
+                        <i class="fas fa-user-graduate" style="color: #50E3C2;"></i>
+                    </div>
+                    <h3>Personalized Guidance</h3>
+                    <p>Receive tailored advice and support based on your unique career goals and aspirations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background-color: rgba(245, 166, 35, 0.1);">
+                        <i class="fas fa-user-tie" style="color: #F5A623;"></i>
+                    </div>
+                    <h3>Professional Counselors</h3>
+                    <p>Connect with experienced, certified counselors specializing in various career fields.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background-color: rgba(74, 144, 226, 0.1);">
+                        <i class="fas fa-book" style="color: #4A90E2;"></i>
+                    </div>
+                    <h3>Career Resources</h3>
+                    <p>Access a comprehensive library of resources to enhance your career development journey.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Get started with CareerConnect in three simple steps</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Create Your Profile</h3>
+                        <p>Sign up and complete your profile with your interests, goals, and preferences.</p>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Find Your Counselor</h3>
+                        <p>Browse through our network of professional counselors and find your perfect match.</p>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Schedule Sessions</h3>
+                        <p>Book appointments and start your journey toward achieving your career goals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Who Section -->
+    <section class="for-who">
+        <div class="container">
+            <div class="for-who-grid">
+                <div class="for-who-card counselor-card">
+                    <div class="for-who-content">
+                        <h2>For Counselors</h2>
+                        <p>Join our platform to connect with students seeking guidance, manage your appointments efficiently, and grow your counseling practice.</p>
+                        <ul class="benefits-list">
+                            <li><i class="fas fa-check-circle"></i> Expand your reach to more students</li>
+                            <li><i class="fas fa-check-circle"></i> Flexible scheduling options</li>
+                            <li><i class="fas fa-check-circle"></i> Secure payment processing</li>
+                            <li><i class="fas fa-check-circle"></i> Professional profile showcase</li>
+                        </ul>
+                        <a href="{{url_for('counselor')}}" class="btn btn-primary">Learn More</a>
+                    </div>
+                    <div class="for-who-image">
+                        <img src="{{url_for('static',filename='img/landing_page/5.jpg')}}" alt="Counselor Illustration">
+                    </div>
+                </div>
+                <div class="for-who-card student-card">
+                    <div class="for-who-image">
+                        <img src="../static/img/landing_page/3.jpg" alt="Student Illustration">
+                    </div>
+                    <div class="for-who-content">
+                        <h2>For Students</h2>
+                        <p>Get personalized career guidance, mentorship, and support from experienced professionals to help you navigate your academic and professional journey.</p>
+                        <ul class="benefits-list">
+                            <li><i class="fas fa-check-circle"></i> Access to expert counselors</li>
+                            <li><i class="fas fa-check-circle"></i> Career assessment tools</li>
+                            <li><i class="fas fa-check-circle"></i> Resource library</li>
+                            <li><i class="fas fa-check-circle"></i> Ongoing support and follow-ups</li>
+                        </ul>
+                        <a href="{{url_for('student')}}" class="btn btn-secondary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Success Stories</h2>
+                <p>Hear from our community of counselors and students</p>
+            </div>
+            <div class="testimonial-slider">
+                <div class="testimonial-track">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"CareerConnect helped me find the perfect counselor who guided me through my career transition. The personalized advice was invaluable!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=4A90E2&color=fff" alt="Sarah Johnson">
+                            <div class="author-info">
+                                <h4>Sarah Johnson</h4>
+                                <p>Marketing Professional</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"As a counselor, this platform has allowed me to reach more students and make a bigger impact. The scheduling tools save me hours each week!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://ui-avatars.com/api/?name=David+Chen&background=50E3C2&color=fff" alt="David Chen">
+                            <div class="author-info">
+                                <h4>David Chen</h4>
+                                <p>Career Counselor</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"The resources and guidance I received through CareerConnect helped me land my dream job. I couldn't have done it without my counselor's support!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://ui-avatars.com/api/?name=Priya+Patel&background=F5A623&color=fff" alt="Priya Patel">
+                            <div class="author-info">
+                                <h4>Priya Patel</h4>
+                                <p>Software Engineer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-controls">
+                    <button class="testimonial-prev"><i class="fas fa-chevron-left"></i></button>
+                    <div class="testimonial-dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <button class="testimonial-next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Your Journey?</h2>
+                <p>Join thousands of students and counselors already using CareerConnect</p>
+                <div class="cta-buttons">
+                    <a href="{{url_for('stud_dash')}}" class="btn btn-primary">Explore As Student</a>
+                    <a href="{{url_for('services')}}" class="btn btn-secondary">Explore Services</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'landing_page/footer.html' %}
+
+    <button id="backToTop" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="{{url_for('static',filename='js/landing_page/script_landing.js')}}"></script>
+</body>
+</html>

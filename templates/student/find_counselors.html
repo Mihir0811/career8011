@@ -1,0 +1,947 @@
+{% extends 'student/stud-base.html' %}
+{% block title %}Find Counselors{% endblock %}
+
+{% block head %}
+<style>
+    /* Find Counselors Page Styles */
+    .find-counselors-container {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(rgba(79, 70, 229, 0.8), rgba(79, 70, 229, 0.9)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        padding: 40px;
+        color: white;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+    }
+    
+    .hero-section h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .hero-section p {
+        font-size: 16px;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-bottom: 25px;
+    }
+    
+    /* Search and Filters */
+    .search-filters {
+        background-color: var(--surface-color);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: var(--card-shadow);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .search-box {
+        position: relative;
+    }
+    
+    .search-box input {
+        width: 100%;
+        padding: 15px 20px 15px 50px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background-color: #f9fafb;
+    }
+    
+    .search-box input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    
+    .search-box i {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 18px;
+    }
+    
+    .filters {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .filter-select {
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background-color: #f9fafb;
+        font-size: 14px;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 16px;
+    }
+    
+    .filter-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    
+    /* Counselor Cards Grid */
+    .filter-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .filter-tag {
+        background-color: #f3f4f6;
+        color: var(--text-primary);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid var(--border-color);
+    }
+    
+    .filter-tag:hover {
+        background-color: #e5e7eb;
+    }
+    
+    .filter-tag i {
+        font-size: 12px;
+    }
+    
+    .find-counselors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+    }
+    
+    .find-counselor-card {
+        background-color: var(--surface-color);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .find-counselor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .counselor-img-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .counselor-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .find-counselor-card:hover .counselor-img {
+        transform: scale(1.05);
+    }
+    
+    .counselor-featured {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: var(--warning-color);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        z-index: 1;
+    }
+    
+    .online-indicator {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        background-color: var(--success-color);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .online-indicator i {
+        font-size: 10px;
+    }
+    
+    .find-counselor-info {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    
+    .find-counselor-info h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 5px 0;
+        color: var(--text-primary);
+    }
+    
+    .find-specialization {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+    
+    .counselor-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .counselor-tag {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary-color);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+    
+    .find-rating {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .find-rating i {
+        color: var(--warning-color);
+        font-size: 14px;
+    }
+    
+    .find-rating span {
+        margin-left: 5px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+    
+    .find-availability {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        color: var(--success-color);
+    }
+    
+    .find-availability i {
+        margin-right: 8px;
+    }
+    
+    .find-counselor-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: auto;
+    }
+    
+    .find-btn {
+        padding: 10px 0;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+        flex: 1;
+        font-size: 14px;
+    }
+    
+    .find-btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+    }
+    
+    .find-btn-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+    
+    .find-btn-outline {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+    
+    .find-btn-outline:hover {
+        background-color: #f8f9fa;
+        border-color: var(--text-secondary);
+    }
+    
+    /* No Results Section */
+    .no-results {
+        text-align: center;
+        padding: 50px 0;
+        color: var(--text-secondary);
+    }
+    
+    .no-results i {
+        font-size: 50px;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+    }
+    
+    .no-results h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    
+    /* Loading Animation */
+    .skeleton-loader {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        border-radius: 8px;
+    }
+    
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 30px;
+        }
+        
+        .hero-section h1 {
+            font-size: 24px;
+        }
+        
+        .filters {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="find-counselors-container">
+    <div class="hero-section">
+        <h1>Find Your Perfect Career Counselor</h1>
+        <p>Connect with experienced professionals who can guide you through your career journey. Filter by specialization, availability, and more to find the right match for your needs.</p>
+    </div>
+
+    <div class="search-filters">
+        <div class="search-box">
+            <input type="text" id="counselorSearch" placeholder="Search by name, specialization, or keywords...">
+            <i class="fas fa-search"></i>
+        </div>
+        <!-- <div class="filters">
+            <select class="filter-select" id="fieldFilter">
+                <option value="">Career Field</option>
+                <option value="technology">Technology</option>
+                <option value="business">Business</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="education">Education</option>
+                <option value="engineering">Engineering</option>
+                <option value="arts">Arts & Design</option>
+            </select>
+            <select class="filter-select" id="languageFilter">
+                <option value="">Language</option>
+                <option value="english">English</option>
+                <option value="spanish">Spanish</option>
+                <option value="french">French</option>
+                <option value="german">German</option>
+                <option value="mandarin">Mandarin</option>
+                <option value="hindi">Hindi</option>
+            </select>
+            <select class="filter-select" id="availabilityFilter">
+                <option value="">Availability</option>
+                <option value="today">Today</option>
+                <option value="this-week">This Week</option>
+                <option value="next-week">Next Week</option>
+                <option value="evenings">Evenings Only</option>
+                <option value="weekends">Weekends Only</option>
+            </select>
+            <select class="filter-select" id="ratingFilter">
+                <option value="">Rating</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4+ Stars</option>
+                <option value="3">3+ Stars</option>
+            </select>
+        </div> -->
+    </div>
+
+    <div class="filter-tags" id="filterTags">
+        <!-- Active filters will appear here -->
+    </div>
+
+    <div class="find-counselors-grid" id="counselorsGrid">
+        {% if counselors %}
+            {% for counselor in counselors %}
+            <div class="find-counselor-card" data-field="{{ counselor.specialization|lower }}" data-rating="4.5">
+                <div class="counselor-img-container">
+                    {% if counselor.is_featured %}
+                    <div class="counselor-featured">Featured</div>
+                    {% endif %}
+                    
+                    {% if counselor.is_online %}
+                    <div class="online-indicator">
+                        <i class="fas fa-circle"></i> Online Now
+                    </div>
+                    {% endif %}
+                    
+                    <img src="{{ counselor.profile_picture }}" alt="{{ counselor.full_name }}" class="counselor-img">
+                </div>
+                
+                <div class="find-counselor-info">
+                    <h3>{{ counselor.full_name }}</h3>
+                    <p class="find-specialization">{{ counselor.specialization }} Specialist</p>
+                    
+                    <div class="counselor-tags">
+                        <span class="counselor-tag">{{ counselor.interests}}</span>
+                        <span class="counselor-tag">Career Planning</span>
+                        <span class="counselor-tag">Mentoring</span>
+                    </div>
+                    
+                    <div class="find-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>4.5 (128 reviews)</span>
+                    </div>
+                    
+                    <!-- <div class="find-availability">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Available Today</span>
+                    </div> -->
+                    <div class="find-availability">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>{{ counselor.approval_status | title }}</span>
+                    </div>
+                    
+                    <div class="find-counselor-actions">
+                        <a href="/schedule?counselor_id={{ counselor.id }}" class="find-btn find-btn-primary">Book Appointment</a>
+                        <!-- <button class="find-btn find-btn-outline">View Profile</button> -->
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Sample data for demonstration -->
+            <div class="find-counselor-card" data-field="technology" data-rating="4.5">
+                <div class="counselor-img-container">
+                    <div class="counselor-featured">Featured</div>
+                    <div class="online-indicator">
+                        <i class="fas fa-circle"></i> Online Now
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Dr. Sarah Smith" class="counselor-img">
+                </div>
+                <div class="find-counselor-info">
+                    <h3>Dr. Sarah Smith</h3>
+                    <p class="find-specialization">Technology Career Specialist</p>
+                    
+                    <div class="counselor-tags">
+                        <span class="counselor-tag">Technology</span>
+                        <span class="counselor-tag">Career Planning</span>
+                        <span class="counselor-tag">Mentoring</span>
+                    </div>
+                    
+                    <div class="find-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>4.5 (128 reviews)</span>
+                    </div>
+                    
+                    <div class="find-availability">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Available Today</span>
+                    </div>
+                    
+                    <div class="find-counselor-actions">
+                        <a href="/schedule?counselor_id=1" class="find-btn find-btn-primary">Book Appointment</a>
+                        <button class="find-btn find-btn-outline">View Profile</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="find-counselor-card" data-field="business" data-rating="4.0">
+                <div class="counselor-img-container">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Dr. John Davis" class="counselor-img">
+                </div>
+                <div class="find-counselor-info">
+                    <h3>Dr. John Davis</h3>
+                    <p class="find-specialization">Business Career Expert</p>
+                    
+                    <div class="counselor-tags">
+                        <span class="counselor-tag">Business</span>
+                        <span class="counselor-tag">Leadership</span>
+                        <span class="counselor-tag">Entrepreneurship</span>
+                    </div>
+                    
+                    <div class="find-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <span>4.0 (95 reviews)</span>
+                    </div>
+                    
+                    <div class="find-availability">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Available This Week</span>
+                    </div>
+                    
+                    <div class="find-counselor-actions">
+                        <a href="/schedule?counselor_id=2" class="find-btn find-btn-primary">Book Appointment</a>
+                        <button class="find-btn find-btn-outline">View Profile</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="find-counselor-card" data-field="healthcare" data-rating="5.0">
+                <div class="counselor-img-container">
+                    <div class="online-indicator">
+                        <i class="fas fa-circle"></i> Online Now
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1961&q=80" alt="Dr. Emily Chen" class="counselor-img">
+                </div>
+                <div class="find-counselor-info">
+                    <h3>Dr. Emily Chen</h3>
+                    <p class="find-specialization">Healthcare Career Consultant</p>
+                    
+                    <div class="counselor-tags">
+                        <span class="counselor-tag">Healthcare</span>
+                        <span class="counselor-tag">Medicine</span>
+                        <span class="counselor-tag">Research</span>
+                    </div>
+                    
+                    <div class="find-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <span>5.0 (156 reviews)</span>
+                    </div>
+                    
+                    <div class="find-availability">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Available Today</span>
+                    </div>
+                    
+                    <div class="find-counselor-actions">
+                        <a href="/schedule?counselor_id=3" class="find-btn find-btn-primary">Book Appointment</a>
+                        <button class="find-btn find-btn-outline">View Profile</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="find-counselor-card" data-field="education" data-rating="4.8">
+                <div class="counselor-img-container">
+                    <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Dr. Lisa Johnson" class="counselor-img">
+                </div>
+                <div class="find-counselor-info">
+                    <h3>Dr. Lisa Johnson</h3>
+                    <p class="find-specialization">Education Career Advisor</p>
+                    
+                    <div class="counselor-tags">
+                        <span class="counselor-tag">Education</span>
+                        <span class="counselor-tag">Teaching</span>
+                        <span class="counselor-tag">Academic</span>
+                    </div>
+                    
+                    <div class="find-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <span>4.8 (112 reviews)</span>
+                    </div>
+                    
+                    <div class="find-availability">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Available Next Week</span>
+                    </div>
+                    
+                    <div class="find-counselor-actions">
+                        <a href="/schedule?counselor_id=4" class="find-btn find-btn-primary">Book Appointment</a>
+                        <button class="find-btn find-btn-outline">View Profile</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="find-counselor-card" data-field="engineering" data-rating="4.6">
+                <div class="counselor-img-container">
+                    <div class="counselor-featured">Featured</div>
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Dr. Michael Torres" class="counselor-img">
+                </div>
+                <div class="find-counselor-info">
+                    <h3>Dr. Michael Torres</h3>
+                    <p class="find-specialization">Engineering Career Guide</p>
+                    
+                    <div class="counselor-tags">
+                        <span class="counselor-tag">Engineering</span>
+                        <span class="counselor-tag">Technical</span>
+                        <span class="counselor-tag">Project Management</span>
+                    </div>
+                    
+                    <div class="find-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>4.6 (83 reviews)</span>
+                    </div>
+                    
+                    <div class="find-availability">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Available This Week</span>
+                    </div>
+                    
+                    <div class="find-counselor-actions">
+                        <a href="/schedule?counselor_id=5" class="find-btn find-btn-primary">Book Appointment</a>
+                        <button class="find-btn find-btn-outline">View Profile</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="find-counselor-card" data-field="arts" data-rating="4.3">
+                <div class="counselor-img-container">
+                    <div class="online-indicator">
+                        <i class="fas fa-circle"></i> Online Now
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1614644147798-f8c0fc9da7f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1924&q=80" alt="Dr. Sophia Patel" class="counselor-img">
+                </div>
+                <div class="find-counselor-info">
+                    <h3>Dr. Sophia Patel</h3>
+                    <p class="find-specialization">Arts & Design Career Coach</p>
+                    
+                    <div class="counselor-tags">
+                        <span class="counselor-tag">Arts</span>
+                        <span class="counselor-tag">Design</span>
+                        <span class="counselor-tag">Creative</span>
+                    </div>
+                    
+                    <div class="find-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <span>4.3 (76 reviews)</span>
+                    </div>
+                    
+                    <div class="find-availability">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Available Today</span>
+                    </div>
+                    
+                    <div class="find-counselor-actions">
+                        <a href="/schedule?counselor_id=6" class="find-btn find-btn-primary">Book Appointment</a>
+                        <button class="find-btn find-btn-outline">View Profile</button>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Variables
+        const counselorSearch = document.getElementById('counselorSearch');
+        const fieldFilter = document.getElementById('fieldFilter');
+        const languageFilter = document.getElementById('languageFilter');
+        const availabilityFilter = document.getElementById('availabilityFilter');
+        const ratingFilter = document.getElementById('ratingFilter');
+        const filterTags = document.getElementById('filterTags');
+        const counselorsGrid = document.getElementById('counselorsGrid');
+        const counselorCards = document.querySelectorAll('.find-counselor-card');
+        
+        // Active filters
+        let activeFilters = {
+            search: '',
+            field: '',
+            language: '',
+            availability: '',
+            rating: ''
+        };
+        
+        // Filter function
+        function applyFilters() {
+            // Show all cards initially
+            counselorCards.forEach(card => {
+                card.style.display = 'flex';
+            });
+            
+            // Apply search filter
+            if (activeFilters.search) {
+                const searchTerm = activeFilters.search.toLowerCase();
+                counselorCards.forEach(card => {
+                    const cardText = card.textContent.toLowerCase();
+                    if (!cardText.includes(searchTerm)) {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Apply field filter
+            if (activeFilters.field) {
+                counselorCards.forEach(card => {
+                    if (card.style.display !== 'none') {
+                        const cardField = card.getAttribute('data-field');
+                        if (cardField !== activeFilters.field) {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            }
+            
+            // Apply rating filter
+            if (activeFilters.rating) {
+                const minRating = parseFloat(activeFilters.rating);
+                counselorCards.forEach(card => {
+                    if (card.style.display !== 'none') {
+                        const cardRating = parseFloat(card.getAttribute('data-rating'));
+                        if (cardRating < minRating) {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            }
+            
+            // Apply language and availability filters
+            // (simplified in this version - would need data attributes for real implementation)
+            
+            // Check if we have any visible results
+            const visibleCards = document.querySelectorAll('.find-counselor-card[style="display: flex;"]');
+            if (visibleCards.length === 0) {
+                // Show no results message if it exists, or create one
+                let noResults = document.querySelector('.no-results');
+                if (!noResults) {
+                    noResults = document.createElement('div');
+                    noResults.className = 'no-results';
+                    noResults.innerHTML = `
+                        <i class="fas fa-search"></i>
+                        <h3>No counselors found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                    `;
+                    // <button class="find-btn find-btn-primary" style="width:200px;margin-top:15px" onclick="clearAllFilters()">Clear All Filters</button>
+                    counselorsGrid.appendChild(noResults);
+                }
+            } else {
+                // Remove no results message if it exists
+                const noResults = document.querySelector('.no-results');
+                if (noResults) {
+                    noResults.remove();
+                }
+            }
+            
+            // Update filter tags
+            updateFilterTags();
+        }
+        
+        // Update filter tags
+        function updateFilterTags() {
+            // Clear existing tags
+            filterTags.innerHTML = '';
+            
+            // Add tag for search if present
+            if (activeFilters.search) {
+                addFilterTag('Search: ' + activeFilters.search, 'search');
+            }
+            
+            // Add tag for field if selected
+            if (activeFilters.field) {
+                const fieldText = fieldFilter.options[fieldFilter.selectedIndex].text;
+                addFilterTag(fieldText, 'field');
+            }
+            
+            // Add tag for language if selected
+            if (activeFilters.language) {
+                const languageText = languageFilter.options[languageFilter.selectedIndex].text;
+                addFilterTag(languageText, 'language');
+            }
+            
+            // Add tag for availability if selected
+            if (activeFilters.availability) {
+                const availabilityText = availabilityFilter.options[availabilityFilter.selectedIndex].text;
+                addFilterTag(availabilityText, 'availability');
+            }
+            
+            // Add tag for rating if selected
+            if (activeFilters.rating) {
+                const ratingText = ratingFilter.options[ratingFilter.selectedIndex].text;
+                addFilterTag(ratingText, 'rating');
+            }
+            
+            // Add clear all button if any filters are active
+            // if (activeFilters.search || activeFilters.field || activeFilters.language || 
+            //     activeFilters.availability || activeFilters.rating) {
+            //     const clearAll = document.createElement('div');
+            //     clearAll.className = 'filter-tag';
+            //     clearAll.innerHTML = 'Clear All';
+            //     clearAll.style.backgroundColor = '#f8f9fa';
+            //     clearAll.style.border = '1px solid #e5e7eb';
+            //     clearAll.addEventListener('click', clearAllFilters);
+            //     filterTags.appendChild(clearAll);
+            // }
+        }
+        
+        // Add a filter tag
+        function addFilterTag(text, filterType) {
+            const tag = document.createElement('div');
+            tag.className = 'filter-tag';
+            tag.innerHTML = `${text} <i class="fas fa-times"></i>`;
+            tag.addEventListener('click', () => {
+                removeFilter(filterType);
+            });
+            filterTags.appendChild(tag);
+        }
+        
+        // Remove a specific filter
+        function removeFilter(filterType) {
+            activeFilters[filterType] = '';
+            
+            // Reset corresponding select element
+            switch (filterType) {
+                case 'field':
+                    fieldFilter.selectedIndex = 0;
+                    break;
+                case 'language':
+                    languageFilter.selectedIndex = 0;
+                    break;
+                case 'availability':
+                    availabilityFilter.selectedIndex = 0;
+                    break;
+                case 'rating':
+                    ratingFilter.selectedIndex = 0;
+                    break;
+                case 'search':
+                    counselorSearch.value = '';
+                    break;
+            }
+            
+            // Apply filters again
+            applyFilters();
+        }
+        
+        // Clear all filters
+        function clearAllFilters() {
+            // Reset all filter values
+            activeFilters = {
+                search: '',
+                field: '',
+                language: '',
+                availability: '',
+                rating: ''
+            };
+            
+            // Reset all select elements
+            counselorSearch.value = '';
+            fieldFilter.selectedIndex = 0;
+            languageFilter.selectedIndex = 0;
+            availabilityFilter.selectedIndex = 0;
+            ratingFilter.selectedIndex = 0;
+            
+            // Apply filters
+            applyFilters();
+        }
+        
+        // Add global access to clearAllFilters
+        window.clearAllFilters = clearAllFilters;
+        
+        // Event listeners
+        counselorSearch.addEventListener('input', function() {
+            activeFilters.search = this.value.trim();
+            applyFilters();
+        });
+        
+        fieldFilter.addEventListener('change', function() {
+            activeFilters.field = this.value;
+            applyFilters();
+        });
+        
+        languageFilter.addEventListener('change', function() {
+            activeFilters.language = this.value;
+            applyFilters();
+        });
+        
+        availabilityFilter.addEventListener('change', function() {
+            activeFilters.availability = this.value;
+            applyFilters();
+        });
+        
+        ratingFilter.addEventListener('change', function() {
+            activeFilters.rating = this.value;
+            applyFilters();
+        });
+        
+        // Add animation to cards
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Staggered animation effect
+                    setTimeout(() => {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100); // 100ms delay between each card animation
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        counselorCards.forEach((card, index) => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    });
+</script>
+{% endblock %}

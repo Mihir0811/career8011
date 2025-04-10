@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Career Navigator</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        {% include 'landing_page/header.html' %}
+    </header>
+
+    <main class="success-container">
+        <div class="container">
+            <div class="success-card">
+                <div class="success-animation">
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                </div>
+                
+                <h1>Payment Successful!</h1>
+                <p class="success-message">Thank you for subscribing to our {{ package|title }} package. Your payment has been processed successfully.</p>
+                
+                <div class="order-details">
+                    <div class="order-item">
+                        <div class="order-label">Transaction ID</div>
+                        <div class="order-value">{{ session_id }}</div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-label">Package</div>
+                        <div class="order-value">{{ package|title }} Plan</div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-label">Status</div>
+                        <div class="order-value status-success">Completed</div>
+                    </div>
+                </div>
+                
+                <div class="confirmation-info">
+                    <p><i class="fas fa-envelope"></i> A confirmation email has been sent to your registered email address.</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <!-- Single Done button that directs to dashboard -->
+                    <a href="{{ url_for('stud_dash') }}" class="btn-done">
+                        Done
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .success-container {
+            background-color: #f5f7fa;
+            min-height: 85vh;
+            padding: 80px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .success-card {
+            background: white;
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 60px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+        }
+        
+        .success-animation {
+            margin-bottom: 30px;
+        }
+        
+        .checkmark {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #4CAF50;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            stroke-width: 3;
+            stroke: #4CAF50;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        h1 {
+            color: #2C3E50;
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            color: #7F8C8D;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .order-details {
+            background: #F8F9FA;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #E1E8ED;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-label {
+            font-weight: 600;
+            color: #7F8C8D;
+            font-size: 15px;
+        }
+        
+        .order-value {
+            color: #2C3E50;
+            font-weight: 500;
+            font-size: 15px;
+            max-width: 60%;
+            text-align: right;
+            word-break: break-all;
+        }
+        
+        .status-success {
+            color: #4CAF50;
+            font-weight: 700;
+        }
+        
+        .confirmation-info {
+            margin-bottom: 30px;
+            color: #7F8C8D;
+            font-size: 15px;
+        }
+        
+        .confirmation-info i {
+            color: #4A90E2;
+            margin-right: 5px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .btn-done {
+            padding: 16px 80px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+            font-size: 18px;
+        }
+        
+        .btn-done:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .success-card {
+                padding: 40px 25px;
+                margin: 0 20px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .success-message {
+                font-size: 16px;
+            }
+            
+            .checkmark {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .btn-done {
+                padding: 14px 60px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</body>
+</html> 

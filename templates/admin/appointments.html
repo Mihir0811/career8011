@@ -1,0 +1,126 @@
+{% extends 'admin/base.html' %}
+{% block title %}Manage Counselor - Admin Panel{% endblock %}
+{% block content %}
+    <h2 class="section-title">Manage Appointments</h2>
+
+    <div class="table-actions">
+        <div class="search-filters">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search students & counselors" id="search">
+            </div>
+            <select class="filter-select" id="status-filter">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const searchInput = document.getElementById("search");
+                const statusFilter = document.getElementById("status-filter");
+                const tableRows = document.querySelectorAll(".data-table tbody tr");
+            
+                function filterAppointments() {
+                    const searchText = searchInput.value.toLowerCase();
+                    const selectedStatus = statusFilter.value.toLowerCase();
+            
+                    tableRows.forEach(row => {
+                        const studentName = row.querySelector("td:nth-child(1) span").textContent.toLowerCase();
+                        const counselorName = row.querySelector("td:nth-child(2) span").textContent.toLowerCase();
+                        const status = row.querySelector("td:nth-child(6) span").textContent.toLowerCase();
+            
+                        // Check if search text is found in student/counselor names
+                        const matchesSearch = studentName.includes(searchText) || counselorName.includes(searchText);
+            
+                        // Check if the status filter matches
+                        const matchesStatus = selectedStatus === "" || status === selectedStatus;
+            
+                        // Show/hide row based on filters
+                        row.style.display = (matchesSearch && matchesStatus) ? "" : "none";
+                    });
+                }
+            
+                // Attach event listeners
+                searchInput.addEventListener("input", filterAppointments);
+                statusFilter.addEventListener("change", filterAppointments);
+            });
+            </script>
+            
+        
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Counselor</th>
+                    <th>Topic</th>
+                    <th>Appointment Date</th>
+                    <th>Appointment Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <img src="https://ui-avatars.com/api/?name={{ appointment.student.name | urlencode }}" alt="{{ appointment.student.name }}">
+                            <span>{{ appointment.student.name }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="user-info">
+                            <img src="https://ui-avatars.com/api/?name={{ appointment.counselor.full_name | urlencode }}" alt="{{ appointment.counselor.name }}">
+                            <span>{{ appointment.counselor.full_name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ appointment.purpose }}</td> 
+                    <td>{{ appointment.date.strftime('%b %d, %Y') }}</td> 
+                    <td>{{ appointment.time_slot }}</td>
+                    <td><span class="status-badge {{ appointment.counselor_status }}">{{ appointment.counselor_status | capitalize }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <style>
+        .status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.pending {
+  background-color: #fff8e1;
+  color: var(--warning-color);
+}
+
+.status-badge.approved {
+  background-color: #e8f5e9;
+  color: var(--success-color);
+}
+
+.status-badge.rejected {
+  background-color: #f5e8e8;
+  color: var(--danger-color);
+}
+
+.status-badge.canceled {
+  background-color: #f3ebeb; 
+  color: #b55353; 
+}
+
+.status-badge.completed {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+    </style>
+
+{% endblock %}

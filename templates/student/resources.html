@@ -1,0 +1,459 @@
+{% extends 'student/stud-base.html' %}
+{% block title %}Student Resources{% endblock %}
+{% block content %}
+<div class="resources-container">
+    <div class="resources-header">
+        <h2>Learning Resources</h2>
+        <p>Access valuable materials to support your academic journey</p>
+    </div>
+    
+    <div class="resources-categories">
+        {% for category in categories %}
+        <button class="category-btn {{ 'active' if loop.first else '' }} {{ category }}">
+            <i class="fas {% if category == 'all' %}fa-th-large
+                {% elif category == 'academic' %}fa-graduation-cap
+                {% elif category == 'career' %}fa-briefcase
+                {% elif category == 'mental-health' %}fa-brain
+                {% elif category == 'wellness' %}fa-heart
+                {% elif category == 'technology' %}fa-laptop-code
+                {% else %}fa-folder{% endif %}"></i>
+            {{ category.replace('-', ' ').title() }}
+        </button>
+        {% endfor %}
+    </div>
+
+    <div class="resources-grid">
+        {% if resources %}
+        {% for resource in resources %}
+        <div class="resource-card {{ resource.category }}" id="resource-card">
+            <div class="resource-type {{ resource.file_type }}">
+                <i class="fas {% if resource.file_type|lower == 'pdf' %}
+                fa-file-pdf
+                {% elif resource.file_type|lower in ['mp4', 'avi', 'mkv', 'video'] %}
+                fa-play-circle
+                {% elif resource.file_type|lower in ['jpeg', 'jpg', 'png'] %}
+                fa-image
+                {% elif resource.file_type|lower in ['mp3', 'wav', 'audio'] %}
+                fa-music
+                {% elif resource.file_type|lower == 'book' %}
+                fa-book
+                {% else %}
+                fa-file
+                {% endif %}" id="resource-icon"></i>
+            </div>
+            
+            <div class="resource-content">
+                <h3>{{ resource.title }}</h3>
+                <p class="resource-description">{{ resource.description }}</p>
+                <div class="resource-meta">
+                    <span class="resource-size"><i class="fas fa-file-alt"></i> {{ resource.file_size }}</span>
+                    <span class="resource-downloads"><i class="fas fa-download"></i> {{ resource.downloads }}</span>
+                </div>
+                <a href="{{ url_for('download_resource',resource_id=resource.id) }}" class="download-btn" download>
+                    <i class="fas fa-cloud-download-alt"></i> Download {{ resource.file_type|title }}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="no-resources">
+            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486754.png" alt="No resources available">
+            <p>Resources Are Not Available</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .resources-container {
+        font-family: 'Poppins', sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 25px;
+        border-radius: 15px;
+        position: relative;
+        background-color: #f8f9fa;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e9ecef' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .resources-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.92);
+        border-radius: 15px;
+        z-index: 0;
+    }
+    
+    .resources-header {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .resources-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .resources-header p {
+        color: #7f8c8d;
+        font-size: 16px;
+    }
+    
+    .resources-categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .category-btn {
+        background: #f8f9fa;
+        border: none;
+        border-radius: 30px;
+        padding: 10px 18px;
+        font-size: 14px;
+        color: #555;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .category-btn i {
+        font-size: 12px;
+    }
+    
+    .category-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .category-btn.active {
+        background: #3498db;
+        color: white;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+    
+    .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .resource-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #eee;
+        transform: translateY(0);
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .resource-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .resource-type {
+        display: flex;
+        justify-content: center;
+        padding: 35px 0;
+        text-align: center;
+        position: relative;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+    
+    .resource-type::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 150px;
+        opacity: 0.05;
+        z-index: 0;
+    }
+    
+    .resource-type.pdf {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+    
+    .resource-type.pdf::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/337/337946.png');
+    }
+    
+    .resource-type.mp4, .resource-type.video, .resource-type.avi, .resource-type.mkv {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    }
+    
+    .resource-type.mp4::before, .resource-type.video::before, .resource-type.avi::before, .resource-type.mkv::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/711/711245.png');
+    }
+    
+    .resource-type.jpeg, .resource-type.jpg, .resource-type.png {
+        background: linear-gradient(135deg, #6f42c1 0%, #6610f2 100%);
+    }
+    
+    .resource-type.jpeg::before, .resource-type.jpg::before, .resource-type.png::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/7920/7920543.png');
+    }
+    
+    .resource-type.mp3, .resource-type.wav, .resource-type.audio {
+        background: linear-gradient(135deg, #fd7e14 0%, #e96b02 100%);
+    }
+    
+    .resource-type.mp3::before, .resource-type.wav::before, .resource-type.audio::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/9865/9865556.png');
+    }
+    
+    .resource-type.book {
+        background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    }
+    
+    .resource-type.book::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/2702/2702134.png');
+    }
+    
+    .resource-type.doc, .resource-type.docx, .resource-type.txt {
+        background: linear-gradient(135deg, #007bff 0%, #0069d9 100%);
+    }
+    
+    .resource-type.doc::before, .resource-type.docx::before, .resource-type.txt::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/281/281760.png');
+    }
+    
+    .resource-type.ppt, .resource-type.pptx {
+        background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+    }
+    
+    .resource-type.ppt::before, .resource-type.pptx::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/2972/2972185.png');
+    }
+    
+    .resource-type.xls, .resource-type.xlsx {
+        background: linear-gradient(135deg, #00b894 0%, #00a382 100%);
+    }
+    
+    .resource-type.xls::before, .resource-type.xlsx::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/281/281778.png');
+    }
+    
+    .resource-type:not(.pdf):not(.mp4):not(.video):not(.avi):not(.mkv):not(.jpeg):not(.jpg):not(.png):not(.mp3):not(.wav):not(.audio):not(.book):not(.doc):not(.docx):not(.txt):not(.ppt):not(.pptx):not(.xls):not(.xlsx) {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    }
+    
+    .resource-type:not(.pdf):not(.mp4):not(.video):not(.avi):not(.mkv):not(.jpeg):not(.jpg):not(.png):not(.mp3):not(.wav):not(.audio):not(.book):not(.doc):not(.docx):not(.txt):not(.ppt):not(.pptx):not(.xls):not(.xlsx)::before {
+        background-image: url('https://cdn-icons-png.flaticon.com/512/2965/2965335.png');
+    }
+    
+    .resource-type i {
+        font-size: 40px;
+        color: white;
+        position: relative;
+        z-index: 1;
+        filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
+    }
+    
+    .resource-content {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .resource-content h3 {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .resource-description {
+        color: #7f8c8d;
+        font-size: 14px;
+        margin: 0 0 15px 0;
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+    
+    .resource-meta {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        font-size: 13px;
+        color: #95a5a6;
+    }
+    
+    .resource-meta i {
+        margin-right: 5px;
+        font-size: 12px;
+    }
+    
+    .download-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .download-btn:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+    
+    .download-btn i {
+        font-size: 14px;
+    }
+    
+    .no-resources {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+    }
+    
+    .no-resources img {
+        width: 120px;
+        margin-bottom: 20px;
+        opacity: 0.7;
+    }
+    
+    .no-resources p {
+        color: #7f8c8d;
+        font-size: 16px;
+    }
+    
+    @media (max-width: 768px) {
+        .resources-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .resources-categories {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            justify-content: flex-start;
+        }
+        
+        .category-btn {
+            white-space: nowrap;
+        }
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function(){
+        // Initialize with animation
+        $('.resource-card').each(function(index) {
+            $(this).css('animation-delay', (index * 0.1) + 's');
+        });
+        
+        // Fix for the double-click issue
+        let lastCategory = 'all'; // Keep track of the current category
+        
+        // Category filtering with improved handling
+        $('.category-btn').click(function() {
+            const category = $(this).attr('class').split(' ').pop();
+            
+            // If clicking the same category twice, do nothing
+            if (category === lastCategory) {
+                return;
+            }
+            
+            // Update active class
+            $('.category-btn').removeClass('active');
+            $(this).addClass('active');
+            
+            // Set display style immediately before animation
+            if (category === 'all') {
+                $('.resource-card').css('display', 'flex'); // Use flex instead of block
+            } else {
+                $('.resource-card').css('display', 'none');
+                $(`.resource-card.${category}`).css('display', 'flex');
+            }
+            
+            // Update the last category
+            lastCategory = category;
+            
+            // Reset and apply animations
+            $('.resource-card:visible').css('animation', 'none');
+            
+            // Force reflow for each visible card
+            $('.resource-card:visible').each(function() {
+                void this.offsetWidth;
+            });
+            
+            // Apply animations with delay
+            $('.resource-card:visible').each(function(index) {
+                $(this).css({
+                    'animation': 'fadeIn 0.5s ease-in-out forwards',
+                    'animation-delay': (index * 0.1) + 's'
+                });
+            });
+        });
+    });
+    
+    // Improved download and reload functionality
+    document.querySelectorAll('.download-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Store original button HTML
+            const originalText = this.innerHTML;
+            
+            // Change to downloading state
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            
+            // Set a timeout to show success message and reload
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }, 800);
+        });
+    });
+</script>
+{% endblock %}

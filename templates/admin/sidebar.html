@@ -1,0 +1,45 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <img src="{{ url_for('static',filename='img/logo.png')  }}" alt="Logo" class="logo">
+        <h1>ADMIN</h1>
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('dashboard') }}" class="{% if active_page == 'dashboard' %}active{% endif %}" data-section="dashboard">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="{{ url_for('students') }}" class="{% if active_page == 'students' %}active{% endif %}" data-section="students">
+            <i class="fas fa-user-graduate"></i> Manage Students
+        </a>
+        <a href="{{ url_for('counselors') }}" class="{% if active_page == 'counselors' %}active{% endif %}" data-section="counselors">
+            <i class="fas fa-user-tie"></i> Manage Counselors
+        </a>
+        <a href="{{ url_for('interests') }}" class="{% if active_page == 'interests' %}active{% endif %}" data-section="interests">
+            <i class="fas fa-star"></i> Manage Interests
+        </a>
+        <a href="{{ url_for('appointments') }}" class="{% if active_page == 'appointments' %}active{% endif %}" data-section="appointments">
+            <i class="fas fa-calendar-check"></i> Monitor Appointments
+        </a>
+        <a href="{{ url_for('monitor_resources') }}" class="{% if active_page == 'monitor_resources' %}active{% endif %}" data-section="monitor_resources">
+            <i class="fas fa-book"></i> Monitor Resources
+        </a>
+        <a href="{{ url_for('monitor_feedbacks') }}" class="{% if active_page == 'monitor_feedbacks' %}active{% endif %}" data-section="monitor_feedbacks">
+            <i class="fas fa-comment-alt"></i> Monitor Feedbacks
+        </a>
+        <a href="{{ url_for('reports') }}" class="{% if active_page == 'reports' %}active{% endif %}" data-section="reports">
+            <i class="fas fa-chart-bar"></i> Reports
+        </a>
+        <a href="{{ url_for('notifications') }}" class="{% if active_page == 'notifications' %}active{% endif %}" data-section="notifications">
+            <i class="fas fa-bell"></i> Notifications
+        </a>
+        <a href="{{ url_for('admin_profile') }}" class="{% if active_page == 'admin_profile' %}active{% endif %}" data-section="admin_profile">
+            <i class="fas fa-user-shield"></i> Your Profile
+        </a>
+        <a href="{{ url_for('admin_logout') }}" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </nav>
+</aside>
+

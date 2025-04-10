@@ -1,0 +1,70 @@
+{% extends 'admin/base.html' %}
+{% block title %}Add Interest - Admin Panel{% endblock %}
+{% block content %}
+    <div class="form-container">
+        <h2 class="section-title">Add Interest</h2>
+        <form id="form-container">
+            <p id="msg" style="color: green;"></p>
+            <br>
+            <div class="form-group">
+                <label for="interest_name">Interest Name</label>
+                <input type="text" id="interest_name" name="interest_name" placeholder="Enter the interest name" required>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="academic">Academic</option>
+                    <option value="career">Career</option>
+                    <option value="hobby">Hobby</option>
+                </select>
+            </div>
+            <br><br>
+            <div class="form-actions">
+                <a type="button" class="cancel-btn" name="cancel-btn">Cancel</a>
+                <button type="submit" class="submit-btn" name="submit-btn" id="submitBtn">Add Interest</button>
+            </div>
+        </form>
+
+        <script>
+           document.getElementById('submitBtn').addEventListener('click', (event) => {
+    event.preventDefault(); // Prevent page reload
+
+    const interestName = document.getElementById('interest_name').value.trim();
+    const category = document.getElementById('category').value;
+
+    if (!interestName || !category) {
+        alert('Both fields are required!');
+        return;
+    }
+
+    const interestData = { interest_name: interestName, category: category };
+
+    fetch('http://localhost:5000/add_interest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(interestData),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            alert(data.msg);
+            document.querySelector('#msg')
+            document.querySelector('#msg').innerHTML = data.msg;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+});
+
+        </script>
+    </div>
+{% endblock %}

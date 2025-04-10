@@ -1,0 +1,336 @@
+{% extends 'counselor/counselor_base.html' %}
+{% block coun_content %}
+<div class="section-header">
+    <h1>Profile</h1>
+    <button class="btn-primary edit-profile-btn">
+        <i class="fas fa-edit"></i> Edit Profile
+    </button>
+</div>
+
+<div class="profile-container">
+    <div class="profile-sidebar">
+        <div class="profile-image-container">
+            <img src="{{ counselor_data.profile_picture if counselor_data.profile_picture else 'https://ui-avatars.com/api/?name=' + session['counselor_name'] | urlencode }}"
+                alt="{{ session['counselor_name'] }}" class="profile-image">
+            <button class="change-photo-btn">
+                <i class="fas fa-camera"></i>
+            </button>
+        </div>
+        <div class="profile-stats">
+            <div class="stat-item">
+                <i class="fas fa-calendar-check"></i>
+                <div class="stat-details">
+                    <span class="stat-value">{{ total_sessions }}</span>
+                    <span class="stat-label">Sessions</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-users"></i>
+                <div class="stat-details">
+                    <span class="stat-value">{{ total_students }}</span>
+                    <span class="stat-label">Students</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-star"></i>
+                <div class="stat-details">
+                    <span class="stat-value">{{ avg_rating }}</span>
+                    <span class="stat-label">Rating</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-details">
+        <div class="profile-section">
+            <h2>Personal Information</h2>
+            <div class="profile-info-grid">
+                <div class="profile-info-item">
+                    <label>Full Name</label>
+                    <p>{{ counselor_data.full_name }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Email</label>
+                    <p>{{ counselor_data.email }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Phone</label>
+                    <p>{{ counselor_data.contact_number }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h2>Specializations</h2>
+            <div class="specialization-tags">
+                <span class="tag">{{ counselor_data.specialization }}</span>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <h2>Interests</h2>
+            <div class="specialization-tags">
+                {% for interest in interests %}
+                <span class="tag">{{ interest }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+
+        <div class="profile-section">
+            <h2>Bio</h2>
+            <p class="profile-bio">
+                {{ counselor_data.bio }}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="availability-section">
+    <div class="section-header">
+        <h2>Availability</h2>
+        <!-- <button class="btn-outline edit-availability-btn">
+                <i class="fas fa-edit"></i> Edit Availability
+            </button> -->
+    </div>
+
+    <div class="availability-schedule">
+        {% for day, time_range in schedule_dict.items() %}
+        <div class="schedule-day">
+            <div class="day-header">{{ day }}</div>
+            <div class="time-slots">
+                <div class="time-slot available">{{ time_range }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="custom-modal" id="editProfileModal">
+    <div class="custom-modal-content">
+        <div class="custom-modal-header">
+            <h5>Edit Profile</h5>
+            <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+            <form id="editProfileForm" action="post">
+                <div class="form-group">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" id="fullName" name="full_name" value="{{ counselor_data.full_name }}"
+                        class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" value="{{ counselor_data.email }}" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="contactNumber" class="form-label">Phone</label>
+                    <input type="text" id="contactNumber" name="contact_number"
+                        value="{{ counselor_data.contact_number }}" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="specialization" class="form-label">Specialization</label>
+                    <select id="specialization" name="specialization" required>
+                        <option value="">Select your specialization</option>
+                        <option value="career counseling">Career Counseling</option>
+                        <option value="mental health">Mental Health</option>
+                        <option value="academic counseling">Academic Counseling</option>
+                        <option value="college admissions">College Admissions</option>
+                        <option value="professional development">Professional Development</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bio" class="form-label">Bio</label>
+                    <textarea id="bio" name="bio" class="form-input">{{ counselor_data.bio }}</textarea>
+                </div>
+            </form>
+        </div>
+        <div class="custom-modal-footer">
+            <button class="btn-secondary" id="closeModalBtn">Close</button>
+            <button class="btn-primary" id="saveProfileBtn">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const editProfileBtn = document.querySelector(".edit-profile-btn");
+        const modal = document.getElementById("editProfileModal");
+        const closeModalBtn = document.getElementById("closeModal");
+        const closeModalBtnFooter = document.getElementById("closeModalBtn");
+
+        // Open the modal when the "Edit Profile" button is clicked
+        if (editProfileBtn && modal) {
+            editProfileBtn.addEventListener("click", function () {
+                modal.style.display = "flex";
+            });
+        }
+
+        // Close the modal when the close button in the header is clicked
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener("click", function () {
+                modal.style.display = "none";
+            });
+        }
+
+        // Close the modal when the "Close" button in the footer is clicked
+        if (closeModalBtnFooter) {
+            closeModalBtnFooter.addEventListener("click", function () {
+                modal.style.display = "none";
+            });
+        }
+
+        // Handle form submission for profile update
+        const editProfileForm = document.getElementById("editProfileForm");
+        if (editProfileForm) {
+            editProfileForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                // Create FormData from the form
+                const formData = new FormData(editProfileForm);
+
+                // Use fetch to send the data to the server
+                fetch("/update_coun_profile", {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            alert("Profile updated successfully!");
+                            location.reload(); // Reload to reflect the updated profile
+                        } else {
+                            alert("Error updating profile: " + data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error updating profile:", error);
+                        alert("An unexpected error occurred.");
+                    });
+            });
+        }
+    });
+</script>
+
+
+<style>
+    /* Custom Modal Styles */
+    .custom-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        /* Dimmed background */
+        z-index: 1050;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .custom-modal-content {
+        background-color: #fff;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 600px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+    }
+
+    /* Modal Header */
+    .custom-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+
+    .custom-modal-header h5 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #333;
+        cursor: pointer;
+    }
+
+    /* Modal Body */
+    .custom-modal-body {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .custom-modal-body form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        /* background-color: yellow; */
+    }
+
+    .custom-modal-body .form-group {
+        margin-bottom: 0px;
+        width: 100%;
+    }
+
+    .custom-modal-body .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+
+    .custom-modal-body .form-input,
+    select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    /* Modal Footer */
+    .custom-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        /* margin-top: 20px; */
+    }
+
+    .custom-modal-footer .btn-secondary,
+    .custom-modal-footer .btn-primary {
+        padding: 8px 20px;
+        margin-left: 10px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .custom-modal-footer .btn-secondary {
+        background-color: #e0e0e0;
+        color: #333;
+    }
+
+    .custom-modal-footer .btn-secondary:hover {
+        background-color: #d6d6d6;
+    }
+
+    .custom-modal-footer .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .custom-modal-footer .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+
+{% endblock %}

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions - CareerConnect</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Add inline styles for FAQ page specific animations and effects -->
+    <style>
+        /* Hero Section Animations */
+        .faq-hero {
+            position: relative;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(80, 227, 194, 0.9)),
+                        url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070') center/cover no-repeat fixed;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.1) 10%, 
+                transparent 10.1%, 
+                transparent 100%);
+            background-size: 20px 20px;
+            animation: pulseBackground 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseBackground {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            animation: slideDown 0.8s ease-out;
+            color: white;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            animation: fadeIn 1s ease-out 0.3s forwards;
+            opacity: 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 3rem;
+            animation: slideUp 0.8s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Still Have Questions Section Styles */
+        .still-questions {
+            position: relative;
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.92), rgba(80, 227, 194, 0.92)),
+                        url('https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?q=80&w=2047') center/cover fixed;
+            overflow: hidden;
+        }
+
+        .questions-wrapper {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .questions-wrapper h2 {
+            color: white;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .questions-wrapper p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .questions-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            color: var(--primary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .questions-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background: #f8f9fa;
+        }
+
+        .questions-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Animated background elements */
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation: float 20s infinite;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            right: -100px;
+            animation: float 15s infinite reverse;
+        }
+
+        .circle-3 {
+            width: 150px;
+            height: 150px;
+            bottom: -75px;
+            left: 20%;
+            animation: float 18s infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .questions-wrapper h2 {
+                font-size: 2.2rem;
+            }
+            
+            .questions-wrapper p {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .support-options {
+                flex-direction: column;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Add styles for FAQ content section */
+        .faq-content {
+            position: relative;
+            background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
+                        url('https://images.unsplash.com/photo-1497864149936-d3163f0c0f4b?q=80&w=2069') center/cover no-repeat fixed;
+            padding: 80px 0;
+        }
+
+        .faq-category {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-header h2 {
+            color: #333;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .category-header h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #4A90E2, #50E3C2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+        <header class="header">
+            {% include 'landing_page/header.html' %}
+        </header>
+
+    <!-- Hero Section -->
+    <section class="hero faq-hero">
+        <div class="hero-bg-animation"></div>
+        <div class="container">
+            <div class="hero-content text-center">
+                <h1>Frequently Asked Questions</h1>
+                <p>Find answers to common questions about our services and platform</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-users fa-2x"></i>
+                        <h3 class="stat-number" data-count="10000">0</h3>
+                        <p class="stat-label">Happy Students</p>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-question-circle fa-2x"></i>
+                        <h3 class="stat-number" data-count="500">0</h3>
+                        <p class="stat-label">Questions Answered</p>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-graduation-cap fa-2x"></i>
+                        <h3 class="stat-number" data-count="95">0</h3>
+                        <p class="stat-label">Satisfaction Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Search Section -->
+    <section class="faq-search">
+        <div class="container">
+            <div class="search-container">
+                <h2>How can we help you?</h2>
+                <div class="search-box">
+                    <input type="text" id="faqSearch" placeholder="Search for questions...">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="popular-searches">
+                    <span>Popular searches:</span>
+                    <a href="#" data-search="pricing">Pricing</a>
+                    <a href="#" data-search="counselor">Finding a counselor</a>
+                    <a href="#" data-search="appointment">Booking appointments</a>
+                    <a href="#" data-search="refund">Refund policy</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Categories Section -->
+    <section class="faq-categories">
+        <div class="container">
+            <div class="categories-grid">
+                <a href="#general" class="category-card active">
+                    <div class="category-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h3>General</h3>
+                </a>
+                <a href="#students" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>For Students</h3>
+                </a>
+                <a href="#counselors" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>For Counselors</h3>
+                </a>
+                <a href="#services" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-concierge-bell"></i>
+                    </div>
+                    <h3>Services</h3>
+                </a>
+                <a href="#billing" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3>Billing & Pricing</h3>
+                </a>
+                <a href="#technical" class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Technical</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Content Section -->
+    <section class="faq-content">
+        <div class="container">
+            <!-- General FAQs -->
+            <div id="general" class="faq-category active">
+                <div class="category-header">
+                    <h2>General Questions</h2>
+                </div>
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What is CareerConnect?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>CareerConnect is a platform that connects students with professional counselors for career guidance, academic support, and personal development. We offer a range of services including one-on-one counseling, workshops, resources, and more to help students achieve their academic and career goals.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I get started with CareerConnect?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Getting started is easy! Simply create an account, complete your profile, and you'll be able to browse counselors, access resources, and book sessions. We recommend starting with a free consultation to help determine which services would be most beneficial for your specific needs and goals.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Is CareerConnect available internationally?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, CareerConnect is available to students and counselors worldwide. Our virtual platform allows for connections across geographical boundaries, though some services may have regional limitations. We have counselors from various countries who can provide guidance specific to different educational systems and job markets.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What makes CareerConnect different from other counseling services?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>CareerConnect stands out through our comprehensive approach to career development. We offer personalized matching between students and counselors, a wide range of specialized services, flexible scheduling options, and an extensive resource library. Our platform is designed to provide ongoing support throughout your academic and career journey, not just one-time advice.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How can I contact customer support?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Our customer support team is available via email at support@careerconnect.com, by phone at +1 (555) 123-4567, or through the live chat feature on our website. Support hours are Monday through Friday, 9:00 AM to 8:00 PM EST, and Saturday, 10:00 AM to 5:00 PM EST.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student FAQs -->
+            <div id="students" class="faq-category">
+                <div class="category-header">
+                    <h2>For Students</h2>
+                </div>
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I choose the right counselor for my needs?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>When choosing a counselor, consider their specialization, experience, and approach. You can browse counselor profiles, read reviews from other students, and even schedule initial consultations to find the best fit for your specific needs and goals. Our matching algorithm can also suggest counselors based on your profile information and preferences.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How often should I meet with my counselor?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>The frequency of sessions depends on your individual needs and goals. Some students benefit from weekly sessions, while others may meet with their counselor bi-weekly or monthly. Your counselor will work with you to determine the optimal schedule for your specific situation. You can always adjust the frequency as your needs change.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Can I change counselors if I'm not satisfied?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, absolutely. We understand that finding the right counselor is important for a successful counseling relationship. If you feel that your current counselor isn't the right fit, you can easily switch to another counselor on our platform at any time. Simply go to your account settings and select "Change Counselor" to browse other options.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Are the counseling sessions confidential?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, confidentiality is a cornerstone of our service. All sessions and communications with your counselor are private and secure. Our counselors adhere to strict ethical guidelines and privacy policies to ensure your information remains confidential. The only exceptions to confidentiality are situations where there is a risk of harm to yourself or others, as required by law.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How can I get the most out of my counseling sessions?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>To maximize the benefits of your counseling sessions, come prepared with specific questions or topics you'd like to discuss, be open and honest about your concerns and goals, actively participate in the conversation, take notes during the session, and follow through on any recommended actions or exercises between sessions. Regular attendance and engagement are key to making progress.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Counselor FAQs -->
+            <div id="counselors" class="faq-category">
+                <div class="category-header">
+                    <h2>For Counselors</h2>
+                </div>
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I apply to become a counselor on CareerConnect?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>To apply as a counselor, visit the "Join as a Counselor" page on our website and complete the application form. You'll need to provide information about your qualifications, experience, specialization, and availability. Our team will review your application and contact you for an interview if you meet our requirements. The entire process typically takes 1-2 weeks.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What qualifications do I need to become a counselor?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We require counselors to have a minimum of a master's degree in counseling, psychology, education, or a related field, along with at least 2 years of professional experience in career counseling or a specialized field. Relevant certifications and licenses are preferred. We also look for excellent communication skills, empathy, and a passion for helping students achieve their goals.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I set my availability and manage appointments?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Once approved, you'll have access to a counselor dashboard where you can set your availability using our calendar tool. You can specify your working hours, block off time for personal commitments, and manage your appointment schedule. The system automatically prevents double-bookings and sends you notifications when new appointments are scheduled.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How does the payment process work for counselors?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Counselors receive payment for their services on a bi-weekly basis. The platform takes a 20% service fee, and the remaining 80% is paid directly to you via your preferred payment method (direct deposit, PayPal, etc.). You can track your earnings and upcoming payments through your counselor dashboard. Payments are processed automatically for completed sessions.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What resources are available to help me succeed as a counselor?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We provide counselors with a range of resources including training materials, webinars, a counselor community forum for peer support, marketing tools to help you promote your services, and regular professional development opportunities. Our counselor success team is also available to provide personalized support and guidance as needed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services FAQs -->
+            <div id="services" class="faq-category">
+                <div class="category-header">
+                    <h2>Services</h2>
+                </div>
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What types of counseling services do you offer?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We offer a wide range of services including career counseling, academic guidance, resume and cover letter review, mock interviews, college application assistance, scholarship guidance, mental health support, and professional development coaching. Each service is tailored to meet the specific needs and goals of individual students.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How long are the counseling sessions?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Standard counseling sessions are 50 minutes long, though we also offer 30-minute quick consultations and 90-minute extended sessions for more in-depth discussions. The duration of workshops and group sessions varies depending on the topic and format, typically ranging from 1 to 2 hours.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Are sessions conducted in person or online?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Most of our services are provided virtually through our secure online platform, which includes video conferencing, messaging, and resource sharing capabilities. This allows for flexibility and accessibility regardless of location. Some counselors may offer in-person sessions in specific locations, which will be indicated in their profiles.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How quickly will I receive feedback on my resume or cover letter?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>For resume and cover letter reviews, you can typically expect to receive feedback within 48 hours of submission. Premium members receive priority review with a 24-hour turnaround time. If you need urgent feedback for an upcoming application deadline, you can request expedited service for an additional fee.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Can I access recorded workshops if I miss a live session?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, all our workshops and webinars are recorded and made available in our resource library. If you register for a live workshop but are unable to attend, you'll automatically receive access to the recording. Premium and Ultimate package members have access to our complete archive of past workshops and webinars.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billing & Pricing FAQs -->
+            <div id="billing" class="faq-category">
+                <div class="category-header">
+                    <h2>Billing & Pricing</h2>
+                </div>
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How much do your services cost?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We offer several subscription packages ranging from $49/month for our Basic plan to $149/month for our Ultimate plan. Each plan includes different services and benefits. Individual services can also be purchased separately, with prices varying based on the specific service and counselor. Please visit our Services page for detailed pricing information.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Do you offer any discounts or financial aid?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, we offer a 20% discount for students with a valid .edu email address or student ID. We also have a financial aid program for students with demonstrated need, which can provide up to 50% off our services. Additionally, we occasionally run special promotions and offer discounted rates for group or institutional subscriptions.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What is your refund policy?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We offer a 7-day money-back guarantee for all new subscriptions. If you're not satisfied with our services within the first week, you can request a full refund. For individual services, you can request a refund within 24 hours of the service if you're not satisfied. No refunds are provided for missed appointments unless cancelled at least 24 hours in advance.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I cancel my subscription?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>You can cancel your subscription at any time through your account settings. Simply go to "Subscription & Billing" and select "Cancel Subscription." Your subscription will remain active until the end of your current billing cycle. There are no cancellation fees or penalties. If you decide to rejoin later, your account information and history will be preserved.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What payment methods do you accept?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We accept all major credit and debit cards (Visa, Mastercard, American Express, Discover), PayPal, and bank transfers. For some regions, we also support local payment methods. All payments are processed securely through our payment gateway, which uses industry-standard encryption to protect your financial information.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical FAQs -->
+            <div id="technical" class="faq-category">
+                <div class="category-header">
+                    <h2>Technical</h2>
+                </div>
+                <div class="faq-accordion">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What technical requirements do I need for virtual sessions?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>For the best experience with virtual sessions, you'll need a stable internet connection (minimum 1 Mbps upload/download speed), a device with a camera and microphone (computer, tablet, or smartphone), and an updated browser (Chrome, Firefox, Safari, or Edge). We recommend using headphones for better audio quality and finding a quiet, private space for your sessions.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How secure is your platform?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We take security and privacy very seriously. Our platform uses end-to-end encryption for all communications, secure socket layer (SSL) technology for data transmission, and follows industry best practices for data protection. We are compliant with relevant data protection regulations and regularly undergo security audits to ensure the safety of your information.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>What should I do if I experience technical issues during a session?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>If you experience technical issues during a session, first try refreshing your browser or reconnecting to the session. If problems persist, you can use the in-session chat to communicate with your counselor and troubleshoot together. Our platform also has a built-in "Technical Support" button that connects you directly with our support team. If a session is significantly disrupted by technical issues, we'll arrange a make-up session at no additional cost.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>Can I access CareerConnect on mobile devices?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, CareerConnect is fully optimized for mobile devices. You can access our platform through your mobile browser or download our dedicated app available for both iOS and Android devices. The mobile version includes all the features of the desktop version, allowing you to schedule appointments, participate in sessions, access resources, and manage your account on the go.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <h3>How do I reset my password?</h3>
+                            <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>To reset your password, click on the "Forgot Password" link on the login page. Enter the email address associated with your account, and we'll send you a password reset link. Click on the link in the email and follow the instructions to create a new password. For security reasons, password reset links expire after 24 hours. If you don't receive the email, check your spam folder or contact our support team for assistance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modified Still Have Questions Section -->
+    <section class="still-questions">
+        <div class="container">
+            <div class="questions-wrapper">
+                <h2>Still Have Questions?</h2>
+                <p>Our support team is here to help you find the answers you need.</p>
+                <a href="{{url_for('contact')}}" class="questions-btn">
+                    <i class="fas fa-message"></i>
+                    Get in Touch
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'landing_page/footer.html' %}
+
+    <button id="backToTop" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="{{url_for('static',filename='js/landing_page/script.js')}}"></script>
+
+    <!-- Add inline scripts for animations -->
+    <script>
+        // Counter Animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-count'));
+            const duration = 2000; // 2 seconds
+            const step = target / (duration / 16); // 60fps
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target + (target === 95 ? '%' : '+');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + (target === 95 ? '%' : '+');
+                }
+            }, 16);
+        }
+
+        // Start counter animation when elements are in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('.stat-number');
+                    counters.forEach(counter => animateCounter(counter));
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+        observer.observe(document.querySelector('.hero-stats'));
+    </script>
+</body>
+</html>

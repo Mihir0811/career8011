@@ -1,0 +1,107 @@
+{% extends 'admin/base.html' %}
+{% block title %}Manage Students - Admin Panel{% endblock %}
+{% block content %}
+<h2 class="section-title">Manage Students</h2>
+<!-- <a href="https://app-na2.hubspot.com/payment-links/242275070/preview/215787336/test">Pay</a> -->
+<div class="table-actions">
+    <div class="search-filters">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search students...">
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.querySelector(".search-box input");
+            const tableRows = document.querySelectorAll(".data-table tbody tr");
+    
+            searchInput.addEventListener("keyup", function () {
+                const searchText = searchInput.value.toLowerCase();
+    
+                tableRows.forEach(row => {
+                    const studentName = row.querySelector("td:first-child span")?.textContent.toLowerCase() || "";
+                    const studentEmail = row.querySelector("td:nth-child(2)")?.textContent.toLowerCase() || "";
+                    const interests = row.querySelector(".interest-tags")?.textContent.toLowerCase() || "";
+    
+                    if (studentName.includes(searchText) || studentEmail.includes(searchText) || interests.includes(searchText)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
+    
+</div>
+
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Interests</th>
+                <th>Registered Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if students %}
+            {% for student in students %}
+            <tr>
+                <td>
+                    <div class="user-info">
+                        <img src="https://ui-avatars.com/api/?name={{ student.name | urlencode }}" alt="{{ student.name }}">
+                        <span>{{ student.name }}</span>
+                    </div>
+                </td>
+                <td>{{ student.email }}</td>
+                <td>
+                    <div class="interest-tags">
+                        {% for interest in student.interests.split(',') %}
+                        <span class="tag">{{ interest }}</span>
+                        {% endfor %}
+                    </div>
+                </td>
+                <td>{{ student.created_at.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="edit-btn" onclick="window.location.href='/edit_stud/{{ student.id }}'"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" onclick="deleteStudent('{{ student.id }}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="5" >No Records Found</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+    <script>
+        function deleteStudent(studentId){
+            fetch(`http://localhost:5000/delete_stud/${studentId}`,{
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then((data)=>{
+                if(data.ok){
+                    alert("User Is Deleted")
+                    location.reload()
+                }
+                else{
+                    alert('Failed To Delete Student!');
+                }
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+        }
+    </script>
+</div>  
+{% endblock %}

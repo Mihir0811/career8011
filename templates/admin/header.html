@@ -1,0 +1,171 @@
+<div class="search-bar1">
+    <h2 class="animated-text"></h2>
+</div>
+
+<div class="header-right">
+    <div class="notifications">
+        <i class="fas fa-bell" id="notification-icon" style="cursor: pointer;"></i>
+        <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
+        <div id="notification-dropdown" class="notification-dropdown" style="display: none;">
+            <ul id="notification-list">
+                <li>No new notifications</li>
+            </ul>
+        </div>
+    </div>
+
+    <style>
+        .notification-dropdown {
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 300px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .notification-dropdown ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .notification-dropdown li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .notification-dropdown li:last-child {
+            border-bottom: none;
+        }
+
+        .notification-dropdown li:hover {
+            background-color: #f5f5f5;
+        }
+
+        .notification-item.new {
+            background-color: #f0f8ff;
+        }
+
+        .search-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .animated-text {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96C93D);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 300%;
+            animation: gradient-animation 10s ease infinite;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .search-input-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .animated-text::after {
+            content: '|';
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+
+    <div class="profile-dropdown">
+        <img src="https://ui-avatars.com/api/?name={{ session['admin_name'] }}" alt="Profile" class="profile-image">
+        <div class="profile-info">
+            <span class="profile-name">{{ session['admin_name'] }}</span>
+            <span class="profile-role">Admin User</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fetchNotifications() {
+        fetch('/admin_notifications')  // Call the Flask endpoint
+            .then(response => response.json())
+            .then(data => {
+                const notificationBadge = document.getElementById('notification-badge');
+                const notificationDropdown = document.getElementById('notification-dropdown');
+                const notificationList = document.getElementById('notification-list');
+                
+                // Update notification badge count
+                if (data.unread_count > 0) {
+                    notificationBadge.style.display = 'inline';  // Show badge
+                    notificationBadge.textContent = data.unread_count;  // Set the unread count
+                } else {
+                    notificationBadge.style.display = 'none';  // Hide badge if no unread notifications
+                }
+
+                // Update the notification dropdown list
+                if (data.notifications.length > 0) {
+                    notificationList.innerHTML = '';  // Clear existing list
+                    data.notifications.forEach(notification => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <div>
+                                <strong>${notification.title}</strong>
+                                <p>${notification.message}</p>
+                                <small>${notification.created_at}</small>
+                            </div>
+                        `;
+                        notificationList.appendChild(li);
+                    });
+
+                    // Make sure the dropdown stays hidden by default
+                    notificationDropdown.style.display = 'none'; // Hide dropdown after fetching notifications
+                } else {
+                    notificationList.innerHTML = '<li>No new notifications</li>';
+                    notificationDropdown.style.display = 'none';  // Hide dropdown if no notifications
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching notifications:', error);
+            });
+    }
+
+    // Function to toggle the notification dropdown visibility
+    function toggleNotificationDropdown() {
+        const notificationDropdown = document.getElementById('notification-dropdown');
+        // Toggle visibility of the dropdown
+        if (notificationDropdown.style.display === 'none' || notificationDropdown.style.display === '') {
+            notificationDropdown.style.display = 'block'; // Show dropdown
+        } else {
+            notificationDropdown.style.display = 'none'; // Hide dropdown
+        }
+    }
+
+    // Automatically fetch notifications when the page loads (but don't show dropdown)
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchNotifications(); // Fetch notifications when the page loads
+
+        // Ensure the notification dropdown is hidden on page load
+        const notificationDropdown = document.getElementById('notification-dropdown');
+        notificationDropdown.style.display = 'none'; // Hide by default
+
+        // Add click event listener to the notification icon
+        const notificationIcon = document.getElementById('notification-icon');
+        notificationIcon.addEventListener('click', toggleNotificationDropdown);  // Toggle on click
+    });
+</script>

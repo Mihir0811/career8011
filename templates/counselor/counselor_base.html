@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counselor Dashboard | Career Guidance Platform</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/counselor/counselor.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebar">
+            {% include 'counselor/coun_sidebar.html' %}
+        </aside>
+        <main class="main-content">
+            <header class="top-bar">
+                {% include 'counselor/coun_header.html' %}
+            </header>
+            <div class="content-wrapper">
+                {% block coun_content %}
+                {% endblock %}
+            </div>
+        </main>
+    </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+
+    fetch('/counselor_feedback_chart/1').then(res => res.json()).then(data => {
+        var options = {
+            series: [{
+                data: data.data,
+            }],
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    borderRadiusApplication: 'end',
+                    horizontal: true,
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            xaxis: {
+                categories: data.labels,
+            },
+            colors: ['#33b2df', '#546E7A', '#d4526e', '#13d8aa'],
+        };
+
+        var chart = new ApexCharts(document.querySelector("#rating-chart"), options);
+        chart.render();
+
+    })
+</script>
+
+
+<!-- <script src="{{url_for('static',filename='js/counselor/counselor.js')}}" ></script> -->
+<script src="{{ url_for('static', filename='js/counselor/counselor.js') }}"></script>
+
+</html>

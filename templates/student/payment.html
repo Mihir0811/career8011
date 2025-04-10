@@ -1,0 +1,399 @@
+{% extends 'student/base.html' %}
+
+{% block title %}Payment{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Purchase - Career Navigator</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        {% include 'landing_page/header.html' %}
+    </header>
+
+    <main class="payment-container">
+        <div class="container">
+            <div class="payment-card">
+                {% if is_logged_in %}
+                <div class="package-summary">
+                    <h2>Order Summary</h2>
+                    <div class="package-header">
+                        <h3>{{ package_details.name }}</h3>
+                        <span class="package-price">{{ package_details.price }}</span>
+                    </div>
+                    
+                    <div class="package-features">
+                        <h4>What's included:</h4>
+                        <ul>
+                            {% for feature in package_details.features %}
+                            <li><i class="fas fa-check"></i> {{ feature }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="payment-total">
+                        <span>Total:</span>
+                        <span class="total-price">{{ package_details.price }}</span>
+                    </div>
+                    
+                    {% if cancelled == 'true' %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Your payment was cancelled. You can try again when you're ready.</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if error == 'true' %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>There was an error processing your payment. Please try again.</p>
+                    </div>
+                    {% endif %}
+                    
+                    <form action="/create-checkout-session" method="POST">
+                        <input type="hidden" name="package" value="{{ package }}">
+                        <button type="submit" class="checkout-button">
+                            <span>Proceed to Checkout</span>
+                            <i class="fas fa-lock"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="secure-payment">
+                        <i class="fas fa-shield-alt"></i> Secure Payment
+                    </div>
+                    
+                    <div class="payment-methods">
+                        <img src="https://cdn.jsdelivr.net/gh/stripe/stripe-media@4d2fdc43f1a6147770b91f16fb9a3414e2f6f9dd/logos/visa.svg" alt="Visa">
+                        <img src="https://cdn.jsdelivr.net/gh/stripe/stripe-media@4d2fdc43f1a6147770b91f16fb9a3414e2f6f9dd/logos/mastercard.svg" alt="Mastercard">
+                        <img src="https://cdn.jsdelivr.net/gh/stripe/stripe-media@4d2fdc43f1a6147770b91f16fb9a3414e2f6f9dd/logos/amex.svg" alt="American Express">
+                    </div>
+                </div>
+                {% else %}
+                <div class="login-prompt">
+                    <div class="login-icon">
+                        <i class="fas fa-user-lock"></i>
+                    </div>
+                    <h2>Almost There!</h2>
+                    <p>Please log in or create an account to complete your purchase of the {{ package_details.name }}.</p>
+                    
+                    <div class="login-actions">
+                        <a href="{{ url_for('student_login') }}?redirect=payment&package={{ package }}" class="btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Log In
+                        </a>
+                        <a href="{{ url_for('register') }}?redirect=payment&package={{ package }}" class="btn-secondary">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </a>
+                    </div>
+                    
+                    <div class="package-preview">
+                        <h4>{{ package_details.name }} - {{ package_details.price }}</h4>
+                        <ul class="preview-features">
+                            {% for feature in package_details.features[:3] %}
+                            <li><i class="fas fa-check"></i> {{ feature }}</li>
+                            {% endfor %}
+                            {% if package_details.features|length > 3 %}
+                            <li class="more-features">+ {{ package_details.features|length - 3 }} more features</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .payment-container {
+            padding: 60px 0;
+            background-color: #f5f7fa;
+            min-height: 70vh;
+        }
+        
+        .payment-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        .package-summary h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            border-bottom: 1px solid #eaeef2;
+            padding-bottom: 15px;
+        }
+        
+        .package-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .package-header h3 {
+            font-size: 22px;
+            color: #4a90e2;
+            margin: 0;
+        }
+        
+        .package-price {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .package-features {
+            margin-bottom: 30px;
+        }
+        
+        .package-features h4 {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .package-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .package-features li {
+            display: flex;
+            align-items: start;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #34495e;
+        }
+        
+        .package-features li i {
+            color: #2ecc71;
+            margin-right: 10px;
+            font-size: 14px;
+            margin-top: 3px;
+        }
+        
+        .payment-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin: 20px 0;
+            border-top: 1px solid #eaeef2;
+            border-bottom: 1px solid #eaeef2;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .total-price {
+            color: #4a90e2;
+        }
+        
+        .checkout-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px 0;
+            background: linear-gradient(135deg, #4a90e2 0%, #50e3c2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .checkout-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+        
+        .secure-payment {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .secure-payment i {
+            color: #2ecc71;
+            margin-right: 5px;
+        }
+        
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            opacity: 0.7;
+        }
+        
+        .payment-methods img {
+            height: 25px;
+        }
+        
+        /* Login prompt styles */
+        .login-prompt {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .login-icon {
+            font-size: 50px;
+            color: #4A90E2;
+            margin-bottom: 20px;
+        }
+        
+        .login-prompt h2 {
+            font-size: 26px;
+            color: #2C3E50;
+            margin-bottom: 15px;
+        }
+        
+        .login-prompt p {
+            color: #7F8C8D;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .login-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .package-preview {
+            background: #F8F9FA;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .package-preview h4 {
+            font-size: 18px;
+            color: #2C3E50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #E1E8ED;
+        }
+        
+        .preview-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .preview-features li {
+            display: flex;
+            align-items: start;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #34495E;
+        }
+        
+        .preview-features li i {
+            color: #2ECC71;
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        
+        .more-features {
+            color: #7F8C8D;
+            font-style: italic;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert i {
+            font-size: 18px;
+        }
+        
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .alert-warning {
+            background-color: #FFF8E1;
+            color: #F9A825;
+        }
+        
+        .alert-danger {
+            background-color: #FFEBEE;
+            color: #D32F2F;
+        }
+        
+        /* Button styles */
+        .btn-primary, .btn-secondary {
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #4A90E2;
+            border: 2px solid #4A90E2;
+        }
+        
+        .btn-secondary:hover {
+            background: #F0F7FF;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 25px;
+                margin: 0 20px;
+            }
+            
+            .login-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</body>
+</html>
+{% endblock %} 

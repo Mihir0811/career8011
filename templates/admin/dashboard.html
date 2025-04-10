@@ -1,0 +1,138 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<h2 class="section-title">Dashboard Overview</h2>
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-icon students">
+            <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="metric-info">
+            <h3>Total Students</h3>
+            <p class="metric-value">1,200</p>
+            <span class="metric-change positive">
+                <i class="fas fa-arrow-up"></i> 15% vs last month
+            </span>
+        </div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-icon counselors">
+            <i class="fas fa-user-tie"></i>
+        </div>
+        <div class="metric-info">
+            <h3>Total Counselors</h3>
+            <p class="metric-value">50</p>
+            <span class="metric-change positive">
+                <i class="fas fa-arrow-up"></i> 5% vs last month
+            </span>
+        </div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-icon appointments">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="metric-info">
+            <h3>Active Appointments</h3>
+            <p class="metric-value">300</p>
+            <span class="metric-change negative">
+                <i class="fas fa-arrow-down"></i> 3% vs last month
+            </span>
+        </div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-icon pending">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="metric-info">
+            <h3>Pending Approvals</h3>
+            <p class="metric-value">10</p>
+            <span class="metric-change neutral">
+                No change vs last month
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <h3>Quick Actions</h3>
+    <div class="action-buttons">
+        <button class="action-btn manage-student">
+            <i class="fas fa-users"></i>
+            Manage Student
+        </button>
+        <button class="action-btn manage-counselor">
+            <i class="fas fa-user-tie"></i>
+            Manage Counselor
+        </button>
+        <button class="action-btn approve-appointments">
+            <i class="fas fa-check-circle"></i>
+            Monitor Appointments
+        </button>
+        <button class="action-btn send-notification">
+            <i class="fas fa-bell"></i>
+            Send Notification
+        </button>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const routes = {
+            "manage-student": "/students",
+            "manage-counselor": "/counselors",
+            "approve-appointments": "/appointments",
+            "send-notification": "/notifications"
+        };
+
+        document.querySelectorAll(".action-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const classList = this.classList;
+                for (const key in routes) {
+                    if (classList.contains(key)) {
+                        window.location.href = routes[key];
+                        break;
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+<div class="recent-activities">
+    <h3>Recent Activities</h3>
+    <div class="activity-list">
+        {% for activity in activities %}
+        <div class="activity-item">
+            <div class="activity-icon">
+                {% if activity.type == 'approval' %}
+                <i class="fas fa-check-circle"></i>
+                {% elif activity.type == 'addition' %}
+                <i class="fas fa-plus"></i>
+                {% elif activity.type == 'deletion' %}
+                <i class="fas fa-trash"></i>
+                {% elif activity.type == 'edition' %}
+                <i class="fas fa-edit"></i>
+                {% elif activity.type == 'notification' %}
+                <i class="fas fa-bell"></i>
+                {% endif %}
+            </div>
+            <div class="activity-details">
+                <p>{{ activity.description }}</p>
+                <span class="activity-time">{{ activity.created_at }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="dashboard-charts">
+    <div class="chart-container">
+        <h3>Registration Trends</h3>
+        <canvas id="registrationChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>Popular Interests</h3>
+        <canvas id="interestsChart"></canvas>
+    </div>
+</div>
+
+{% endblock %}

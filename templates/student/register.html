@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - Career Guidance Platform</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/student/register.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="registration-container">
+            <div class="registration-header">
+                <div class="logo-container">
+                    <img src="../../static/img/logo.png" alt="Logo" class="logo">
+                    <h1>Career Guidance</h1>
+                </div>
+                <p class="tagline">Start your career journey today</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Personal Info</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Interests</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Complete</div>
+                </div>
+            </div>
+
+            <form id="registrationForm" class="registration-form" method="post">
+                <!-- Step 1: Personal Information -->
+                <div class="form-step active" id="step1">
+                    <h2>Personal Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="fullName" name="fullName" required>
+                        </div>
+                        <span class="error-message" id="fullNameError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <span class="error-message" id="emailError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactNumber">Contact Number</label>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="contactNumber" name="contactNumber" required>
+                        </div>
+                        <span class="error-message" id="contactNumberError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" required>
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                        <span class="error-message" id="passwordError"></span>
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div class="strength-bar"></div>
+                            </div>
+                            <span class="strength-text">Password strength</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            <i class="fas fa-eye toggle-password"></i>
+                        </div>
+                        <span class="error-message" id="confirmPasswordError"></span>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-next" id="nextToStep2">Next: Select Interests</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Interests Selection -->
+                <div class="form-step" id="step2">
+                    <h2>Select Your Interests</h2>
+                    <p class="form-info">Choose at least three areas that interest you for career guidance.</p>
+                    
+                    <div class="interests-grid">
+                        {% for interest in interests %}
+                        <div class="interest-item">
+                            <input type="checkbox" id="interest{{ interest.id }}" name="interests" value="{{ interest.interest_name }}">
+                            {{ interest.name }}
+                            <label for="interest{{ interest.id }}">
+                                <i class="fas fa-check-circle"></i>
+                                <span>{{ interest.interest_name }}</span>
+                            </label>
+                        </div>
+                        {% else %}
+                        <p>No interests available to display.</p>
+                        {% endfor %}
+                    </div>
+                    
+                    
+                    <span class="error-message" id="interestsError"></span>
+                    
+                    <div class="captcha-container">
+                        <div class="captcha-box" id="captchaBox">
+                            <span id="captchaText"></span>
+                            <button type="button" id="refreshCaptcha">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-shield-alt"></i>
+                            <input type="text" id="captchaInput" placeholder="Enter the code above" required>
+                        </div>
+                        <span class="error-message" id="captchaError"></span>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-back" id="backToStep1">Back</button>
+                        <button type="submit" class="btn btn-submit">Register Account</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Registration Complete -->
+                <div class="form-step" id="step3">
+                    <div class="success-container">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2>Registration Successful!</h2>
+                        <p>Your account has been created successfully. Please check your email for verification.</p>
+                        <div class="form-actions">
+                            <a href="{{url_for('student_login')}}" class="btn btn-login" id="btn-login">Proceed to Login</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="form-footer">
+                <p>Already have an account? <a href="{{url_for('student_login')}}">Login here</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{url_for('static',filename='js/student/registration.js')}}"></script>
+</body>
+</html>
+<script>
+const form = document.getElementById("registrationForm");
+
+form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const data = {};
+
+    formData.forEach((value, key) => {
+        if (data[key]) {
+            if (!Array.isArray(data[key])) {
+                data[key] = [data[key]];
+            }
+            data[key].push(value);
+        } else {
+            data[key] = value;
+        }
+    });
+
+    fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    })
+        .then((response) => response.json())
+        .then((result) => {
+            console.log(result);
+            console.log(result.msg);
+        })
+        .catch((error) => console.error(error));
+});
+
+</script>

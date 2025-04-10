@@ -1,0 +1,179 @@
+{% extends 'counselor/counselor_base.html' %}
+{% block coun_content %}
+<div class="section-header">
+    <h1>View Students</h1>
+</div>
+
+<div class="filter-container">
+    <div class="filter-group">
+        <label for="student-search">Search:</label>
+        <div class="search-input">
+            <input type="text" id="student-search" placeholder="Search by name or email">
+            <i class="fas fa-search"></i>
+        </div>
+        <script>
+            document.getElementById('student-search').addEventListener('input', function () {
+                const searchQuery = this.value.toLowerCase();
+                const studentCards = document.querySelectorAll('.student-card');
+        
+                studentCards.forEach(card => {
+                    const name = card.getAttribute('data-name');
+                    const email = card.getAttribute('data-email');
+                    if (name.includes(searchQuery) || email.includes(searchQuery)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        </script>
+    </div>
+</div>
+
+<div class="students-grid" id="students-grid">
+    {% for entry in students_with_sessions %}
+    <div class="student-card" data-name="{{ entry.student.name | lower }}" data-email="{{ entry.student.email | lower }}">
+        <div class="student-header">
+            <img src="https://ui-avatars.com/api/?name={{ entry.student.name | urlencode }}" alt="{{ entry.student.name }}" class="student-avatar">
+            <div class="student-info">
+                <h3>{{ entry.student.name }}</h3>
+                <p>{{ entry.student.interests }}</p>
+            </div>
+        </div>
+        <div class="student-details">
+            <div class="detail-item">
+                <i class="fas fa-envelope"></i>
+                <span>{{ entry.student.email }}</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-phone"></i>
+                <span>{{ entry.student.contact_number }}</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>{{ entry.session_count }} Sessions</span>
+            </div>
+        </div>
+        <div class="student-actions">
+            <button class="btn btn-primary view-details-btn" 
+            data-appointment-id="{{ entry.appointment_id }}" 
+            title="View Details">
+                <i class="fas fa-eye"></i> View Details
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="studentDetailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Student Details</h3>
+        <div id="modal-body">
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('studentDetailsModal');
+    const modalBody = document.getElementById('modal-body');
+    const closeModalBtn = document.querySelector('.close-btn');
+
+    modal.style.display = 'none';
+
+    document.querySelectorAll('.view-details-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const appointmentId = this.getAttribute('data-appointment-id');
+
+            fetch(`/view_student_details/${appointmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        modalBody.innerHTML = `
+                            <p><strong>Name:</strong> ${data.student_name}</p>
+                            <p><strong>Email:</strong> ${data.email}</p>
+                            <p><strong>Phone:</strong> ${data.phone}</p>
+                            <p><strong>Interests:</strong> ${data.interests}</p>
+                            <p><strong>Purpose:</strong> ${data.purpose}</p>
+                            <p><strong>Status:</strong> ${data.status}</p>
+                            <p><strong>Date:</strong> ${data.date}</p>
+                            <p><strong>Time Slot:</strong> ${data.time_slot}</p>
+                        `;
+                    } else {
+                        modalBody.innerHTML = `<p>${data.message}</p>`;
+                    }
+                    modal.style.display = 'flex';
+                })
+                .catch(error => {
+                    modalBody.innerHTML = `<p>Error fetching details: ${error.message}</p>`;
+                    modal.style.display = 'flex';
+                });
+        });
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+</script>
+
+<style>
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+    position: relative;
+}
+
+.close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+</style>
+{% endblock %}

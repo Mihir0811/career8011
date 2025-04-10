@@ -1,0 +1,55 @@
+{% extends 'counselor/counselor_base.html' %}
+{% block coun_content %}
+
+<div class="section-header">
+    <h1>Meeting with {{ student_name }}</h1>
+</div>
+
+<div class="meeting-container">
+    <p class="text-success">
+        Your meeting is live. Waiting for the student to join.
+    </p>
+
+    <!-- Embedded Whereby video room -->
+    <iframe
+        src="{{ session_link }}"
+        allow="camera; microphone; fullscreen; speaker; display-capture"
+        style="width: 100%; height: 600px; border: 1px solid #ddd;"
+        allowfullscreen
+    ></iframe>
+</div>
+
+<!-- ✅ JavaScript to update meeting status when counselor leaves the tab or closes browser -->
+<script>
+    window.addEventListener('beforeunload', function () {
+        const data = JSON.stringify({ appointment_id: "{{ appointment_id }}" });
+        const blob = new Blob([data], { type: 'application/json' });
+
+        // Send update via beacon (reliable on unload)
+        navigator.sendBeacon('/update_meeting_status', blob);
+        console.log("Sent meeting status update via beacon.");
+    });
+</script>
+
+<style>
+    .meeting-container {
+        margin-top: 20px;
+    }
+
+    iframe {
+        border-radius: 10px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .text-success {
+        color: green;
+        font-weight: bold;
+    }
+</style>
+
+{% endblock %}

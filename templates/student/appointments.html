@@ -1,0 +1,412 @@
+{% extends 'student/stud-base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<div class="appointments-container">
+    <div class="appointments-header">
+        <h2>My Appointments</h2>
+        <div class="appointments-tabs">
+            <button class="appointment-tab upcoming-btn active" data-tab="upcoming">
+                <i class="fas fa-calendar-alt"></i> Upcoming
+            </button>
+            <button class="appointment-tab completed-btn" data-tab="completed">
+                <i class="fas fa-check-circle"></i> Completed
+            </button>
+            <button class="appointment-tab canceled-btn" data-tab="canceled">
+                <i class="fas fa-times-circle"></i> Canceled
+            </button>
+        </div>
+    </div>
+
+    <div class="appointments">
+        <!-- Upcoming Appointments -->
+        <div class="appointments-content fade-in" id="upcomingAppointments">
+            {% if upcoming_appointments %}
+            {% for appointment in upcoming_appointments %}
+                <div class="appointment-card">
+                    <div class="appointment-header">
+                        <div class="appointment-title">
+                            <h4><i class="fas fa-bookmark"></i> Topic: {{ appointment.purpose }}</h4>
+                            <span class="appointment-date"><i class="far fa-calendar"></i> {{ appointment.date.strftime('%B %d, %Y') }} at {{ appointment.time_slot }}</span>
+                        </div>
+                        <div class="appointment-status upcoming">
+                            <span class="status-dot"></span>{{ appointment.student_status }}
+                        </div>
+                    </div>
+                    <div class="appointment-body">
+                        <div class="counselor-info">
+                            <div class="counselor-img">
+                                <img src="{{ url_for('static', filename='img/coun_uploads/' ~ (appointment.counselor.image or 'dummy.jpg')) }}"
+                                    alt="{{ appointment.counselor.full_name }}"
+                                    onerror="this.src='https://ui-avatars.com/api/?name={{ appointment.counselor.full_name }}&background=random'">
+                            </div>
+                            <div class="counselor-details">
+                                <h5>{{ appointment.counselor.full_name }}</h5>
+                                <p><i class="fas fa-user-md"></i> {{ appointment.counselor.specialization }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% else %}
+            <div class="no-appointments">
+                <img src="https://cdn-icons-png.flaticon.com/512/6195/6195678.png" alt="No appointments">
+                <p>No upcoming appointments.</p>
+                <a href="{{url_for('schedule')}}" class="btn book-now-btn"><i class="fas fa-plus-circle"></i> Book an
+                    Appointment</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Completed Appointments -->
+        <div class="appointments-content completed-content fade-in" id="completedAppointments" style="display:none;">
+            {% if completed_appointments %}
+            {% for appointment in completed_appointments %}
+                <div class="appointment-card">
+                    <div class="appointment-header">
+                        <div class="appointment-title">
+                            <h4><i class="fas fa-bookmark"></i> Topic: {{ appointment.purpose }}</h4>
+                            <span class="appointment-date"><i class="far fa-calendar"></i> {{ appointment.date.strftime('%B
+                                %d, %Y') }} at {{ appointment.time_slot }}</span>
+                        </div>
+                        <div class="appointment-status completed">
+                            <span class="status-dot"></span>Completed
+                        </div>
+                    </div>
+                    <div class="appointment-body">
+                        <div class="counselor-info">
+                            <div class="counselor-img">
+                                <img src="{{ url_for('static', filename='img/coun_uploads/' ~ (appointment.counselor.image or 'dummy.jpg')) }}"
+                                    alt="{{ appointment.counselor.full_name }}"
+                                    onerror="this.src='https://ui-avatars.com/api/?name={{ appointment.counselor.full_name }}&background=random'">
+                            </div>
+                            <div class="counselor-details">
+                                <h5>{{ appointment.counselor.full_name }}</h5>
+                                <p><i class="fas fa-user-md"></i> {{ appointment.counselor.specialization }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% else %}
+            <div class="no-appointments">
+                <img src="https://cdn-icons-png.flaticon.com/512/6292/6292175.png" alt="No completed appointments">
+                <p>No completed appointments.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Canceled Appointments -->
+        <div class="appointments-content canceled-content fade-in" id="canceledAppointments" style="display:none;">
+            {% if canceled_appointments %}
+            {% for appointment in canceled_appointments %}
+            <div class="appointment-card">
+                <div class="appointment-header">
+                    <div class="appointment-title">
+                        <h4><i class="fas fa-bookmark"></i> Topic: {{ appointment.purpose }}</h4>
+                        <span class="appointment-date"><i class="far fa-calendar"></i> {{ appointment.date.strftime('%B
+                            %d, %Y') }} at {{ appointment.time_slot }}</span>
+                    </div>
+                    <div class="appointment-status canceled">
+                        <span class="status-dot"></span>Canceled
+                    </div>
+                </div>
+                <div class="appointment-body">
+                    <div class="counselor-info">
+                        <div class="counselor-img">
+                            <img src="{{ url_for('static', filename='img/coun_uploads/' ~ (appointment.counselor.image or 'dummy.jpg')) }}"
+                                alt="{{ appointment.counselor.full_name }}"
+                                onerror="this.src='https://ui-avatars.com/api/?name={{ appointment.counselor.full_name }}&background=random'">
+                        </div>
+                        <div class="counselor-details">
+                            <h5>{{ appointment.counselor.full_name }}</h5>
+                            <p><i class="fas fa-user-md"></i> {{ appointment.counselor.specialization }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="no-appointments">
+                <img src="https://cdn-icons-png.flaticon.com/512/5024/5024518.png" alt="No canceled appointments">
+                <p>No canceled appointments.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .appointments-container {
+        font-family: 'Poppins', sans-serif;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        background-image: url('https://img.freepik.com/free-vector/abstract-medical-wallpaper-template-design_53876-61802.jpg?w=1380&t=st=1697546244~exp=1697546844~hmac=2ab2bbc456f2e2b0cd32fb0915c16cca63e21e3b20a924e99b29acd90fe0e40c');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    .appointments-container:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 15px;
+        z-index: 0;
+    }
+
+    .appointments-header {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .appointments-header h2 {
+        color: #2c3e50;
+        font-size: 28px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .appointments-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .appointment-tab {
+        padding: 12px 24px;
+        border: none;
+        background: #f1f3f5;
+        color: #495057;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .appointment-tab:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    .appointment-tab.active {
+        background: #4361ee;
+        color: white;
+        box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+    }
+
+    .appointment-tab.active.upcoming-btn {
+        background: #3498db;
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    }
+
+    .appointment-tab.active.completed-btn {
+        background: #2ecc71;
+        box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+    }
+
+    .appointment-tab.active.canceled-btn {
+        background: #e74c3c;
+        box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+    }
+
+    .appointments {
+        position: relative;
+        z-index: 1;
+    }
+
+    .appointments-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+
+    .appointment-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #e9ecef;
+    }
+
+    .appointment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .appointment-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #f1f3f5;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .appointment-title h4 {
+        margin: 0 0 8px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .appointment-title h4 i {
+        font-size: 14px;
+        margin-right: 5px;
+    }
+
+    .appointment-date {
+        font-size: 13px;
+        color: #6c757d;
+    }
+
+    .appointment-date i {
+        font-size: 12px;
+        margin-right: 4px;
+    }
+
+    .appointment-status {
+        font-size: 12px;
+        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .counselor-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .counselor-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        border: 2px solid white;
+    }
+
+    .counselor-details h5 {
+        margin: 0 0 4px 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .counselor-details p {
+        margin: 0;
+        font-size: 13px;
+        color: #6c757d;
+    }
+
+    .counselor-details p i {
+        font-size: 11px;
+        margin-right: 4px;
+    }
+
+    .appointment-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 15px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 13px;
+        transition: all 0.3s ease;
+    }
+
+    .btn i {
+        font-size: 11px;
+        margin-right: 4px;
+    }
+
+    /* Fix for empty state icons */
+    .no-appointments img {
+        width: 120px;
+        height: auto;
+        margin-bottom: 15px;
+        opacity: 0.7;
+    }
+
+    .no-appointments p {
+        font-size: 15px;
+        color: #6c757d;
+        margin-bottom: 15px;
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .appointments-content {
+            grid-template-columns: 1fr;
+        }
+
+        .appointment-tab {
+            padding: 8px 15px;
+            font-size: 13px;
+        }
+
+        .appointment-tab i {
+            font-size: 12px;
+            margin-right: 3px;
+        }
+    }
+</style>
+
+<script>
+    document.querySelectorAll('.appointment-tab').forEach(tab => {
+        tab.addEventListener('click', function () {
+            // Remove active class from all tabs
+            document.querySelectorAll('.appointment-tab').forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            this.classList.add('active');
+
+            
+            // Get tab id
+            const tabId = this.dataset.tab;
+
+            // Hide all content sections
+            document.querySelectorAll('.appointments-content').forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // Show selected content with animation
+            const selectedContent = document.getElementById(`${tabId}Appointments`);
+            selectedContent.style.display = 'grid';
+            selectedContent.classList.remove('fade-in');
+            void selectedContent.offsetWidth; // Trigger reflow
+            selectedContent.classList.add('fade-in');
+        });
+    });
+</script>
+{% endblock %}

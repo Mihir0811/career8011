@@ -1,0 +1,61 @@
+<div class="sidebar-header" style="width: max-content;">
+    <img src="{{ url_for('static',filename='img/logo.png')  }}" alt="Logo" class="logo">
+    <h1 style="font-size: 19px;">COUNSELOR</h1>
+    <button id="sidebarToggle" class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
+<nav class="sidebar-nav">
+    <ul>
+        <li class="{% if active_page == 'counselor_dash' %}active{% endif %}" data-section="dashboard">
+            <a href="{{url_for('counselor_dash')}}" >
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="{% if active_page == 'coun_appointment' %}active{% endif %}" data-section="appointments">
+            <a href="{{url_for('coun_appointment')}}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Manage Appointments</span>
+            </a>
+        </li>
+        <li class="{% if active_page == 'coun_view_stud' %}active{% endif %}" data-section="students">
+            <a href="{{url_for('coun_view_stud')}}">
+                <i class="fas fa-users"></i>
+                <span>View Students</span>
+            </a>
+        </li>
+        <li class="{% if active_page == 'coun_room' %}active{% endif %}" data-section="students">
+            <a href="{{url_for('coun_room')}}">
+                <i class="fas fa-video"></i>
+                <span>Meeting</span>
+            </a>
+        </li>
+        <li class="{% if active_page == 'manage_resources' %}active{% endif %}" data-section="manage_resources">
+            <a href="{{url_for('manage_resources')}}">
+                <i class="fas fa-book"></i>
+                <span>Manage Resources</span>
+            </a>
+        </li>
+        <li class="{% if active_page == 'coun_feedback' %}active{% endif %}" data-section="feedback">
+            <a href="{{url_for('coun_feedback')}}">
+                <i class="fas fa-star"></i>
+                <span>Feedback</span>
+            </a>
+        </li>
+        <li class="{% if active_page == 'coun_profile' %}active{% endif %}" data-section="profile">
+            <a href="{{url_for('coun_profile')}}">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<div class="sidebar-footer">
+    <a href="{{ url_for('coun_logout') }}" class="logout-link">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+    </a>
+</div>

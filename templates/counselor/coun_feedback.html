@@ -1,0 +1,78 @@
+{% extends 'counselor/counselor_base.html' %}
+{% block coun_content %}
+<div class="section-header">
+    <h1>Feedback</h1>
+</div>
+
+<div class="feedback-overview">
+    <div class="rating-summary">
+        <div class="rating-header">
+            <h2>Rating Summary</h2>
+            <div class="overall-rating">
+                <span class="rating-number">{{ overall_rating | round(2) }}</span>
+                <div class="stars">
+                    {% for star in range(1, 6) %}
+                        {% if overall_rating >= star %}
+                            <i class="fas fa-star"></i> 
+                        {% elif overall_rating >= star - 0.5 %}
+                            <i class="fas fa-star-half-alt"></i> 
+                        {% else %}
+                            <i class="far fa-star"></i> 
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <span class="rating-count">Based on {{ total_ratings }} ratings</span>
+            </div>
+        </div>
+        <div class="rating-bars">
+            {% for star in range(5, 0, -1) %}
+            <div class="rating-bar-item">
+                <div class="rating-label">{{ star }} Stars</div>
+                <div class="rating-bar-container">
+                    <div class="rating-bar"
+                        style="width: {{ (rating_distribution[star] / total_ratings * 100) if total_ratings > 0 else 0 }}% ">
+                    </div>
+                </div>
+                <div class="rating-count">{{ rating_distribution[star] }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="rating-chart">
+        <div id="rating-chart"></div>
+    </div>
+</div>
+
+<div class="feedback-list">
+    <div class="section-header">
+        <h2>Recent Feedback</h2>
+    </div>
+
+    <div class="feedback-items">
+        {% for feedback in feedbacks %}
+        <div class="feedback-item">
+            <div class="feedback-header">
+                <img src="https://ui-avatars.com/api/?name={{ feedback.student.name | urlencode }}"
+                    class="feedback-avatar">
+                <div class="feedback-info">
+                    <h3>{{ feedback.student.name }}</h3>
+                    <div class="feedback-stars">
+                        {% for _ in range(feedback.rating) %}
+                        <i class="fas fa-star"></i>
+                        {% endfor %}
+                        {% for _ in range(5 - feedback.rating) %}
+                        <i class="far fa-star"></i>
+                        {% endfor %}
+                    </div>
+                    <span class="feedback-date">{{ feedback.created_at.strftime('%B %d, %Y') }}</span>
+                </div>
+            </div>
+            <div class="feedback-content">
+                <p>{{ feedback.feedback_text }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

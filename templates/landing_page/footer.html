@@ -1,0 +1,314 @@
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-about">
+                <div class="footer-logo">
+                    <img src="https://ui-avatars.com/api/?name=Career+Navigator&background=4A90E2&color=fff&bold=true&size=64" alt="CareerNavigator Logo">
+                    <span>CareerNavigator</span>
+                </div>
+                <p style="color:#666 !important">Empowering connections between counselors and students for better career outcomes.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul class="footer-nav-links">
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('about') }}">About Us</a></li>
+                    <li><a href="{{ url_for('counselor') }}">Counselor</a></li>
+                    <li><a href="{{ url_for('student') }}">Student</a></li>
+                    <li><a href="{{ url_for('services') }}">Services</a></li>
+                    <li><a href="{{ url_for('faq') }}">FAQ</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-services">
+                <h3>Our Services</h3>
+                <ul>
+                    <li><a href="{{ url_for('services') }}">Appointment Scheduling</a></li>
+                    <li><a href="{{ url_for('services') }}">Career Guidance</a></li>
+                    <li><a href="{{ url_for('services') }}">Mental Health Support</a></li>
+                    <li><a href="{{ url_for('services') }}">Feedback System</a></li>
+                    <li><a href="{{ url_for('services') }}">Resource Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Education Street, Academic City</li>
+                    <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                    <li><i class="fas fa-envelope"></i> info@careernavigator.com</li>
+                </ul>
+                <div class="newsletter">
+                    <h4>Subscribe to our newsletter</h4>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <div class="input-group">
+                            <input 
+                                type="email" 
+                                name="email" 
+                                placeholder="Your email address"
+                                required
+                                class="newsletter-input"
+                            >
+                            <button type="submit" class="submit-btn" aria-label="Subscribe to newsletter">
+                                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="form-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="copyright">
+                <p>&copy; 2025 CareerNavigator. All rights reserved.</p>
+            </div>
+            <div class="footer-bottom-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#cookie">Cookie Policy</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+.footer {
+    background: #f8f9fa;
+    padding: 60px 0 20px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.footer-logo img {
+    width: 40px;
+    height: 40px;
+}
+
+.footer-logo span {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-links a {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4A90E2;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.social-links a:hover {
+    background: #4A90E2;
+    color: #fff;
+    transform: translateY(-3px);
+}
+
+.footer h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+.footer-nav-links a,
+.footer-services a {
+    color: #666;
+    transition: color 0.3s ease;
+    display: block;
+    padding: 5px 0;
+}
+
+.footer-nav-links a:hover,
+.footer-services a:hover {
+    color: #4A90E2;
+}
+
+.footer-nav-links a.active {
+    color: #4A90E2;
+    font-weight: bold;
+}
+
+.footer-contact ul li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.newsletter {
+    margin-top: 25px;
+}
+
+.newsletter h4 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.newsletter-form {
+    width: 100%;
+    max-width: 450px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 5px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eaeaea;
+    transition: all 0.3s ease;
+}
+
+.newsletter-input {
+    flex: 1;
+    border: none;
+    padding: 12px 16px;
+    font-size: 15px;
+    color: #2c3e50;
+    background: transparent;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    margin-right: -5px;
+}
+
+.submit-btn:hover {
+    background: #357ABD;
+    transform: translateY(-1px);
+}
+
+.btn-icon {
+    transition: transform 0.3s ease;
+}
+
+.submit-btn:hover .btn-icon {
+    transform: translateX(1px) translateY(-1px);
+}
+
+/* Loading state */
+.submit-btn.loading .btn-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+    .input-group {
+        padding: 5px;
+    }
+    
+    .submit-btn {
+        width: 38px;
+        height: 38px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all footer navigation links
+    const footerLinks = document.querySelectorAll('.footer-nav-links a');
+    
+    // Set active based on current page
+    function setActiveLink() {
+        const currentPath = window.location.pathname;
+        footerLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+    
+    // Set active link on page load
+    setActiveLink();
+
+    // Newsletter form handling
+    const newsletterForm = document.getElementById('newsletterForm');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            const inputGroup = form.querySelector('.input-group');
+            const input = form.querySelector('input');
+            const button = form.querySelector('.submit-btn');
+            const message = form.querySelector('.form-message');
+
+            // Add loading state
+            button.classList.add('loading');
+            button.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Success state
+                button.classList.remove('loading');
+                button.disabled = false;
+                inputGroup.classList.add('success');
+                message.textContent = 'Successfully subscribed!';
+                message.style.color = '#10B981';
+                
+                // Reset form after 2 seconds
+                setTimeout(() => {
+                    inputGroup.classList.remove('success');
+                    message.textContent = '';
+                    input.value = '';
+                }, 2000);
+            }, 1500);
+        });
+    }
+});
+</script>

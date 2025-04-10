@@ -1,0 +1,63 @@
+{% extends 'student/stud-base.html' %}
+{% block title %}Student Profile{% endblock %}
+{% block content %}
+<div class="profile container mt-5">
+    <div class="row tm-content-row">
+        <div class="tm-block-col tm-col-account-settings" style="padding: 10px;background-color: white;border-radius: 8px;">
+            <div class="tm-bg-primary-dark tm-block tm-block-settings" style="border-radius: 8px !important;">
+                <h2 class="tm-block-title">Account Settings</h2>
+                <form id="updateProfileForm" class="tm-signup-form row">
+                    <div class="form-group col-lg-6">
+                        <label for="username">Username</label>
+                        <input id="username" name="username" type="text" class="form-control validate" value="{{ student.name }}"/>
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="email">Account Email</label>
+                        <input id="email" name="email" type="email" class="form-control validate" value="{{ student.email }}"/>
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="oldPass">Old Password</label>
+                        <input id="oldPass" name="oldPass" type="password" class="form-control validate" />
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="newPass">New Password</label>
+                        <input id="newPass" name="newPass" type="password" class="form-control validate" />
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="pno">Phone</label>
+                        <input id="pno" name="pno" type="tel" class="form-control validate" value="{{ student.contact_number }}"/>
+                    </div>
+                    <div class="form-group col-lg-6 pb-4">
+                        <label class="tm-hide-sm">&nbsp;</label>
+                        <button type="button" class="btn btn-primary btn-block text-uppercase update-profile-btn">
+                            Update Your Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.querySelector('.update-profile-btn').addEventListener('click', async function () {
+    const data = {
+        name: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        contact_number: document.getElementById('pno').value,
+        new_password: document.getElementById('newPass').value
+    };
+    try {
+        const response = await fetch('/update_student_prof', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        alert(result.message || result.error);
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('An unexpected error occurred.');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Counselors - CareerConnect</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles that enhance existing style.css */
+        .counselor-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 70vh;
+        }
+
+        .counselor-hero .hero-content {
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .counselor-filter {
+            margin-top: -50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .filter-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .counselor-card {
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+        }
+
+        .counselor-card:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .counselor-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 100%);
+            transition: all 0.3s ease;
+        }
+
+        .counselor-card:hover .counselor-image::after {
+            background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%);
+        }
+
+        .counselor-specialties span {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .counselor-specialties span:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .testimonials {
+            background: linear-gradient(rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.97)),
+                        url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .testimonial-card {
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .become-counselor {
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),
+                        url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .become-counselor-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .benefits-list li {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .benefits-list li i {
+            color: var(--secondary);
+            margin-right: 10px;
+        }
+
+        .cta {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            padding: 120px 0;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.9) 0%, rgba(80, 227, 194, 0.9) 100%);
+            opacity: 0.85;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .cta-content h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta .btn-secondary-dark {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .cta .btn-secondary-dark:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: var(--secondary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .counselor-hero {
+                height: 50vh;
+            }
+
+            .counselor-filter {
+                margin-top: -30px;
+            }
+
+            .filter-container {
+                padding: 20px;
+            }
+
+            .cta {
+                padding: 80px 0;
+            }
+            
+            .cta-content h2 {
+                font-size: 2.2rem;
+            }
+            
+            .cta-content p {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header class="header">
+        {% include 'landing_page/header.html' %}
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero counselor-hero">
+        <div class="container">
+            <div class="hero-content text-center" style="color: white !important;">
+                <h1 style="color: white !important;">Our Expert Counselors</h1>
+                <p style="color: white !important;">Guiding you to success</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Counselor Filter Section -->
+    <section class="counselor-filter">
+        <div class="container">
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="specialization">Specialization</label>
+                    <select id="specialization" class="filter-select">
+                        <option value="">All Specializations</option>
+                        <option value="career">Career Counseling</option>
+                        <option value="academic">Academic Guidance</option>
+                        <option value="mental-health">Mental Health</option>
+                        <option value="college">College Admissions</option>
+                        <option value="professional">Professional Development</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="experience">Experience</label>
+                    <select id="experience" class="filter-select">
+                        <option value="">All Experience Levels</option>
+                        <option value="1-3">1-3 Years</option>
+                        <option value="4-7">4-7 Years</option>
+                        <option value="8-12">8-12 Years</option>
+                        <option value="13+">13+ Years</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="availability">Availability</label>
+                    <select id="availability" class="filter-select">
+                        <option value="">Any Availability</option>
+                        <option value="today">Available Today</option>
+                        <option value="this-week">Available This Week</option>
+                        <option value="weekends">Weekends Only</option>
+                        <option value="evenings">Evenings Only</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary filter-btn">Apply Filters</button>
+                <button class="btn btn-outline reset-btn">Reset</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Counselor Profiles Section -->
+    <section class="counselor-profiles">
+        <div class="container">
+            <div class="section-header">
+                <h2>Meet Our Counselors</h2>
+                <p>Expert guidance from experienced professionals</p>
+            </div>
+            <div class="counselor-grid">
+                <div class="counselor-card">
+                    <div class="counselor-image">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                             alt="Michael Johnson"
+                             loading="lazy">
+                        <div class="counselor-availability available">Available Now</div>
+                    </div>
+                    <div class="counselor-info">
+                        <h3>Michael Johnson</h3>
+                        <p class="counselor-title">Career Development Specialist</p>
+                        <div class="counselor-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>4.5 (120 reviews)</span>
+                        </div>
+                        <div class="counselor-specialties">
+                            <span>Career Transitions</span>
+                            <span>Resume Building</span>
+                            <span>Interview Prep</span>
+                        </div>
+                        <p class="counselor-bio">With over 10 years of experience in career counseling, Michael specializes in helping professionals navigate career transitions and achieve their goals.</p>
+                        <div class="counselor-actions">
+                            <a href="{{url_for('find_counselors')}}" class="btn btn-secondary">View Profile</a>
+                            <a href="{{url_for('schedule')}}" class="btn btn-primary">Book Session</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="counselor-card">
+                    <div class="counselor-image">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=776&q=80" 
+                             alt="Jennifer Lee"
+                             loading="lazy">
+                        <div class="counselor-availability busy">Available Tomorrow</div>
+                    </div>
+                    <div class="counselor-info">
+                        <h3>Jennifer Lee</h3>
+                        <p class="counselor-title">Academic Advisor</p>
+                        <div class="counselor-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>5.0 (87 reviews)</span>
+                        </div>
+                        <div class="counselor-specialties">
+                            <span>College Applications</span>
+                            <span>Scholarship Guidance</span>
+                            <span>Study Skills</span>
+                        </div>
+                        <p class="counselor-bio">Jennifer is passionate about helping students achieve academic success and navigate the college application process with confidence.</p>
+                        <div class="counselor-actions">
+                            <a href="{{url_for('find_counselors')}}" class="btn btn-secondary">View Profile</a>
+                            <a href="{{url_for('schedule')}}" class="btn btn-primary">Book Session</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="counselor-card">
+                    <div class="counselor-image">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                             alt="Robert Williams"
+                             loading="lazy">
+                        <div class="counselor-availability available">Available Now</div>
+                    </div>
+                    <div class="counselor-info">
+                        <h3>Robert Williams</h3>
+                        <p class="counselor-title">Mental Health Counselor</p>
+                        <div class="counselor-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>4.0 (95 reviews)</span>
+                        </div>
+                        <div class="counselor-specialties">
+                            <span>Stress Management</span>
+                            <span>Anxiety & Depression</span>
+                            <span>Work-Life Balance</span>
+                        </div>
+                        <p class="counselor-bio">Robert specializes in helping students and professionals manage stress, anxiety, and other mental health challenges that can impact academic and career success.</p>
+                        <div class="counselor-actions">
+                            <a href="{{url_for('find_counselors')}}" class="btn btn-secondary">View Profile</a>
+                            <a href="{{url_for('schedule')}}" class="btn btn-primary">Book Session</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="counselor-card">
+                    <div class="counselor-image">
+                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=761&q=80" 
+                             alt="Sophia Garcia"
+                             loading="lazy">
+                        <div class="counselor-availability busy">Available Next Week</div>
+                    </div>
+                    <div class="counselor-info">
+                        <h3>Sophia Garcia</h3>
+                        <p class="counselor-title">Professional Development Coach</p>
+                        <div class="counselor-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>4.7 (132 reviews)</span>
+                        </div>
+                        <div class="counselor-specialties">
+                            <span>Leadership Skills</span>
+                            <span>Communication</span>
+                            <span>Career Advancement</span>
+                        </div>
+                        <p class="counselor-bio">Sophia helps professionals develop the skills and strategies they need to advance in their careers and become effective leaders in their fields.</p>
+                        <div class="counselor-actions">
+                            <a href="{{url_for('find_counselors')}}" class="btn btn-secondary">View Profile</a>
+                            <a href="{{url_for('schedule')}}" class="btn btn-primary">Book Session</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="counselor-card">
+                    <div class="counselor-image">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                             alt="David Kim"
+                             loading="lazy">
+                        <div class="counselor-availability available">Available Now</div>
+                    </div>
+                    <div class="counselor-info">
+                        <h3>David Kim</h3>
+                        <p class="counselor-title">Tech Career Specialist</p>
+                        <div class="counselor-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.9 (78 reviews)</span>
+                        </div>
+                        <div class="counselor-specialties">
+                            <span>Tech Industry</span>
+                            <span>Coding Careers</span>
+                            <span>Startup Mentoring</span>
+                        </div>
+                        <p class="counselor-bio">David specializes in guiding students and professionals in the tech industry, helping them navigate the rapidly evolving landscape of technology careers.</p>
+                        <div class="counselor-actions">
+                            <a href="{{url_for('find_counselors')}}" class="btn btn-secondary">View Profile</a>
+                            <a href="{{url_for('schedule')}}" class="btn btn-primary">Book Session</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="counselor-card">
+                    <div class="counselor-image">
+                        <img src="https://images.unsplash.com/photo-1598550874175-4d0ef436c909?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                             alt="Maria Rodriguez"
+                             loading="lazy">
+                        <div class="counselor-availability busy">Available This Weekend</div>
+                    </div>
+                    <div class="counselor-info">
+                        <h3>Maria Rodriguez</h3>
+                        <p class="counselor-title">International Education Advisor</p>
+                        <div class="counselor-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>4.2 (65 reviews)</span>
+                        </div>
+                        <div class="counselor-specialties">
+                            <span>Study Abroad</span>
+                            <span>International Admissions</span>
+                            <span>Cultural Adaptation</span>
+                        </div>
+                        <p class="counselor-bio">Maria helps students navigate the complexities of international education, from choosing the right program to adapting to a new cultural environment.</p>
+                        <div class="counselor-actions">
+                            <a href="{{url_for('find_counselors')}}" class="btn btn-secondary">View Profile</a>
+                            <a href="{{url_for('schedule')}}" class="btn btn-primary">Book Session</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pagination">
+                <a href="#" class="pagination-prev disabled"><i class="fas fa-chevron-left"></i></a>
+                <a href="#" class="pagination-number active">1</a>
+                <a href="#" class="pagination-number">2</a>
+                <a href="#" class="pagination-number">3</a>
+                <span class="pagination-dots">...</span>
+                <a href="#" class="pagination-number">10</a>
+                <a href="#" class="pagination-next"><i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Students Say</h2>
+                <p>Hear from students who have worked with our counselors</p>
+            </div>
+            <div class="testimonial-slider">
+                <div class="testimonial-track">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Working with Michael Johnson completely transformed my job search. His guidance helped me land my dream job in just two months!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                                 alt="Alex Thompson"
+                                 loading="lazy">
+                            <div class="author-info">
+                                <h4>Alex Thompson</h4>
+                                <p>Software Engineer</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Jennifer's advice on college applications was invaluable. She helped me get accepted to my top-choice university with a scholarship!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                                 alt="Samantha Lee"
+                                 loading="lazy">
+                            <div class="author-info">
+                                <h4>Samantha Lee</h4>
+                                <p>College Freshman</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Robert's sessions helped me manage my anxiety during finals. His strategies made a huge difference in my academic performance."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" 
+                                 alt="James Wilson"
+                                 loading="lazy">
+                            <div class="author-info">
+                                <h4>James Wilson</h4>
+                                <p>Graduate Student</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-controls">
+                    <button class="testimonial-prev"><i class="fas fa-chevron-left"></i></button>
+                    <div class="testimonial-dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <button class="testimonial-next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Become a Counselor Section -->
+    <section class="become-counselor">
+        <div class="container">
+            <div class="become-counselor-content">
+                <div class="become-counselor-text">
+                    <h2 style="color: white !important;">Join Our Counselor Network</h2>
+                    <p style="color: white !important;">Are you a qualified counselor looking to expand your reach and help more students? Join our platform and connect with students from around the world.</p>
+                    <ul class="benefits-list" style="color: white !important;">
+                        <li><i class="fas fa-check-circle"></i> Flexible scheduling</li>
+                        <li><i class="fas fa-check-circle"></i> Secure payment processing</li>
+                        <li><i class="fas fa-check-circle"></i> Access to a global student base</li>
+                        <li><i class="fas fa-check-circle"></i> Professional development opportunities</li>
+                    </ul>
+                    <a href="{{url_for('counselor_dash')}}" class="btn btn-secondary-dark">Apply to Join</a>
+                </div>
+                <div class="become-counselor-image">
+                    <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                         alt="Become a Counselor"
+                         loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Connect with a Counselor?</h2>
+                <p>Take the first step towards achieving your goals with personalized guidance from our expert counselors</p>
+                <a href="{{url_for('stud_dash')}}" class="btn btn-secondary-dark">
+                    Schedule an Appointment
+                    <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'landing_page/footer.html' %}
+    
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="{{url_for('static',filename='js/landing_page/script.js')}}"></script>
+</body>
+</html>

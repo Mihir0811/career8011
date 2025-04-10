@@ -1,0 +1,72 @@
+{% extends 'student/stud-base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<div class="schedule-container">
+    <div class="calendar-section">
+        <div class="calendar" id="appointmentCalendar"></div>
+        <!-- <input type="hidden" id="appointmentDate" name="appointment_date"> -->
+    </div>
+    <div class="booking-section">
+        <h3>Book Appointment</h3>
+        <form id="bookingForm" class="booking-form" method="post">
+            <div class="form-group">
+                <label>Select Counselor</label>
+                <select name="counselor_id" id="counselorDropdown" required>
+                    <option value="">Choose a counselor</option>
+                    {% for counselor in counselors %}
+                        <option value="{{ counselor.id }}">{{ counselor.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" name="date" id="appointmentDate" readonly>
+            </div>
+            <div class="form-group">
+                <label>Time Slot</label>
+                <select name="time_slot" id="timeSlotDropdown" required>
+                    <option value="">Select time</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Purpose (Optional)</label>
+                <textarea name="purpose" placeholder="Briefly describe the purpose of your appointment"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary confirm-booking-btn" style="background-color: var(--primary-color);color: white; border-radius: 8px !important;transition: all 0.2s linear;">Confirm Booking</button>
+        </form>
+    </div>
+</div>
+<script>
+    document.getElementById('bookingForm').addEventListener('submit', async function (event) {
+        event.preventDefault(); 
+
+        const formData = new FormData(this); 
+
+
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/schedule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(result.message || 'Appointment booked successfully!');
+                window.location.reload();
+            } else {
+                const error = await response.json();
+                alert(error.message || 'Failed to book appointment.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An unexpected error occurred.');
+        }
+    });
+</script>
+
+{% endblock %}

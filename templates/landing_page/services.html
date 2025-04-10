@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services - CareerConnect</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Add AOS library for scroll animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header class="header">
+        {% include 'landing_page/header.html' %}
+    </header>
+
+    <!-- Mobile Navigation -->
+
+    <!-- Enhanced Hero Section -->
+    <section class="hero services-hero">
+        <div class="hero-background"></div>
+        <div class="container" data-aos="fade-up">
+            <div class="hero-content text-center">
+                <h1 class="animate-text">Our Services</h1>
+                <p class="animate-text-delay">Empowering Your Career Journey with Expert Guidance and Support </p>
+                <div class="hero-cta-wrapper">
+                    <a href="{{ url_for('meeting') }}" class="hero-btn" style="
+                        display: inline-flex;
+        align-items: center;
+                        gap: 12px;
+                        padding: 16px 32px;
+                        font-size: 1.1rem;
+        font-weight: 600;
+                        color: #ffffff;
+                        background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+                        border-radius: 50px;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+                        position: relative;
+                        overflow: hidden;
+                        border: none;
+                        cursor: pointer;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-top: 2rem;
+                        z-index: 1;
+                    ">
+                        <span style="position: relative; z-index: 2;">Explore Services</span>
+                        <i class="fas fa-arrow-right" style="
+                            font-size: 1rem;
+                            transition: transform 0.3s ease;
+                            position: relative;
+                            z-index: 2;
+                        "></i>
+                        <div class="btn-hover-effect" style="
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: linear-gradient(135deg, #50E3C2 0%, #4A90E2 100%);
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                            z-index: 1;
+                        "></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview Section -->
+    <section class="services-overview">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Comprehensive Career Support</h2>
+                <p>Discover the range of services we offer to help you achieve your goals</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3>Career Counseling</h3>
+                        <p>One-on-one guidance to help you explore career options, set goals, and develop a personalized action plan for success.</p>
+                    </div>
+                    <div class="service-cta">
+                        <a href="#career-counseling" class="btn btn-sm btn-primary">Learn More</a>
+                    </div>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <h3>Workshops & Webinars</h3>
+                        <p>Interactive sessions on various career-related topics, from resume building to interview skills and networking strategies.</p>
+                    </div>
+                    <div class="service-cta">
+                        <a href="#workshops" class="btn btn-sm btn-primary">Learn More</a>
+                    </div>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Student Mentorship</h3>
+                        <p>Connect with experienced professionals who can provide guidance, support, and insights based on their own career journeys.</p>
+                    </div>
+                    <div class="service-cta">
+                        <a href="#mentorship" class="btn btn-sm btn-primary">Learn More</a>
+                    </div>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3>Resume & Cover Letter Review</h3>
+                        <p>Expert feedback and suggestions to help you create compelling application materials that stand out to employers.</p>
+                    </div>
+                    <div class="service-cta">
+                        <a href="#resume-review" class="btn btn-sm btn-primary">Learn More</a>
+                    </div>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Mock Interviews</h3>
+                        <p>Practice interviews with feedback to help you build confidence and improve your performance in real interviews.</p>
+                    </div>
+                    <div class="service-cta">
+                        <a href="#mock-interviews" class="btn btn-sm btn-primary">Learn More</a>
+                    </div>
+                </div>
+                <div class="service-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Mental Health Support</h3>
+                        <p>Resources and counseling to help you manage stress, anxiety, and other challenges that can impact your academic and career success.</p>
+                    </div>
+                    <div class="service-cta">
+                        <a href="#mental-health" class="btn btn-sm btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Counseling Section -->
+    <section id="career-counseling" class="service-detail">
+        <div class="container">
+            <div class="service-detail-content">
+                <div class="service-detail-text">
+                    <h2>Career Counseling</h2>
+                    <p>Our career counseling services are designed to help you navigate your career journey with confidence and clarity. Whether you're just starting out, looking to make a change, or seeking advancement in your current field, our expert counselors are here to guide you.</p>
+                    <h3>What to Expect</h3>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check-circle"></i> Personalized assessment of your skills, interests, and values</li>
+                        <li><i class="fas fa-check-circle"></i> Exploration of career options aligned with your profile</li>
+                        <li><i class="fas fa-check-circle"></i> Development of a customized career action plan</li>
+                        <li><i class="fas fa-check-circle"></i> Guidance on education and training opportunities</li>
+                        <li><i class="fas fa-check-circle"></i> Ongoing support and accountability</li>
+                    </ul>
+                    <div class="service-cta">
+                        <a href="{{url_for('schedule')}}" class="btn btn-primary">Schedule a Session</a>
+                    </div>
+                </div>
+                <div class="service-detail-image">
+                    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3" 
+                         alt="Career Counseling"
+                         loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workshops Section -->
+    <section id="workshops" class="service-detail bg-light">
+        <div class="container">
+            <div class="service-detail-content reverse">
+                <div class="service-detail-image">
+                    <img src="https://images.unsplash.com/photo-1515168833906-d2a3b82b302a?ixlib=rb-4.0.3" 
+                         alt="Workshops & Webinars"
+                         loading="lazy">
+                </div>
+                <div class="service-detail-text">
+                    <h2>Workshops & Webinars</h2>
+                    <p>Our interactive workshops and webinars cover a wide range of career-related topics, providing you with practical skills and knowledge to enhance your professional development.</p>
+                    <h3>Upcoming Events</h3>
+                    <div class="event-list">
+                        <div class="event-item">
+                            <div class="event-date">
+                                <span class="event-month">May</span>
+                                <span class="event-day">15</span>
+                            </div>
+                            <div class="event-info">
+                                <h4>Mastering the Art of Networking</h4>
+                                <p>Learn effective strategies for building and leveraging your professional network.</p>
+                                <span class="event-time"><i class="fas fa-clock"></i> 2:00 PM - 4:00 PM EST</span>
+                            </div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">
+                                <span class="event-month">May</span>
+                                <span class="event-day">22</span>
+                            </div>
+                            <div class="event-info">
+                                <h4>Resume Writing Workshop</h4>
+                                <p>Craft a compelling resume that highlights your strengths and achievements.</p>
+                                <span class="event-time"><i class="fas fa-clock"></i> 1:00 PM - 3:00 PM EST</span>
+                            </div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-date">
+                                <span class="event-month">Jun</span>
+                                <span class="event-day">05</span>
+                            </div>
+                            <div class="event-info">
+                                <h4>Interview Success Strategies</h4>
+                                <p>Prepare for interviews with confidence and learn how to effectively showcase your qualifications.</p>
+                                <span class="event-time"><i class="fas fa-clock"></i> 3:00 PM - 5:00 PM EST</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-cta">
+                        <a href="#" class="btn btn-primary">View All Events</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mentorship Section -->
+    <section id="mentorship" class="service-detail">
+        <div class="container">
+            <div class="service-detail-content">
+                <div class="service-detail-text">
+                    <h2>Student Mentorship</h2>
+                    <p>Our mentorship program connects you with experienced professionals who can provide guidance, support, and insights based on their own career journeys. This relationship can be invaluable as you navigate your academic and professional path.</p>
+                    <h3>Benefits of Mentorship</h3>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check-circle"></i> Personalized guidance from someone who has "been there"</li>
+                        <li><i class="fas fa-check-circle"></i> Insights into industry trends and expectations</li>
+                        <li><i class="fas fa-check-circle"></i> Expanded professional network</li>
+                        <li><i class="fas fa-check-circle"></i> Increased confidence and motivation</li>
+                        <li><i class="fas fa-check-circle"></i> Development of both hard and soft skills</li>
+                    </ul>
+                    <div class="service-cta">
+                        <a href="#" class="btn btn-primary">Find a Mentor</a>
+                    </div>
+                </div>
+                <div class="service-detail-image">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3" 
+                         alt="Student Mentorship"
+                         loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resume Review Section -->
+    <section id="resume-review" class="service-detail bg-light">
+        <div class="container">
+            <div class="service-detail-content reverse">
+                <div class="service-detail-image">
+                    <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?ixlib=rb-4.0.3" 
+                         alt="Resume & Cover Letter Review"
+                         loading="lazy">
+                </div>
+                <div class="service-detail-text">
+                    <h2>Resume & Cover Letter Review</h2>
+                    <p>Make a strong first impression with polished, professional application materials. Our experts will review your resume and cover letter, providing detailed feedback and suggestions for improvement.</p>
+                    <h3>Our Review Process</h3>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check-circle"></i> Comprehensive review of content, format, and style</li>
+                        <li><i class="fas fa-check-circle"></i> Suggestions for highlighting relevant skills and experiences</li>
+                        <li><i class="fas fa-check-circle"></i> Feedback on clarity, conciseness, and impact</li>
+                        <li><i class="fas fa-check-circle"></i> Guidance on tailoring materials for specific opportunities</li>
+                        <li><i class="fas fa-check-circle"></i> ATS optimization recommendations</li>
+                    </ul>
+                    <div class="service-cta">
+                        <a href="#" class="btn btn-primary">Submit for Review</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mock Interviews Section -->
+    <section id="mock-interviews" class="service-detail">
+        <div class="container">
+            <div class="service-detail-content">
+                <div class="service-detail-text">
+                    <h2>Mock Interviews</h2>
+                    <p>Practice makes perfect, especially when it comes to interviews. Our mock interview service provides you with the opportunity to practice and refine your interview skills in a supportive environment.</p>
+                    <h3>What's Included</h3>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check-circle"></i> Realistic interview simulation with industry-specific questions</li>
+                        <li><i class="fas fa-check-circle"></i> Immediate feedback on your responses and presentation</li>
+                        <li><i class="fas fa-check-circle"></i> Guidance on addressing challenging questions</li>
+                        <li><i class="fas fa-check-circle"></i> Tips for managing interview anxiety</li>
+                        <li><i class="fas fa-check-circle"></i> Follow-up session to practice implementing feedback</li>
+                    </ul>
+                    <div class="service-cta">
+                        <a href="#" class="btn btn-primary">Book a Mock Interview</a>
+                    </div>
+                </div>
+                <div class="service-detail-image">
+                    <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3" 
+                         alt="Mock Interviews"
+                         loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mental Health Section -->
+    <section id="mental-health" class="service-detail bg-light">
+        <div class="container">
+            <div class="service-detail-content reverse">
+                <div class="service-detail-image">
+                    <img src="https://images.unsplash.com/photo-1527689368864-3a821dbccc34?ixlib=rb-4.0.3" 
+                         alt="Mental Health Support"
+                         loading="lazy">
+                </div>
+                <div class="service-detail-text">
+                    <h2>Mental Health Support</h2>
+                    <p>We recognize that mental well-being is essential for academic and career success. Our mental health support services are designed to help you manage stress, anxiety, and other challenges that can impact your performance and quality of life.</p>
+                    <h3>Support Options</h3>
+                    <ul class="service-list">
+                        <li><i class="fas fa-check-circle"></i> One-on-one counseling sessions</li>
+                        <li><i class="fas fa-check-circle"></i> Stress management workshops</li>
+                        <li><i class="fas fa-check-circle"></i> Mindfulness and resilience training</li>
+                        <li><i class="fas fa-check-circle"></i> Resources for self-care and well-being</li>
+                        <li><i class="fas fa-check-circle"></i> Referrals to specialized services when needed</li>
+                    </ul>
+                    <div class="service-cta">
+                        <a href="#" class="btn btn-primary">Explore Support Options</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Service Packages</h2>
+                <p>Choose the package that best fits your needs and budget</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Basic Plan</h3>
+                        <div class="price">₹49<span>/month</span></div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> 1 Career Counseling Session</li>
+                            <li><i class="fas fa-check"></i> Resume Review</li>
+                            <li><i class="fas fa-check"></i> Access to Webinar Library</li>
+                            <li><i class="fas fa-check"></i> Basic Resource Access</li>
+                        </ul>
+                    </div>
+                    <button onclick="makePayment('basic', 4900)" class="btn btn-primary btn-lg w-100">Get Started</button>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="pricing-header">
+                        <h3>Premium Plan</h3>
+                        <div class="price">₹99<span>/month</span></div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> 3 Career Counseling Sessions</li>
+                            <li><i class="fas fa-check"></i> Resume & Cover Letter Review</li>
+                            <li><i class="fas fa-check"></i> Access to All Webinars</li>
+                            <li><i class="fas fa-check"></i> Full Resource Access</li>
+                            <li><i class="fas fa-check"></i> 1 Mock Interview</li>
+                            <li><i class="fas fa-check"></i> Mentorship Matching</li>
+                        </ul>
+                    </div>
+                    <button onclick="makePayment('premium', 9900)" class="btn btn-primary btn-lg w-100">Get Started</button>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Ultimate Plan</h3>
+                        <div class="price">₹149<span>/month</span></div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Unlimited Career Counseling</li>
+                            <li><i class="fas fa-check"></i> Priority Resume & Cover Letter Review</li>
+                            <li><i class="fas fa-check"></i> VIP Access to All Events</li>
+                            <li><i class="fas fa-check"></i> Premium Resource Access</li>
+                            <li><i class="fas fa-check"></i> Unlimited Mock Interviews</li>
+                            <li><i class="fas fa-check"></i> Priority Mentorship Matching</li>
+                            <li><i class="fas fa-check"></i> Mental Health Support Sessions</li>
+                        </ul>
+                    </div>
+                    <button onclick="makePayment('ultimate', 14900)" class="btn btn-primary btn-lg w-100">Get Started</button>
+                </div>
+            </div>
+            <div class="pricing-note">
+                <p>All packages include a 7-day free trial. Cancel anytime.</p>
+                <p>Need a custom solution? <a href="contact.html">Contact us</a> for enterprise and group pricing.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section services-faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Answers to common questions about our services</p>
+            </div>
+            <div class="faq-accordion">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How do I know which service is right for me?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>If you're unsure which service would be most beneficial for your specific situation, we recommend starting with a free consultation. Our team will assess your needs and goals, and recommend the most appropriate services to help you achieve success.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I upgrade or downgrade my package?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, you can upgrade or downgrade your package at any time. Changes will take effect at the start of your next billing cycle. There are no penalties or fees for changing your subscription level.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are there any discounts for students?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we offer special student rates for all our services. Simply verify your student status with a valid .edu email address or student ID, and you'll receive a 20% discount on any package.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How quickly can I expect results?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Results vary depending on your specific goals, current situation, and the effort you put into implementing the guidance provided. Some clients see immediate improvements in areas like resume quality or interview performance, while career transitions and long-term goals may take several months to achieve.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I request a specific counselor or mentor?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, you can request to work with a specific counselor or mentor based on their profile and expertise. While we do our best to accommodate these requests, availability may vary. If your preferred counselor is not available, we'll match you with someone who has similar expertise and experience.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="faq-more">
+                <a href="faq.html" class="btn btn-outline">View All FAQs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Invest in Your Future?</h2>
+                <p>Take the first step towards achieving your career goals</p>
+                <a href="#" class="btn btn-secondary-dark">Explore Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'landing_page/footer.html' %}
+
+    <button id="backToTop" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="{{url_for('static',filename='js/landing_page/script.js')}}"></script>
+
+    <style>
+    /* Enhanced Animations and UI */
+    :root {
+        --primary: #4A90E2;
+        --secondary: #50E3C2;
+        --primary-light: #EBF3FC;
+        --secondary-light: #E8FBF6;
+        --text-dark: #2C3E50;
+        --text-light: #7F8C8D;
+        --white: #FFFFFF;
+        --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    /* Hero Section Enhancement */
+    .services-hero {
+        position: relative;
+        min-height: 80vh;
+        overflow: hidden;
+    }
+
+    .hero-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3') center/cover;
+        transform: scale(1.1);
+        animation: heroZoom 20s infinite alternate ease-in-out;
+    }
+
+    @keyframes heroZoom {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.1); }
+    }
+
+    .animate-text {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s forwards ease-out;
+    }
+
+    .animate-text-delay {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s forwards ease-out 0.3s;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Service Cards Enhancement */
+    .service-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2.5rem;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--gradient-primary);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .service-card:hover::before {
+        opacity: 1;
+    }
+
+    /* Service Icons Enhancement */
+    .service-icon {
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 1.5rem;
+        background: var(--primary-light);
+        border-radius: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-icon::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-primary);
+        opacity: 0;
+        transition: all 0.5s ease;
+    }
+
+    .service-card:hover .service-icon::before {
+        opacity: 0.2;
+    }
+
+    .service-icon i {
+        font-size: 2.5rem;
+        color: var(--primary);
+        position: relative;
+        z-index: 1;
+        transition: all 0.5s ease;
+    }
+
+    /* Button Enhancements */
+    .btn {
+        padding: 12px 28px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-primary);
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: -1;
+    }
+
+    .btn:hover::before {
+        opacity: 1;
+    }
+
+    /* Pricing Cards Enhancement */
+    .pricing-card {
+        background: var(--white);
+        border-radius: 25px;
+        padding: 3rem 2rem;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .pricing-card.popular {
+        transform: scale(1.05);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .pricing-card.popular:hover {
+        transform: translateY(-10px) scale(1.05);
+    }
+
+    /* FAQ Section Enhancement */
+    .services-faq {
+        background: linear-gradient(rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.97)),
+                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3') center/cover;
+    }
+
+    .faq-item {
+        border-radius: 15px;
+        margin-bottom: 1rem;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+        transform: translateX(10px);
+    }
+
+    /* CTA Section Enhancement */
+    .cta {
+        background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+                    url('https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?ixlib=rb-4.0.3') center/cover fixed;
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(74, 144, 226, 0.5) 0%, rgba(80, 227, 194, 0.5) 100%);
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Responsive Enhancements */
+    @media (max-width: 768px) {
+        .service-detail-content {
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .service-detail-content.reverse {
+            flex-direction: column;
+        }
+
+        .service-detail-image {
+            height: 300px;
+        }
+
+        .pricing-card.popular {
+            transform: scale(1.02);
+        }
+
+        .hero-btn {
+            padding: 14px 28px !important;
+            font-size: 1rem !important;
+        }
+    }
+
+    .hero-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    .hero-btn:hover .btn-hover-effect {
+        opacity: 1;
+    }
+
+    .hero-btn:hover i {
+        transform: translateX(5px);
+    }
+
+    .hero-btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+    }
+
+    .pricing-cta button {
+        width: 100%;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .pricing-cta button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .pricing-card.popular .pricing-cta button {
+        background: var(--gradient-primary);
+        color: white;
+    }
+
+    .pricing-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .pricing-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .pricing-btn:hover i {
+        transform: translateX(4px);
+    }
+    </style>
+
+    <script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+        offset: 100
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    function makePayment(plan, amount) {
+        var options = {
+            "key": "rzp_test_pUXJB2ZJXV0sMk", // Replace with your Razorpay Key ID
+            "amount": amount, // Amount in paise
+            "currency": "INR",
+            "name": "CareerConnect",
+            "description": plan.charAt(0).toUpperCase() + plan.slice(1) + " Plan Subscription",
+            "image": "your_logo_url", // Replace with your logo URL
+            "handler": function (response){
+                // Handle successful payment
+                alert('Payment Successful! Payment ID: ' + response.razorpay_payment_id);
+                // You can redirect to a success page or update the UI
+                // window.location.href = '/payment-success';
+            },
+            "prefill": {
+                "name": "", // Can be populated with user's name if available
+                "email": "", // Can be populated with user's email if available
+                "contact": "" // Can be populated with user's phone if available
+            },
+            "theme": {
+                "color": "#4A90E2"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    }
+
+    // Handle payment failure
+    window.addEventListener('razorpay.payment.failed', function(e) {
+        alert('Payment failed. Please try again. Error: ' + e.detail.error.description);
+    });
+    </script>
+</body>
+</html>

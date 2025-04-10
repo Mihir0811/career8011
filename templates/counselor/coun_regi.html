@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counselor Registration | Career Guidance Platform</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/counselor/coun_regi.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="registration-container">
+            <div class="registration-header">
+                <h1>Counselor Registration</h1>
+                <p>Join our platform to guide students in their career journey</p>
+            </div>
+
+            <!-- Progress Stepper -->
+            <div class="stepper">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Basic Information</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Career Expertise</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Availability & Review</div>
+                </div>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="counselorRegistrationForm" enctype="multipart/form-data">
+                <!-- Step 1: Basic Information -->
+                <div class="form-step active" id="step1">
+                    <h2>Basic Information</h2>
+                    <p>Please provide your personal and contact details</p>
+
+                    <div class="form-group">
+                        <label for="fullName">Full Name <span class="required">*</span></label>
+                        <input type="text" id="fullName" name="fullName" required>
+                        <div class="error-message" id="fullNameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <div class="password-input-container">
+                            <input type="password" id="password" name="password" required>
+                            <button type="button" class="toggle-password" tabindex="-1">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div class="strength-bar" id="strengthBar"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText">Password strength</div>
+                        </div>
+                        <div class="error-message" id="passwordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                        <div class="password-input-container">
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            <button type="button" class="toggle-password" tabindex="-1">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="error-message" id="confirmPasswordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactNumber">Contact Number <span class="required">*</span></label>
+                        <input type="tel" id="contactNumber" name="contactNumber" required>
+                        <div class="error-message" id="contactNumberError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specialization">Specialization <span class="required">*</span></label>
+                        <select id="specialization" name="specialization" required>
+                            <option value="">Select your specialization</option>
+                            <option value="career counseling">Career Counseling</option>
+                            <option value="mental health">Mental Health</option>
+                            <option value="academic counseling">Academic Counseling</option>
+                            <option value="college admissions">College Admissions</option>
+                            <option value="professional development">Professional Development</option>
+                        </select>
+                        <div class="error-message" id="specializationError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">Bio/Introduction <span class="required">*</span></label>
+                        <textarea id="bio" name="bio" rows="4" required></textarea>
+                        <div class="char-counter"><span id="bioCharCount">0</span>/500 characters</div>
+                        <div class="error-message" id="bioError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profilePicture">Profile Picture</label>
+                        <div class="file-upload-container">
+                            <div class="file-upload-preview" id="profilePreview">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="file-upload-input">
+                                <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+                                <label for="profilePicture" class="file-upload-label">
+                                    <i class="fas fa-upload"></i> Choose a file
+                                </label>
+                                <div class="file-name" id="fileName">No file chosen</div>
+                            </div>
+                        </div>
+                        <div class="error-message" id="profilePictureError"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
+                        <button type="button" id="nextStep1" class="btn btn-primary">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Career Expertise Setup -->
+                <div class="form-step" id="step2">
+                    <h2>Career Expertise Setup</h2>
+                    <p>Select the career interests you specialize in</p>
+
+                    <div class="form-group">
+                        <label for="interestSearch">Search Interests</label>
+                        <div class="search-container">
+                            <input type="text" id="interestSearch" placeholder="Search for interests...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="careerInterests">Career Interests <span class="required">*</span></label>
+                        <div class="interests-container" id="interestsContainer">
+
+                        </div>
+                        <div class="error-message" id="interestsError"></div>
+                    </div>
+
+                    <!-- Embed dynamic data -->
+                    <script>
+                        const careerInterestsJson = '{{ interests | tojson | safe}}';
+                        const careerInterests = JSON.parse(careerInterestsJson)
+                        console.log(careerInterests);
+                    </script>
+
+                    <div class="form-group">
+                        <label>Selected Interests</label>
+                        <div class="selected-interests" id="selectedInterests">
+                            <div class="empty-selection">No interests selected yet</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" id="addCustomInterest" class="btn btn-outline">
+                            <i class="fas fa-plus"></i> Add Custom Interest
+                        </button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="prevStep2" class="btn btn-secondary">Previous</button>
+                        <button type="button" id="nextStep2" class="btn btn-primary">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Availability and Review -->
+                <div class="form-step" id="step3">
+                    <h2>Availability & Review</h2>
+                    <p>Set your availability and review your information</p>
+
+                    <div class="availability-section">
+                        <h3>Availability Schedule</h3>
+                        <div class="days-selection">
+
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="monday" name="days" value="Monday">
+                                <label for="monday">Monday</label>
+                                <button type="button" class="add-slot-btn" data-day="monday">Add Slot</button>
+                            </div>
+                            <div id="mondaySlots" class="slots-container"></div>
+
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="tuesday" name="days" value="Tuesday">
+                                <label for="tuesday">Tuesday</label>
+                                <button type="button" class="add-slot-btn" data-day="tuesday">Add Slot</button>
+                            </div>
+                            <div id="tuesdaySlots" class="slots-container"></div>
+
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="wednesday" name="days" value="Wednesday">
+                                <label for="wednesday">Wednesday</label>
+                                <button type="button" class="add-slot-btn" data-day="wednesday">Add Slot</button>
+                            </div>
+                            <div id="wednesdaySlots" class="slots-container"></div>
+
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="thursday" name="days" value="Thursday">
+                                <label for="thursday">Thursday</label>
+                                <button type="button" class="add-slot-btn" data-day="thursday">Add Slot</button>
+                            </div>
+                            <div id="thursdaySlots" class="slots-container"></div>
+
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="friday" name="days" value="Friday">
+                                <label for="friday">Friday</label>
+                                <button type="button" class="add-slot-btn" data-day="friday">Add Slot</button>
+                            </div>
+                            <div id="fridaySlots" class="slots-container"></div>
+
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="saturday" name="days" value="Saturday">
+                                <label for="saturday">Saturday</label>
+                                <button type="button" class="add-slot-btn" data-day="saturday">Add Slot</button>
+                            </div>
+                            <div id="saturdaySlots" class="slots-container"></div>
+
+                            <div class="day-checkbox">
+                                <input type="checkbox" id="sunday" name="days" value="Sunday">
+                                <label for="sunday">Sunday</label>
+                                <button type="button" class="add-slot-btn" data-day="sunday">Add Slot</button>
+                            </div>
+                            <div id="sundaySlots" class="slots-container"></div>
+
+
+                        </div>
+                        <div class="error-message" id="availabilityError"></div>
+                        <br>
+
+
+                        <div class="review-section">
+                            <h3>Review Your Information</h3>
+                            <div class="review-container">
+                                <div class="review-group">
+                                    <h4>Personal Information</h4>
+                                    <div class="review-item">
+                                        <div class="review-label">Full Name:</div>
+                                        <div class="review-value" id="reviewName"></div>
+                                    </div>
+                                    <div class="review-item">
+                                        <div class="review-label">Email:</div>
+                                        <div class="review-value" id="reviewEmail"></div>
+                                    </div>
+                                    <div class="review-item">
+                                        <div class="review-label">Contact Number:</div>
+                                        <div class="review-value" id="reviewContact"></div>
+                                    </div>
+                                    <div class="review-item">
+                                        <div class="review-label">Specialization:</div>
+                                        <div class="review-value" id="reviewSpecialization"></div>
+                                    </div>
+                                    <div class="review-item">
+                                        <div class="review-label">Bio:</div>
+                                        <div class="review-value" id="reviewBio"></div>
+                                    </div>
+                                </div>
+
+                                <div class="review-group">
+                                    <h4>Career Expertise</h4>
+                                    <div class="review-item">
+                                        <div class="review-label">Selected Interests:</div>
+                                        <div class="review-value" id="reviewInterests"></div>
+                                    </div>
+                                </div>
+
+                                <div class="review-group">
+                                    <h4>Availability</h4>
+                                    <div class="review-item">
+                                        <div class="review-label">Available Days:</div>
+                                        <div class="review-value" id="reviewDays"></div>
+                                    </div>
+                                    <div class="review-item">
+                                        <div class="review-label">Working Hours:</div>
+                                        <div class="review-value" id="reviewHours"></div>
+                                    </div>
+                                    <div class="review-item">
+                                        <div class="review-label">Break Time:</div>
+                                        <div class="review-value" id="reviewBreak"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" id="prevStep3" class="btn btn-secondary">Previous</button>
+                            <button type="submit" id="submitBtn" class="btn btn-success">Submit Registration</button>
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Interest Modal -->
+    <div class="modal" id="customInterestModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Custom Interest</h3>
+                <button type="button" class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="customInterestName">Interest Name <span class="required">*</span></label>
+                    <input type="text" id="customInterestName" placeholder="Enter a new career interest">
+                    <div class="error-message" id="customInterestError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="customInterestDescription">Description</label>
+                    <textarea id="customInterestDescription" rows="3"
+                        placeholder="Briefly describe this career interest"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelCustomInterest">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveCustomInterest">Add Interest</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content success-modal">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Registration Successful!</h2>
+            <p>Your registration has been submitted successfully. Admin approval is pending.</p>
+            <p>You will receive an email notification once your account is approved.</p>
+            <button type="button" class="btn btn-success" id="successDoneBtn">Done</button>
+            <script>
+                document.getElementById("successDoneBtn").addEventListener("click", function () {
+                    window.location.href = "coun_login";
+                });
+            </script>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <script src="{{url_for('static',filename='js/counselor/coun_regi.js')}}" defer></script>
+</body>
+
+</html>
+<script>
+    const counselorRegistrationForm = document.getElementById('counselorRegistrationForm');
+    counselorRegistrationForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("fullName", document.getElementById("fullName").value);
+        formData.append("email", document.getElementById("email").value);
+        formData.append("password", document.getElementById("password").value);
+        formData.append("contactNumber", document.getElementById("contactNumber").value);
+        formData.append("specialization", document.getElementById("specialization").value);
+        formData.append("bio", document.getElementById("bio").value);
+
+        const interestNames = selectedInterestsArray.map(interest => interest.interest_name);
+        formData.append("selectedInterests", JSON.stringify(interestNames));
+
+        const profilePicture = document.getElementById("profilePicture").files[0];
+        if (profilePicture) {
+            formData.append("profilePicture", profilePicture);
+        }
+
+        // Collect selected days
+        const selectedDays = [];
+        document.querySelectorAll("input[name='days']:checked").forEach((checkbox) => {
+            selectedDays.push(checkbox.value);
+        });
+        formData.append("availabilityDays", JSON.stringify(selectedDays));
+
+        // Collect time slots for each day
+        const availabilitySlots = {};
+        selectedDays.forEach((day) => {
+            const slots = [];
+            const daySlotsContainer = document.getElementById(`${day.toLowerCase()}Slots`);
+            daySlotsContainer.querySelectorAll(".time-slot-group").forEach((slotGroup) => {
+                const startTime = slotGroup.querySelector(`input[name="${day.toLowerCase()}StartTime[]"]`).value;
+                const endTime = slotGroup.querySelector(`input[name="${day.toLowerCase()}EndTime[]"]`).value;
+                if (startTime && endTime) {
+                    slots.push({ startTime, endTime });
+                }
+            });
+            availabilitySlots[day] = slots;
+        });
+        formData.append("availabilitySlots", JSON.stringify(availabilitySlots));
+
+        console.log([...formData]);
+
+        fetch('/coun_regi', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((resp) => resp.json())
+            .then((data) => {
+                if (data.msg) {
+                    console.log(data.msg);
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    });
+
+</script>

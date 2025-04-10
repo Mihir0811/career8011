@@ -1,0 +1,156 @@
+{% extends 'admin/base.html' %}
+{% block title %}Manage Counselor - Admin Panel{% endblock %}
+{% block content %}
+    <h2 class="section-title">Manage Counselors</h2>
+    <div class="table-actions">
+        <div class="search-filters">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search counselors...">
+            </div>
+            <select class="filter-select">
+                <option value="">All Specializations</option>
+                <option value="career">Career Development</option>
+                <option value="academic">Academic Advising</option>
+                <option value="personal">Personal Growth</option>
+            </select>
+            <select class="filter-select">
+                <option value="">Approval Status</option>
+                <option value="approved">Approved</option>
+                <option value="pending">Pending</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.querySelector(".search-box input");
+    const specializationFilter = document.querySelectorAll(".filter-select")[0];
+    const approvalFilter = document.querySelectorAll(".filter-select")[1];
+    const tableRows = document.querySelectorAll(".data-table tbody tr");
+
+    function filterTable() {
+        const searchValue = searchInput.value.toLowerCase();
+        const specializationValue = specializationFilter.value.toLowerCase();
+        const approvalValue = approvalFilter.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const name = row.querySelector("td:nth-child(1) span").textContent.toLowerCase();
+            const specialization = row.querySelector("td:nth-child(3) .tag").textContent.toLowerCase();
+            const approval = row.querySelector("td:nth-child(4) .status-tag").textContent.toLowerCase();
+
+            const matchesSearch = name.includes(searchValue);
+            const matchesSpecialization = !specializationValue || specialization.includes(specializationValue);
+            const matchesApproval = !approvalValue || approval.includes(approvalValue);
+
+            if (matchesSearch && matchesSpecialization && matchesApproval) {
+                row.style.display = "table-row";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    searchInput.addEventListener("input", filterTable);
+    specializationFilter.addEventListener("change", filterTable);
+    approvalFilter.addEventListener("change", filterTable);
+});
+
+    </script>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Specialization</th>
+                    <th>Approval Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for counselor in counselors %}
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <img src="https://ui-avatars.com/api/?name={{ counselor.full_name | urlencode }}" 
+                                     alt="{{ counselor.full_name }}" 
+                                     class="counselor-profile" 
+                                     data-profile="{{ counselor.profile_picture }}">
+                                <span>{{ counselor.full_name }}</span>
+                            </div>
+                        </td>
+                        <td>{{ counselor.email }}</td>
+                        <td>
+                            <div class="interest-tags">
+                                <span class="tag">{{ counselor.specialization }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-tag {{ 'approved' if counselor.approval_status == 'approved' else ('rejected' if counselor.approval_status == 'rejected' else 'pending') }}">
+                                {{ counselor.approval_status | capitalize }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                {% if counselor.approval_status == 'pending' %}
+                                    <button class="approve-btn" data-id="{{ counselor.id }}"><i class="fas fa-check"></i> Approve</button>
+                                    <button class="reject-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i> Reject</button>
+                                {% elif counselor.approval_status == 'approved' %}
+                                    <button disabled class="approved-btn"><i class="fas fa-check-circle"></i> Approved</button>
+                                {% elif counselor.approval_status == 'rejected' %}
+                                    <button disabled class="rejected-btn"><i class="fas fa-times-circle"></i> Rejected</button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const counselorProfiles = document.querySelectorAll('.counselor-profile');
+        counselorProfiles.forEach(profile => {
+            profile.addEventListener('click', function () {
+                const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${this.alt}`;
+                const profilePictureUrl = this.getAttribute('data-profile');
+    
+                if (this.src === defaultAvatarUrl) {
+                    this.src = profilePictureUrl;
+                } else {
+                    this.src = defaultAvatarUrl;
+                }
+            });
+        });
+
+        // Approve and Reject buttons
+        document.querySelectorAll('.approve-btn, .reject-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const counselorId = this.getAttribute('data-id');
+                const action = this.classList.contains('approve-btn') ? 'approve' : 'reject';
+
+                fetch('/approve_counselor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ counselor_id: counselorId, action: action }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(`Counselor ${action}d successfully.`);
+                            location.reload();
+                        } else {
+                            alert(`Error: ${data.error}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+{% endblock %}

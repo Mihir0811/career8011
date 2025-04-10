@@ -1,0 +1,260 @@
+{% extends 'admin/base.html' %}
+{% block title %}Reports - Admin Panel{% endblock %}
+{% block content %}
+<h2 class="section-title">Reports</h2>
+
+<!-- <div class="report-actions">
+    <div class="date-range">
+        <label>Date Range:</label>
+        <select class="filter-select">
+            <option value="week">Last Week</option>
+            <option value="month" selected>Last Month</option>
+            <option value="quarter">Last Quarter</option>
+            <option value="year">Last Year</option>
+        </select>
+    </div> -->
+<!-- <div class="export-buttons">
+        <button class="export-btn pdf">
+            <i class="fas fa-file-pdf"></i> Export as PDF
+        </button>
+        <button class="export-btn excel">
+            <i class="fas fa-file-excel"></i> Export as Excel
+        </button>
+    </div> -->
+</div>
+
+<div class="reports-grid">
+    <div class="chart-container">
+        <h3>Popular Interests</h3>
+        <canvas id="interestsReportChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>All Registrations</h3>
+        <div id="registrationsReportChart"></div>
+    </div>
+    <div class="chart-container">
+        <h3>Appointment Status</h3>
+        <canvas id="overallAppointmentStatusChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>Counselor Growth</h3>
+        <div id="counselorGrowthChart"></div>
+    </div>
+</div>
+
+
+<!-- <div class="table-container">
+    <h3>Appointment Summary</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Total Appointments</th>
+                <th>Completed</th>
+                <th>Cancelled</th>
+                <th>Completion Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>January</td>
+                <td>120</td>
+                <td>95</td>
+                <td>25</td>
+                <td>79%</td>
+            </tr>
+            <tr>
+                <td>February</td>
+                <td>145</td>
+                <td>110</td>
+                <td>35</td>
+                <td>76%</td>
+            </tr>
+            <tr>
+                <td>March</td>
+                <td>160</td>
+                <td>130</td>
+                <td>30</td>
+                <td>81%</td>
+            </tr>
+        </tbody>
+    </table>
+</div> -->
+
+
+<script>
+    fetch('/popular_interests')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const labels = data.data.map(item => item.interest);
+                const counts = data.data.map(item => item.count);
+
+                const predefinedColors = [
+                    '#4F46E5',
+                    '#10B981',
+                    '#F59E0B',
+                    '#EF4444',
+                    '#8B5CF6',
+                    '#3B82F6',
+                    '#F43F5E',
+                    '#14B8A6',
+                    '#F97316',
+                    '#22C55E'
+                ];
+
+                const backgroundColors = labels.map((_, index) =>
+                    predefinedColors[index % predefinedColors.length]
+                );
+
+                const borderColors = backgroundColors.map(color =>
+                    color
+                );
+
+                new Chart(document.getElementById('interestsReportChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Popular Interests',
+                            data: counts,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } else {
+                console.error(data.message);
+            }
+        });
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+
+    fetch('/counselor_report').then(res => res.json()).then(data => {
+
+        var colors = ['#33b2df', '#546E7A', '#d4526e', '#13d8aa'];
+
+        var options = {
+            series: [{
+                data: data.data,
+            }],
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    borderRadiusApplication: 'end',
+                    horizontal: true,
+                    distributed: true,
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            xaxis: {
+                categories: data.labels,
+            },
+            colors: colors,
+        };
+
+        var chart = new ApexCharts(document.querySelector("#counselorGrowthChart"), options);
+        chart.render();
+    }).catch(error => console.error("Fetch error:", error));
+
+    fetch('/students_counselors_count').then(res => res.json()).then(data => {
+
+
+        var colors = ['#d4526e', '#13d8aa'];
+
+        var options = {
+            series: data.data,
+            chart: {
+                width: 380,
+                type: 'donut',
+            },
+            labels: data.labels,
+            plotOptions: {
+                pie: {
+                    startAngle: -90,
+                    endAngle: 270
+                }
+            },
+            fill: {
+                type: 'gradient',
+            },
+            legend: {
+                formatter: function (val, opts) {
+                    return val + " - " + opts.w.globals.series[opts.seriesIndex]
+                }
+            },
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }],
+        };
+
+        var chart = new ApexCharts(document.querySelector("#registrationsReportChart"), options);
+        chart.render();
+    }).catch(error => console.error("Fetch error:", error));
+
+    document.addEventListener("DOMContentLoaded", function () {
+    fetch("/overall_appointment_chart")
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById("overallAppointmentStatusChart").getContext("2d");
+
+            new Chart(ctx, {
+                type: "polarArea", // Set the chart type to Polar Area
+                data: {
+                    labels: data.labels, // Status labels
+                    datasets: [{
+                        data: data.data, // Status counts
+                        backgroundColor: ["blue", "green", "red", "gray", "purple"], // Colors for each status
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: "top" },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ": " + tooltipItem.raw + " appointments";
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error loading chart data:", error));
+});
+
+</script>
+{% endblock %}
+
+
+

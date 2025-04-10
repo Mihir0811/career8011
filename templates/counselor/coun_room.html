@@ -1,0 +1,45 @@
+{% extends 'counselor/counselor_base.html' %}
+{% block coun_content %}
+<div class="section-header">
+    <h1>Manage Your Live Sessions and Start Meetings</h1>
+</div>
+
+<div class="view-container">
+    {% if appointments %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Purpose</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td>{{ appointment.student.name }}</td>
+                    <td>{{ appointment.date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ appointment.time_slot }}</td>
+                    <td>{{ appointment.purpose }}</td>
+                    <td>
+                        {% if appointment.counselor_status == 'approved' %}
+                            <a href="{{ url_for('start_meeting', appointment_id=appointment.id) }}" class="btn-primary">
+                                Start Meeting
+                            </a>
+                        {% elif appointment.student_status == 'live' %}
+                            <span class="text-info">Student Joined</span>
+                        {% else %}
+                            <span class="text-muted">Cannot Start</span>
+                        {% endif %}
+                    </td>                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-warning">No live sessions at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

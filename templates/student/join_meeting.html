@@ -1,0 +1,54 @@
+{% extends 'student/stud-base.html' %}
+{% block title %}Join Meeting{% endblock %}
+{% block content %}
+
+<div class="section-header">
+    <h1>Join Meeting with Counselor</h1>
+</div>
+
+<div class="meeting-container">
+    <p class="text-success">
+        Welcome, {{ student_name }}. You are about to join your meeting.
+    </p>
+
+    <!-- Whereby video room embedded here -->
+    <iframe
+        id="meeting-frame"
+        src="{{ session_link }}"
+        allow="camera; microphone; fullscreen; speaker; display-capture"
+        style="width: 100%; height: 600px; border: 1px solid #ccc;"
+        allowfullscreen
+    ></iframe>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const iframe = document.getElementById("meeting-frame");
+
+        // Periodically check if the iframe is still loaded
+        const checkIframeUnload = setInterval(() => {
+            if (!iframe.contentWindow || iframe.contentDocument.readyState === "unloaded") {
+                clearInterval(checkIframeUnload);
+                window.location.href = "/feedback"; // Redirect to feedback page
+            }
+        }, 3000); // Check every 3 seconds
+
+        // Redirect if the tab is closed or navigated away
+        window.addEventListener("unload", () => {
+            window.location.href = "/feedback";
+        });
+    });
+</script>
+
+<style>
+    .meeting-container {
+        margin-top: 20px;
+    }
+
+    iframe {
+        border-radius: 10px;
+        box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+{% endblock %}

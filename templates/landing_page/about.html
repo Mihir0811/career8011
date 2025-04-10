@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - CareerConnect</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/landing_page/style.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .about-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                        url('https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1920');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .about-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .mission-vision {
+            background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
+                        url('https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0;
+        }
+
+        .team-section {
+            background-color: #f8f9fa;
+            padding: 80px 0;
+        }
+
+        .team-image {
+            overflow: hidden;
+        }
+
+        .team-image img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover .team-image img {
+            transform: scale(1.05);
+        }
+
+        .cta {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://images.pexels.com/photos/7096/people-woman-coffee-meeting.jpg?auto=compress&cs=tinysrgb&w=1920');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header class="header">
+        {% include 'landing_page/header.html' %}
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero about-hero">
+        <div class="container">
+            <div class="hero-content text-center" style="color: white;">
+                <h1 style="color: white !important;">Who We Are</h1>
+                <p style="color: white !important;">Our mission to inspire and guide</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                         alt="CareerConnect Team Collaboration" 
+                         loading="lazy">
+                </div>
+                <div class="about-content">
+                    <h2>Our Story</h2>
+                    <p>CareerConnect was founded in 2018 with a simple yet powerful vision: to bridge the gap between students and professional counselors, making career guidance accessible to all.</p>
+                    <p>What started as a small initiative has now grown into a comprehensive platform serving thousands of students and counselors worldwide. Our team of dedicated professionals works tirelessly to ensure that every student receives the guidance they need to succeed.</p>
+                    <p>We believe that the right guidance at the right time can transform lives, and we're committed to making that a reality for students everywhere.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision Section -->
+    <section class="mission-vision">
+        <div class="container">
+            <div class="section-header">
+                <h2>Mission & Vision</h2>
+                <p>Guiding principles that drive our work</p>
+            </div>
+            <div class="mission-vision-grid">
+                <div class="mission-card">
+                    <div class="card-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>To empower students with personalized career guidance and connect them with experienced counselors who can help them navigate their professional journey.</p>
+                </div>
+                <div class="vision-card">
+                    <div class="card-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>A world where every student has access to quality career guidance, enabling them to make informed decisions and reach their full potential.</p>
+                </div>
+                <div class="values-card">
+                    <div class="card-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Our Values</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Excellence in service</li>
+                        <li><i class="fas fa-check-circle"></i> Integrity and transparency</li>
+                        <li><i class="fas fa-check-circle"></i> Student-centered approach</li>
+                        <li><i class="fas fa-check-circle"></i> Continuous innovation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Journey</h2>
+                <p>Key milestones in our growth</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2018</div>
+                    <div class="timeline-content">
+                        <h3>Foundation</h3>
+                        <p>CareerConnect was founded with the mission to connect students with professional counselors.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2019</div>
+                    <div class="timeline-content">
+                        <h3>Platform Launch</h3>
+                        <p>Launched our online platform, making it easier for students to find and connect with counselors.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2020</div>
+                    <div class="timeline-content">
+                        <h3>Virtual Counseling</h3>
+                        <p>Introduced virtual counseling sessions, expanding our reach to students worldwide.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2021</div>
+                    <div class="timeline-content">
+                        <h3>Resource Library</h3>
+                        <p>Launched our comprehensive resource library, providing students with valuable career guidance materials.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2022</div>
+                    <div class="timeline-content">
+                        <h3>Global Expansion</h3>
+                        <p>Expanded our services to 20+ countries, helping students across the globe.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2023</div>
+                    <div class="timeline-content">
+                        <h3>AI Integration</h3>
+                        <p>Integrated AI-powered tools to enhance the counseling experience for both students and counselors.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2024</div>
+                    <div class="timeline-content">
+                        <h3>Community Building</h3>
+                        <p>Launched community features to foster peer-to-peer learning and support.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2025</div>
+                    <div class="timeline-content">
+                        <h3>The Future</h3>
+                        <p>Continuing to innovate and expand our services to reach more students and counselors.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Meet Our Team</h2>
+                <p>The dedicated professionals behind CareerConnect</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=800" 
+                             alt="John Smith - Founder & CEO"
+                             loading="lazy">
+                    </div>
+                    <div class="team-info">
+                        <h3>John Smith</h3>
+                        <p class="team-role">Founder & CEO</p>
+                        <p class="team-bio">With over 15 years of experience in education and career counseling, John founded CareerConnect to make quality guidance accessible to all students.</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="https://images.pexels.com/photos/3727464/pexels-photo-3727464.jpeg?auto=compress&cs=tinysrgb&w=800" 
+                             alt="Sarah Johnson - Head of Counseling"
+                             loading="lazy">
+                    </div>
+                    <div class="team-info">
+                        <h3>Sarah Johnson</h3>
+                        <p class="team-role">Head of Counseling</p>
+                        <p class="team-bio">Sarah leads our counseling team, ensuring that all students receive personalized and effective guidance from our expert counselors.</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=800" 
+                             alt="David Chen - Chief Technology Officer"
+                             loading="lazy">
+                    </div>
+                    <div class="team-info">
+                        <h3>David Chen</h3>
+                        <p class="team-role">Chief Technology Officer</p>
+                        <p class="team-bio">David oversees the development and maintenance of our platform, ensuring a seamless experience for both students and counselors.</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="https://images.pexels.com/photos/3727468/pexels-photo-3727468.jpeg?auto=compress&cs=tinysrgb&w=800" 
+                             alt="Emily Rodriguez - Director of Student Success"
+                             loading="lazy">
+                    </div>
+                    <div class="team-info">
+                        <h3>Emily Rodriguez</h3>
+                        <p class="team-role">Director of Student Success</p>
+                        <p class="team-bio">Emily works closely with students to ensure they get the most out of our platform and achieve their career goals.</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Join Our Mission</h2>
+                <p>Be a part of our journey to transform career guidance</p>
+                <a href="{{url_for('contact')}}" class="btn btn-primary-dark">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'landing_page/footer.html' %}
+
+    <button id="backToTop" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="{{url_for('static',filename='js/landing_page/script.js')}}"></script>
+</body>
+</html>

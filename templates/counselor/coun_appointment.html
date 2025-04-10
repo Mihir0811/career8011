@@ -1,0 +1,340 @@
+{% extends 'counselor/counselor_base.html' %}
+{% block coun_content %}
+    <div class="section-header">
+        <h1>Manage Appointments</h1>
+        <h2>{{ id }}</h2>
+    </div>
+    
+    <div class="filter-container">
+        <!-- <div class="filter-group">
+            <label for="appointment-status">Status:</label>
+            <select id="appointment-status" class="filter-select">
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div> -->
+        
+            <div class="filter-group">
+                <label for="appointment-search">Search:</label>
+                <div class="search-input">
+                    <input type="text" id="appointment-search" placeholder="Search by student name">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <script>
+                document.getElementById('appointment-search').addEventListener('input', function () {
+                    const searchQuery = this.value.toLowerCase();
+                    const tableRows = document.querySelectorAll('#appointments-table-body tr');
+            
+                    tableRows.forEach(row => {
+                        const studentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                        if (studentName.includes(searchQuery)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            </script>
+        </div>
+        
+        <div class="view-container" id="table-view">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Student Name</th>
+                        <th>Topic</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="appointments-table-body">
+                    {% for appointment in appointments %}
+                    <tr data-appointment-id="{{ appointment.id }}">
+                        <td>{{ appointment.date_time }}</td>
+                        <td>{{ appointment.student_name }}</td>
+                        <td>{{ appointment.topic }}</td>
+                        <td>
+                            <span class="status-badge {{ appointment.counselor_status | lower }}">
+                                {{ appointment.counselor_status.capitalize() }}
+                            </span>
+                        </td>
+                        <td class="action-cell">
+                            {% if appointment.counselor_status == 'Pending' %}
+                                <button class="action-icon approve" title="Approve">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="action-icon reject" title="Reject">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <!-- <button class="action-icon reschedule" title="Reschedule">
+                                    <i class="fas fa-clock"></i>
+                                </button> -->
+                            {% elif appointment.counselor_status == 'Approved' %}
+                                <button class="action-icon view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <!-- <button class="action-icon reschedule" title="Reschedule">
+                                    <i class="fas fa-clock"></i>
+                                </button> -->
+                                <button class="action-icon cancel" title="Cancel">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            {% elif appointment.counselor_status == 'Rejected' %}
+                                <button class="action-icon view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <!-- <button class="action-icon reschedule" title="Reschedule">
+                                    <i class="fas fa-clock"></i>
+                                </button> -->
+                            {% elif appointment.counselor_status == 'Canceled' %}
+                                <button class="action-icon view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <!-- <button class="action-icon reschedule" title="Reschedule">
+                                    <i class="fas fa-clock"></i>
+                                </button> -->
+                            {% elif appointment.counselor_status == 'Completed' %}
+                                <button class="action-icon view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <!-- <button class="action-icon feedback" title="Add Feedback">
+                                    <i class="fas fa-comment"></i>
+                                </button> -->
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="student-details-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <!-- <span id="modal-close-button" class="modal-close">&times;</span> -->
+                <h3>Student Details</h3>
+                <p><strong>Name:</strong> <span id="modal-student-name"></span></p>
+                <p><strong>Email:</strong> <span id="modal-student-email"></span></p>
+                <p><strong>Phone:</strong> <span id="modal-student-phone"></span></p>
+                <p><strong>Interests:</strong> <span id="modal-student-interests"></span></p>
+                <p><strong>Purpose:</strong> <span id="modal-appointment-purpose"></span></p>
+                <p><strong>Date:</strong> <span id="modal-appointment-date"></span></p>
+                <p><strong>Time Slot:</strong> <span id="modal-appointment-time-slot"></span></p>
+                <button id="modal-close-button">Close</button>
+            </div>
+        </div>
+    
+    <!-- Calendar View -->
+    
+<script>
+   document.addEventListener('click', function (event) {
+    if (event.target.closest('.action-icon.approve')) {
+    
+        const row = event.target.closest('tr');
+        const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+
+        if (appointmentId) {
+            
+            fetch(`/approve_appointment/${appointmentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert('Appointment approved successfully.');
+                        location.reload(); 
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred while approving the appointment.');
+                });
+        } else {
+            alert('Invalid appointment ID.');
+        }
+    }
+
+    if (event.target.closest('.action-icon.reject')) {
+        const row = event.target.closest('tr');
+        const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+
+        if (appointmentId) {
+            fetch(`/reject_appointment/${appointmentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert('Appointment rejected successfully.');
+                        location.reload(); 
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred while rejecting the appointment.');
+                });
+        } else {
+            alert('Invalid appointment ID.');
+        }
+    }
+
+    if (event.target.closest('.action-icon.cancel')) {
+        const row = event.target.closest('tr');
+        const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+
+        if (appointmentId) {
+            const confirmCancel = confirm('Are you sure you want to cancel this appointment?');
+
+            if (confirmCancel) {
+                fetch(`/cancel_appointment/${appointmentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            alert('Appointment canceled successfully.');
+                            location.reload(); 
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        alert('An error occurred while canceling the appointment.');
+                    });
+            }
+        } else {
+            alert('Invalid appointment ID.');
+        }
+    }
+
+    if (event.target.closest('.action-icon.view')) {
+        const row = event.target.closest('tr');
+        const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+
+        if (appointmentId) {
+            fetch(`/view_student_details/${appointmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('modal-student-name').textContent = data.student_name;
+                        document.getElementById('modal-student-email').textContent = data.email;
+                        document.getElementById('modal-student-phone').textContent = data.phone;
+                        document.getElementById('modal-student-interests').textContent = data.interests;
+                        document.getElementById('modal-appointment-purpose').textContent = data.purpose;
+                        document.getElementById('modal-appointment-date').textContent = data.date;
+                        document.getElementById('modal-appointment-time-slot').textContent = data.time_slot;
+
+                        const modal = document.getElementById('student-details-modal');
+                        modal.style.display = 'flex';
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch details.');
+                });
+        }
+    }
+
+    if (event.target.id === 'modal-close-button' || event.target.closest('.modal-close')) {
+        const modal = document.getElementById('student-details-modal');
+        modal.style.display = 'none';
+    }
+});
+</script>
+<style>
+/* Modal background styling */
+#student-details-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark transparent overlay */
+    z-index: 1000; /* Ensure it appears above all content */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+/* Modal content styling */
+.modal-content {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+    max-width: 90%; /* Responsive for smaller screens */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative; /* For close button positioning */
+}
+
+/* Modal header styling */
+.modal-content h3 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+}
+
+/* Close button styling */
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+/* Close button hover effect */
+.modal-close:hover {
+    color: #000;
+}
+
+/* Button styling */
+#modal-close-button {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: red;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+#modal-close-button:hover {
+    background-color: #0056b3;
+}
+
+/* Modal body text styling */
+.modal-content p {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #555;
+}
+</style>
+{% endblock %}

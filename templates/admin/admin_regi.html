@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/admin/admin_regi.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>Admin Registration</h1>
+        </header>
+
+        <div class="alert-container" id="alertContainer"></div>
+
+        <main class="registration-container">
+            <form id="adminRegistrationForm" class="registration-form" enctype="multipart/form-datax" method="post">
+                <div class="form-columns">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="fullName">Full Name <span class="required">*</span></label>
+                            <input type="text" id="fullName" name="fullName">
+                            <div class="error-message" id="fullNameError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" >
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">Username <span class="required">*</span></label>
+                            <input type="text" id="username" name="username">
+                            <div class="error-message" id="usernameError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password <span class="required">*</span></label>
+                            <div class="password-input-container">
+                                <input type="password" id="password" name="password">
+                                <button type="button" class="toggle-password" tabindex="-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-meter">
+                                    <div class="meter-section"></div>
+                                    <div class="meter-section"></div>
+                                    <div class="meter-section"></div>
+                                    <div class="meter-section"></div>
+                                </div>
+                                <div class="strength-text">Password Strength: <span>Weak</span></div>
+                            </div>
+                            <div class="password-requirements">
+                                <p>Password must contain:</p>
+                                <ul>
+                                    <li id="length"><i class="fa-solid fa-circle"></i> At least 8 characters</li>
+                                    <li id="uppercase"><i class="fa-solid fa-circle"></i> One uppercase letter</li>
+                                    <li id="lowercase"><i class="fa-solid fa-circle"></i> One lowercase letter</li>
+                                    <li id="number"><i class="fa-solid fa-circle"></i> One number</li>
+                                    <li id="special"><i class="fa-solid fa-circle"></i> One special character</li>
+                                </ul>
+                            </div>
+                            <div class="error-message" id="passwordError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                            <div class="password-input-container">
+                                <input type="password" id="confirmPassword" name="confirmPassword" >
+                                <button type="button" class="toggle-password" tabindex="-1">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="error-message" id="confirmPasswordError"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number</label>
+                            <input type="number" name="contactNumber" id="contactNumber" minlength="10">
+                            <div class="error-message" id="roleError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="securityQuestion">Security Question <span class="required">*</span></label>
+                            <select id="securityQuestion" name="securityQuestion">
+                                <option value="" disabled selected>Select a security question</option>
+                                <option value="What was your first pet's name?">What was your first pet's name?</option>
+                                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                                <option value="What was the name of your first school?">What was the name of your first school?</option>
+                                <option value="What is your favorite book?">What is your favorite book?</option>
+                                <option value="In what city were you born?">In what city were you born?</option>
+                            </select>
+                            <div class="error-message" id="securityQuestionError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="securityAnswer">Answer to Security Question <span class="required">*</span></label>
+                            <input type="text" id="securityAnswer" name="securityAnswer">
+                            <div class="error-message" id="securityAnswerError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profilePicture">Profile Picture</label>
+                            <div class="file-upload-container">
+                                <div class="file-upload-preview" id="profilePreview">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div class="file-upload-input">
+                                    <input type="file" id="profilePicture" name="profilePicture" accept=".jpg,.jpeg,.png">
+                                    <button type="button" class="file-upload-btn">Choose File</button>
+                                    <span class="file-name">No file chosen</span>
+                                </div>
+                            </div>
+                            <div class="file-requirements">
+                                <p>Allowed formats: .jpg, .jpeg, .png</p>
+                                <p>Maximum size: 2MB</p>
+                            </div>
+                            <div class="error-message" id="profilePictureError"></div>
+                        </div>
+
+                        <div class="form-group recaptcha-container">
+                            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                            <div class="error-message" id="recaptchaError"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
+                    <button type="submit" id="registerBtn" class="btn btn-primary">
+                        <span class="btn-text">Register</span>
+                        <span class="btn-loader"></span>
+                    </button>
+                </div>
+            </form>
+        </main>
+
+        <footer class="page-footer">
+            <p class="disclaimer">Only authorized personnel are allowed to register.</p>
+            <p class="copyright">&copy; 2025 Admin Panel. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Registration Successful</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <p>Admin registered successfully!</p>
+                <p>You will be redirected to the Admin Dashboard shortly.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{{url_for('admin_login')}}" class="btn btn-primary" id="goToDashboard" style="text-decoration: none; color: aliceblue;">Go to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static',filename='js/admin/admin_regi.js') }}"></script>
+</body>
+<script>
+    document.getElementById('adminRegistrationForm').addEventListener('submit', async function (event) {
+        event.preventDefault(); 
+
+        const formData = new FormData(this); 
+
+        try {
+            const response = await fetch('/admin_regi', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Admin registered successfully!');
+                // window.location.reload(); 
+            } else {
+                // document.getElementById('alertContainer').innerHTML = result.message;
+                // alert(`Error: ${result.message}`);
+                
+                const errorSummary = document.createElement('div');
+            errorSummary.className = 'alert alert-danger';
+            errorSummary.innerHTML =   `<strong>Error:</strong> ${result.message}`;
+            alertContainer.appendChild(errorSummary);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while registering the admin.');
+        }
+    });
+</script>
+
+</html>

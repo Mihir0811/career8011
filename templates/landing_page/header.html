@@ -1,0 +1,85 @@
+<div class="container">
+    <div class="logo">
+        <img src="../../static/img/logo.png" alt="CareerConnect Logo">
+        <span>CareerNavigator</span>
+    </div>
+    <nav class="main-nav">
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
+            <li><a href="{{ url_for('about') }}">About Us</a></li>
+            <li><a href="{{ url_for('counselor')}}">Counselor</a></li>
+            <li><a href="{{ url_for('student')}}">Student</a></li>
+            <li><a href="{{ url_for('services')}}">Services</a></li>
+            <li><a href="{{ url_for('faq')}}">FAQ</a></li>
+            <li><a href="{{ url_for('contact')}}">Contact Us</a></li>
+        </ul>
+        <!-- <div class="auth-buttons">
+            <a href="#" class="btn btn-outline">Log In</a>
+            <a href="#" class="btn btn-primary">Sign Up</a>
+        </div> -->
+        <button class="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+</div>
+
+<!-- Mobile Navigation -->
+<div class="mobile-nav">
+<ul class="mobile-nav-links">
+    <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
+    <li><a href="{{ url_for('about') }}">About Us</a></li>
+    <li><a href="{{ url_for('counselor') }}">Counselor</a></li>
+    <li><a href="{{ url_for('student') }}">Student</a></li>
+    <li><a href="{{ url_for('services') }}">Services</a></li>
+    <li><a href="{{ url_for('faq') }}">FAQ</a></li>
+    <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
+</ul>
+<div class="mobile-auth-buttons">
+    <a href="#" class="btn btn-outline">Get Stareted As Sy</a>
+    <a href="#" class="btn btn-primary">Sign Up</a>
+</div>
+</div>
+
+<style>
+.nav-links a.active,
+.mobile-nav-links a.active {
+color: #4A90E2; /* Or your preferred active link color */
+font-weight: bold;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Get all navigation links
+const navLinks = document.querySelectorAll('.nav-links a, .mobile-nav-links a');
+
+// Remove all active classes first
+function removeAllActive() {
+    navLinks.forEach(link => link.classList.remove('active'));
+}
+
+// Set active based on current page
+function setActiveLink() {
+    const currentPath = window.location.pathname;
+    removeAllActive();
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// Set active link on page load
+setActiveLink();
+
+// Update active link when clicking navigation
+navLinks.forEach(link => {
+    link.addEventListener('click', function() {
+        removeAllActive();
+        this.classList.add('active');
+    });
+});
+});
+</script>

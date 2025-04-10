@@ -1,0 +1,663 @@
+{% extends 'student/stud-base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block head %}
+<style>
+    /* Dashboard Styles */
+    .dashboard-content {
+        padding: 20px 0;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+        background: linear-gradient(rgba(79, 70, 229, 0.85), rgba(79, 70, 229, 0.95)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80');
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        padding: 40px 30px;
+        color: white;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 100%;
+        background-image: url('https://www.transparentpng.com/thumb/student/graduate-students-with-teacher-png-pictures-16.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: right center;
+        opacity: 0.2;
+        animation: floatImage 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatImage {
+        from {
+            transform: translateY(0) rotate(0deg);
+        }
+
+        to {
+            transform: translateY(10px) rotate(3deg);
+        }
+    }
+
+    .welcome-section h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .welcome-section p {
+        font-size: 16px;
+        opacity: 0.9;
+        max-width: 60%;
+    }
+
+    /* Overview Cards */
+    .overview-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 35px;
+    }
+
+    .card {
+        background-color: var(--surface-color);
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .card-header i {
+        font-size: 22px;
+        color: var(--primary-color);
+    }
+
+    .card-content {
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* Profile Completion Card */
+    .progress-circle {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: conic-gradient(var(--primary-color) 0% 75%, #e5e7eb 75% 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .progress-circle::before {
+        content: '';
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: white;
+    }
+
+    .progress-number {
+        position: relative;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .profile-completion p {
+        text-align: center;
+        color: var(--text-secondary);
+        margin: 5px 0 15px;
+    }
+
+    /* Appointment Card */
+    .appointment-info {
+        width: 100%;
+        text-align: left;
+    }
+
+    .appointment-info h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 15px;
+    }
+
+    .appointment-info p {
+        display: flex;
+        align-items: center;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+    }
+
+    .appointment-info p i {
+        color: var(--primary-color);
+        margin-right: 10px;
+        width: 20px;
+    }
+
+    .appointment-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    /* Career Progress Card */
+    .chart-legend {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+    }
+
+    .legend-color {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        margin-right: 5px;
+    }
+
+    /* Recommended Counselors */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .view-all {
+        color: var(--primary-color);
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .view-all:hover {
+        text-decoration: underline;
+    }
+
+    .view-all i {
+        transition: transform 0.2s ease;
+    }
+
+    .view-all:hover i {
+        transform: translateX(3px);
+    }
+
+    .counselor-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+        margin-bottom: 35px;
+    }
+
+    .counselor-card {
+        display: flex;
+        background-color: var(--surface-color);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .counselor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .counselor-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 0;
+        object-fit: cover;
+    }
+
+    .counselor-info {
+        padding: 15px;
+        flex: 1;
+    }
+
+    .counselor-info h3 {
+        margin: 0 0 5px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .specialization {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .rating {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .rating i {
+        color: #F59E0B;
+        font-size: 14px;
+    }
+
+    .rating span {
+        margin-left: 5px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    /* Resources Section */
+    .resource-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+    }
+
+    .resource-card {
+        background-color: var(--surface-color);
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .resource-icon {
+        background-color: #f8f9fa;
+        width: 100%;
+        height: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+        color: var(--primary-color);
+    }
+
+    .resource-info {
+        padding: 20px;
+    }
+
+    .resource-info h3 {
+        margin: 0 0 10px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .resource-info p {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-bottom: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Buttons */
+    .btn-primary,
+    .btn-secondary,
+    .btn-outline {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .overview-cards {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .welcome-section::before {
+            display: none;
+        }
+
+        .welcome-section p {
+            max-width: 100%;
+        }
+
+        .counselor-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .appointment-actions {
+            flex-direction: column;
+        }
+
+        .chart-legend {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-content">
+    <div class="welcome-section" style="color: white !important;">
+        <h1 style="color: white !important;">Welcome back, {{ session['student_name'] }}!</h1>
+        <p style="color: white !important" ;>Track your progress, manage appointments, and discover resources to
+            accelerate your career journey.</p>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="overview-cards">
+        <div class="card profile-completion">
+            <div class="card-header">
+                <h3>Your Profile Details</h3>
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="card-content">
+                <!-- <div class="progress-circle" data-progress="75">
+                    <span class="progress-number">75%</span>
+                </div> -->
+                <div>
+                    <h1>{{ session['student_name'] }}</h1>
+                </div>
+                <p>Complete your profile to get personalized career recommendations</p>
+                <!-- <button class="btn-primary">Complete Profile</button> -->
+            </div>
+        </div>
+
+        <div class="card next-appointment">
+            <div class="card-header">
+                <h3>Next Appointment</h3>
+                <i class="fas fa-calendar"></i>
+            </div>
+            <div class="card-content">
+                <div class="appointment-info">
+                    <h4>Career Planning Session</h4>
+                    <p><i class="fas fa-user"></i> Dr. Sarah Smith</p>
+                    <p><i class="fas fa-clock"></i> Tomorrow, 2:00 PM</p>
+                    <p><i class="fas fa-video"></i> Google Meet</p>
+                </div>
+                <div class="appointment-actions">
+                    <button class="btn-secondary">Join Meeting</button>
+                    <button class="btn-outline">Reschedule</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card career-progress">
+            <div class="card-header">
+                <h3>All Students Interests</h3>
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <div class="card-content">
+                <!-- <canvas id="interestsChart"></canvas>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--primary-color)"></span>
+                        <span>Technology</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--secondary-color)"></span>
+                        <span>Business</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--warning-color)"></span>
+                        <span>Design</span>
+                    </div>
+                </div> -->
+                <canvas id="interestsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommended Counselors -->
+    <section class="recommended-counselors">
+        <div class="section-header">
+            <h2>Recommended Counselors</h2>
+            <a href="{{ url_for('find_counselors') }}" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="counselor-cards">
+            {% if counselors %}
+            {% for counselor in counselors %}
+            <div class="counselor-card">
+                <img src="{{ counselor.profile_picture or 'https://via.placeholder.com/150' }}"
+                    alt="{{ counselor.full_name }}" class="counselor-img">
+                <div class="counselor-info">
+                    <h3>{{ counselor.full_name }}</h3>
+                    <p class="specialization">{{ counselor.specialization }}</p>
+                    <div class="rating">
+                        {% set rating = (counselor.feedbacks | sum(attribute='rating') / (counselor.feedbacks | length)
+                        if counselor.feedbacks else 0) %}
+                        {% for _ in range(rating|int) %}
+                        <i class="fas fa-star"></i>
+                        {% endfor %}
+                        {% if rating % 1 >= 0.5 %}
+                        <i class="fas fa-star-half-alt"></i>
+                        {% endif %}
+                        <span>{{ rating|round(1) }} ({{ counselor.feedbacks|length }})</span>
+                    </div>
+                    <button class="btn-primary">Book Appointment</button>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>No recommended counselors found based on your interests.</p>
+            {% endif %}
+        </div>
+    </section>
+
+
+
+    <!-- Recent Resources -->
+    <section class="recent-resources">
+        <div class="section-header">
+            <h2>Recent Resources</h2>
+            <a href="{{ url_for('resources') }}" class="view-all">Browse Library <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="resource-cards">
+            {% for resource in recent_resources %}
+            <div class="resource-card">
+                <div class="resource-icon">
+                    {% if resource.file_type.lower() == 'pdf' %}
+                    <i class="fas fa-file-pdf"></i>
+                    {% elif resource.file_type.lower() in ['mp4', 'video', 'avi', 'mkv'] %}
+                    <i class="fas fa-play-circle"></i>
+                    {% elif resource.file_type.lower() in ['book', 'ebook', 'epub'] %}
+                    <i class="fas fa-book"></i>
+                    {% elif resource.file_type.lower() in ['image', 'jpg', 'jpeg', 'png', 'gif'] %}
+                    <i class="fas fa-image"></i>
+                    {% else %}
+                    <i class="fas fa-file"></i>
+                    {% endif %}
+                </div>
+                <div class="resource-info">
+                    <h3>{{ resource.title }}</h3>
+                    <p>{{ resource.description }}</p>
+                    <a href="{{ url_for('download_resource',resource_id=resource.id) }}" class="btn-primary"
+                        download="{{ resource.title }}">Download {{ resource.file_type }}</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<script>
+    // Initialize charts
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Career Interests Chart
+        fetch('/popular_interests')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const labels = data.data.map(item => item.interest);
+                    const counts = data.data.map(item => item.count);
+
+                    const predefinedColors = [
+                        '#4F46E5',
+                        '#10B981',
+                        '#F59E0B',
+                        '#EF4444',
+                        '#8B5CF6',
+                        '#3B82F6',
+                        '#F43F5E',
+                        '#14B8A6',
+                        '#F97316',
+                        '#22C55E'
+                    ];
+
+                    const backgroundColors = labels.map((_, index) =>
+                        predefinedColors[index % predefinedColors.length]
+                    );
+
+                    const borderColors = backgroundColors.map(color => color);
+
+                    new Chart(document.getElementById('interestsChart'), {
+                        type: 'doughnut', // Change to 'doughnut' for donut chart
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Popular Interests',
+                                data: counts,
+                                backgroundColor: backgroundColors,
+                                borderColor: borderColors,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            cutout: '50%', // Creates the donut hole effect
+                        }
+                    });
+
+                } else {
+                    console.error(data.message);
+                }
+            });
+
+
+        // Add animation to cards
+        const cards = document.querySelectorAll('.card, .counselor-card, .resource-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        cards.forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            observer.observe(card);
+        });
+    });
+</script>
+{% endblock %}

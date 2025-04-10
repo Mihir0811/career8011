@@ -1,0 +1,213 @@
+<div class="search-container1" style="margin-left: 20px;">
+    <h2 class="animated-text"></h2>
+
+</div>
+
+<div class="top-bar-right">
+    <div class="notifications">
+        <button class="notification-btn" id="notificationBtn">
+            <i class="fas fa-bell"></i>
+            <!-- <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>     -->
+        </button>
+        <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+            <div class="notification-header">
+                <h3>Notifications</h3>
+                <button class="mark-all-read" id="markAllReadBtn">Mark all as read</button>
+            </div>
+            <div class="notification-list" id="notificationList">
+                <div class="notification-item">No notifications</div> <!-- Placeholder -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const notificationBtn = document.getElementById("notificationBtn");
+            const notificationDropdown = document.getElementById("notificationDropdown");
+            const notificationBadge = document.getElementById("notificationBadge");
+            const notificationList = document.getElementById("notificationList");
+            const markAllReadBtn = document.getElementById("markAllReadBtn");
+
+            // Function to fetch notifications
+            function fetchNotifications() {
+                fetch('/counselor_notifications')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.notifications && data.notifications.length > 0) {
+                            notificationList.innerHTML = ""; // Clear existing notifications
+                            data.notifications.forEach(notification => {
+                                const notificationItem = document.createElement("div");
+                                notificationItem.classList.add("notification-item", "unread");
+
+                                notificationItem.innerHTML = `
+                                    <div class="notification-icon">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>${notification.title} - ${notification.message}</p>
+                                        <span>${notification.created_at}</span>
+                                    </div>
+                                `;
+
+                                notificationList.appendChild(notificationItem);
+                            });
+
+                            // Show badge and set count
+                            notificationBadge.style.display = "inline-block";
+                            notificationBadge.textContent = data.notifications.length;
+                        } else {
+                            notificationList.innerHTML = `<div class="notification-item">No notifications</div>`;
+                            notificationBadge.style.display = "none"; // Hide badge if no notifications
+                        }
+                    })
+                    .catch(error => console.error("Error fetching notifications:", error));
+            }
+
+            // Function to toggle notification dropdown
+            notificationBtn.addEventListener("click", function () {
+                notificationDropdown.style.display =
+                    notificationDropdown.style.display === "none" ? "block" : "none";
+            });
+
+            // Function to mark all notifications as read
+            markAllReadBtn.addEventListener("click", function () {
+                notificationList.querySelectorAll(".notification-item").forEach(item => {
+                    item.classList.remove("unread");
+                });
+
+                // Hide badge after marking as read
+                notificationBadge.style.display = "none";
+            });
+
+            // Fetch notifications when the page loads
+            fetchNotifications();
+
+            // Refresh notifications every 30 seconds (optional)
+            setInterval(fetchNotifications, 30000);
+        });
+    </script>
+
+
+
+    <div class="profile-dropdown">
+        <button class="profile-btn" id="profileBtn">
+            <img src="{{ profile_picture }}" alt="profileImg" class="profile-img">
+            <!-- <img src="https://ui-avatars.com/api/?name={{ session['counselor_name'] | urlencode }}" alt="profileImg" class="profile-img"> -->
+            <span class="profile-name">{{session['counselor_name']}}</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="profile-menu" id="profileMenu">
+            <a href="{{ url_for('coun_profile') }}"><i class="fas fa-user"></i> My Profile</a>
+            <div class="dropdown-divider"></div>
+            <a href="{{ url_for('coun_logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .search-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .search-input-wrapper {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .animated-text {
+        font-size: 2.5rem;
+        background: linear-gradient(45deg, #4158D0, #C850C0, #FFCC70);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 300%;
+        animation: gradient-animation 10s ease infinite;
+    }
+
+    .animated-text::after {
+        content: '|';
+        margin-left: 2px;
+        animation: blink 1s infinite;
+        font-weight: bold;
+    }
+
+    @keyframes gradient-animation {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    @keyframes blink {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+    }
+</style>
+
+<script>
+    const phrases = [
+        "Welcome Counselor",
+        "Guide The Future",
+        "Shape Careers",
+        "Inspire Growth",
+        "Transform Lives"
+    ];
+
+    let currentPhraseIndex = 0;
+    let currentCharIndex = 0;
+    let isDeleting = false;
+    const typingSpeed = 100;
+    const deletingSpeed = 50;
+    const pauseTime = 2000;
+
+    function typeText() {
+        const element = document.querySelector('.animated-text');
+        const currentPhrase = phrases[currentPhraseIndex];
+
+        if (isDeleting) {
+            element.textContent = currentPhrase.substring(0, currentCharIndex - 1);
+            currentCharIndex--;
+        } else {
+            element.textContent = currentPhrase.substring(0, currentCharIndex + 1);
+            currentCharIndex++;
+        }
+
+        element.style.setProperty('--cursor-visibility',
+            (currentCharIndex === currentPhrase.length && !isDeleting) ? 'hidden' : 'visible'
+        );
+
+        let timeout = isDeleting ? deletingSpeed : typingSpeed;
+
+        if (!isDeleting && currentCharIndex === currentPhrase.length) {
+            isDeleting = true;
+            timeout = pauseTime;
+        } else if (isDeleting && currentCharIndex === 0) {
+            isDeleting = false;
+            currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+        }
+
+        setTimeout(typeText, timeout);
+    }
+
+    // Start the animation when the page loads
+    window.addEventListener('load', typeText);
+</script>

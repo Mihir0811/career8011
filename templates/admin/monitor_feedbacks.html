@@ -1,24 +1,27 @@
 {% extends 'admin/base.html' %}
 {% block title %}Monitor Feedbacks - Admin Panel{% endblock %}
 {% block content %}
-
-<div>
-    <h1 class="section-title">Monitor Feedbacks</h1>
-
-    <div class="table-actions">
-        <div class="search-filters">
-            <select class="filter-select">
-                <option value="all">All Star</option>
-                <option value="5">5 Star</option>
-                <option value="4">4 Star</option>
-                <option value="3">3 Star</option>
-                <option value="2">2 Star</option>
-                <option value="1">1 Star</option>
-            </select>
+<div class="monitor-feedbacks-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Monitor Feedbacks</h1>
+            <p>View and track student ratings and feedback for counselors</p>
+        </div>
+        <div class="header-actions">
+            <div class="filter-container">
+                <select class="filter-select" id="rating-filter">
+                    <option value="all">All Star Ratings</option>
+                    <option value="5">5 Star</option>
+                    <option value="4">4 Star</option>
+                    <option value="3">3 Star</option>
+                    <option value="2">2 Star</option>
+                    <option value="1">1 Star</option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <div class="table-container">
+    <div class="feedbacks-table-container">
         <table class="data-table">
             <thead>
                 <tr>
@@ -31,19 +34,38 @@
             <tbody id="feedback-table-body">
                 {% for feedback in feedbacks %}
                 <tr>
-                    <td>{{ feedback.counselor.full_name }}</td>
-                    <td style="white-space: nowrap;">{{ feedback.student.name }}</td>
-                    <td>{{ feedback.feedback_text }}</td>
                     <td>
-                        <span style="white-space: nowrap;">
+                        <div class="counselor-info">
+                            <div class="avatar" data-initial="{{ feedback.counselor.full_name[0] }}">
+                                <img src="https://ui-avatars.com/api/?name={{ feedback.counselor.full_name | urlencode }}&background=random&color=fff" alt="{{ feedback.counselor.full_name }}">
+                            </div>
+                            <span>{{ feedback.counselor.full_name }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="student-info">
+                            <div class="avatar" data-initial="{{ feedback.student.name[0] }}">
+                                <img src="https://ui-avatars.com/api/?name={{ feedback.student.name | urlencode }}&background=random&color=fff" alt="{{ feedback.student.name }}">
+                            </div>
+                            <span>{{ feedback.student.name }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="feedback-text">
+                            {{ feedback.feedback_text }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rating-stars">
                             {% for i in range(1, 6) %}
                                 {% if i <= feedback.rating %}
-                                    <i class="fas fa-star" style="color: #f59e0b"></i>
+                                    <i class="fas fa-star"></i>
                                 {% else %}
-                                    <i class="far fa-star" style="color: #f59e0b;"></i>
+                                    <i class="far fa-star"></i>
                                 {% endif %}
                             {% endfor %}
-                        </span>
+                            <span class="rating-value">{{ feedback.rating }}.0</span>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -52,8 +74,293 @@
     </div>
 </div>
 
+<style>
+    /* Main Container */
+    .monitor-feedbacks-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    /* Page Header */
+    .page-header {
+        position: relative;
+        background-image: url('https://img.freepik.com/free-photo/customer-experience-concept-best-excellent-services-rating-client-satisfaction-surveys_161092-335.jpg?w=1380&t=st=1695270801~exp=1695271401~hmac=bb7bc0b7eefe8a8df0a52f92de52cdd10ff1dd8af9e60f052a1e3a6cd9cb2ca3');
+        background-size: cover;
+        background-position: center;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.85) 0%, rgba(234, 179, 8, 0.9) 100%);
+        z-index: 0;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-content h1 {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .header-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    /* Filter Select */
+    .filter-select {
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: calc(100% - 15px) center;
+        padding-right: 40px;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        font-size: 14px;
+        min-width: 200px;
+    }
+
+    .filter-select:focus {
+        outline: none;
+        background-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-select option {
+        background-color: #F59E0B;
+        color: white;
+    }
+
+    /* Table Container */
+    .feedbacks-table-container {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        background-color: #f8fafc;
+        color: #4b5563;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 16px 20px;
+        text-align: left;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1e293b;
+        vertical-align: middle;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #fef3c7;
+    }
+
+    /* Counselor Info */
+    .counselor-info, .student-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #64748b;
+        position: relative;
+        border: 2px solid #F59E0B;
+        transition: all 0.3s ease;
+    }
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .counselor-info span, .student-info span {
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    /* Feedback Text */
+    .feedback-text {
+        color: #4b5563;
+        font-size: 14px;
+        line-height: 1.5;
+        max-width: 400px;
+    }
+
+    /* Rating Stars */
+    .rating-stars {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+    }
+
+    .rating-stars i {
+        color: #F59E0B;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .rating-stars i:hover {
+        transform: scale(1.2);
+    }
+
+    .rating-value {
+        margin-left: 8px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    /* Empty State */
+    .empty-state {
+        padding: 40px 20px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .monitor-feedbacks-container {
+        animation: fadeIn 0.5s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-actions {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .filter-container {
+            width: 100%;
+        }
+
+        .filter-select {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .data-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .counselor-info, .student-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .avatar {
+            margin: 0 auto;
+        }
+
+        .counselor-info span, .student-info span {
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .feedback-text {
+            max-width: 200px;
+        }
+    }
+</style>
+
 <script>
-    document.querySelector('.filter-select').addEventListener('change', function () {
+    document.getElementById('rating-filter').addEventListener('change', function () {
         const selectedRating = this.value === 'all' ? '' : this.value; // Get selected rating or default
         const url = `/monitor_feedbacks?rating=${selectedRating}&ajax=true`;
 
@@ -64,31 +371,49 @@
                 tableBody.innerHTML = ''; // Clear existing rows
 
                 if (feedbacks.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="4">No feedbacks found.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="4"><div class="empty-state">No feedbacks found.</div></td></tr>';
                     return;
                 }
 
                 feedbacks.forEach(feedback => {
-                    const row = document.createElement('tr');
-
                     // Generate star icons dynamically
                     let starHTML = '';
                     for (let i = 1; i <= 5; i++) {
                         if (i <= feedback.rating) {
-                            starHTML += '<i class="fas fa-star" style="color: #f59e0b;"></i>';
+                            starHTML += '<i class="fas fa-star"></i>';
                         } else {
-                            starHTML += '<i class="far fa-star" style="color: #f59e0b;"></i>';
+                            starHTML += '<i class="far fa-star"></i>';
                         }
                     }
 
+                    const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${feedback.counselor_name}</td>
-                        <td>${feedback.student_name}</td>
-                        <td>${feedback.description}</td>
                         <td>
-                            <span style="white-space: nowrap;">
+                            <div class="counselor-info">
+                                <div class="avatar" data-initial="${feedback.counselor_name[0]}">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(feedback.counselor_name)}&background=random&color=fff" alt="${feedback.counselor_name}">
+                                </div>
+                                <span>${feedback.counselor_name}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="student-info">
+                                <div class="avatar" data-initial="${feedback.student_name[0]}">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(feedback.student_name)}&background=random&color=fff" alt="${feedback.student_name}">
+                                </div>
+                                <span>${feedback.student_name}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="feedback-text">
+                                ${feedback.description}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="rating-stars">
                                 ${starHTML}
-                            </span>
+                                <span class="rating-value">${feedback.rating}.0</span>
+                            </div>
                         </td>
                     `;
                     tableBody.appendChild(row);
@@ -97,5 +422,4 @@
             .catch(error => console.error('Error fetching feedbacks:', error));
     });
 </script>
-
 {% endblock %}

@@ -93,12 +93,17 @@
                     </div>
 
 
+                    <div>
                     <button type="submit" class="verify-btn" id="verifyBtn">
                         <span>Verify Code</span>
                         <i class="fas fa-check"></i>
                     </button>
-
+                  </div>
                 </form>
+                <button type="submit" class="resend-btn" id="resendBtn">
+                    <span>Resend Code</span>
+                    <!-- <i class="fas fa-check"></i> -->
+                </button>
 
                 <div class="back-to-login">
                     <button id="backToLoginBtn">
@@ -123,3 +128,60 @@
 </body>
 
 </html>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const resendBtn = document.getElementById('resendBtn');
+    const alertContainer = document.getElementById('alertContainer');
+
+    // Event Listener for Resend Button
+    resendBtn.addEventListener('click', function () {
+        const email = document.getElementById('email').value.trim();
+
+        if (!email) {
+            showAlert('error', 'Please enter a valid email address.');
+            return;
+        }
+
+        fetch('/resend_verification_code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', 'A new verification code has been sent to your email.');
+                } else {
+                    showAlert('error', data.error || data.message || 'Failed to resend verification code.');
+                }
+            })
+            .catch(error => {
+                showAlert('error', 'An error occurred. Please try again later.');
+                console.error('Error during resend:', error);
+            });
+    });
+
+    // Show Alerts Dynamically
+    function showAlert(type, message) {
+        const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+        const icon = type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check';
+
+        const alertElement = document.createElement('div');
+        alertElement.className = `alert ${alertClass}`;
+        alertElement.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+
+        alertContainer.innerHTML = ''; // Clear existing alerts
+        alertContainer.appendChild(alertElement);
+
+        setTimeout(() => {
+            if (alertContainer.contains(alertElement)) {
+                alertElement.remove();
+            }
+        }, 5000); // Auto-remove after 5 seconds
+    }
+});
+
+
+</script>

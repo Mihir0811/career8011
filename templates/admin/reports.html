@@ -1,88 +1,260 @@
 {% extends 'admin/base.html' %}
 {% block title %}Reports - Admin Panel{% endblock %}
 {% block content %}
-<h2 class="section-title">Reports</h2>
+<div class="reports-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Analytics & Reports</h1>
+            <p>Gain insights with comprehensive data visualizations</p>
+        </div>
+    </div>
 
-<!-- <div class="report-actions">
-    <div class="date-range">
-        <label>Date Range:</label>
-        <select class="filter-select">
-            <option value="week">Last Week</option>
-            <option value="month" selected>Last Month</option>
-            <option value="quarter">Last Quarter</option>
-            <option value="year">Last Year</option>
-        </select>
-    </div> -->
-<!-- <div class="export-buttons">
-        <button class="export-btn pdf">
-            <i class="fas fa-file-pdf"></i> Export as PDF
-        </button>
-        <button class="export-btn excel">
-            <i class="fas fa-file-excel"></i> Export as Excel
-        </button>
-    </div> -->
+    <div class="reports-grid">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3><i class="fas fa-chart-bar"></i> Popular Interests</h3>
+                <div class="chart-actions">
+                    <button class="chart-action-btn" title="Refresh Data"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+            <div class="chart-body">
+                <canvas id="interestsReportChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3><i class="fas fa-users"></i> All Registrations</h3>
+                <div class="chart-actions">
+                    <button class="chart-action-btn" title="Refresh Data"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div id="registrationsReportChart"></div>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3><i class="fas fa-calendar-check"></i> Appointment Status</h3>
+                <div class="chart-actions">
+                    <button class="chart-action-btn" title="Refresh Data"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+            <div class="chart-body">
+                <canvas id="overallAppointmentStatusChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3><i class="fas fa-user-tie"></i> Counselor Growth</h3>
+                <div class="chart-actions">
+                    <button class="chart-action-btn" title="Refresh Data"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div id="counselorGrowthChart"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="reports-grid">
-    <div class="chart-container">
-        <h3>Popular Interests</h3>
-        <canvas id="interestsReportChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <h3>All Registrations</h3>
-        <div id="registrationsReportChart"></div>
-    </div>
-    <div class="chart-container">
-        <h3>Appointment Status</h3>
-        <canvas id="overallAppointmentStatusChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <h3>Counselor Growth</h3>
-        <div id="counselorGrowthChart"></div>
-    </div>
-</div>
+<style>
+    /* Main Container */
+    .reports-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
 
+    /* Page Header */
+    .page-header {
+        position: relative;
+        background-image: url('https://img.freepik.com/free-photo/business-data-analysis_53876-94025.jpg?w=1380&t=st=1695290802~exp=1695291402~hmac=08c03e929e7210a964e1eaffa72c3784ba3f8fcd74f4ee9c3ee42d1b1cec2f68');
+        background-size: cover;
+        background-position: center;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
 
-<!-- <div class="table-container">
-    <h3>Appointment Summary</h3>
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Month</th>
-                <th>Total Appointments</th>
-                <th>Completed</th>
-                <th>Cancelled</th>
-                <th>Completion Rate</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>January</td>
-                <td>120</td>
-                <td>95</td>
-                <td>25</td>
-                <td>79%</td>
-            </tr>
-            <tr>
-                <td>February</td>
-                <td>145</td>
-                <td>110</td>
-                <td>35</td>
-                <td>76%</td>
-            </tr>
-            <tr>
-                <td>March</td>
-                <td>160</td>
-                <td>130</td>
-                <td>30</td>
-                <td>81%</td>
-            </tr>
-        </tbody>
-    </table>
-</div> -->
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.85) 0%, rgba(6, 148, 162, 0.9) 100%);
+        z-index: 0;
+    }
 
+    .header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-content h1 {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* Reports Grid */
+    .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
+    /* Chart Card */
+    .chart-card {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+        animation: cardFadeIn 0.6s ease forwards;
+        opacity: 0;
+    }
+
+    .chart-card:nth-child(1) { animation-delay: 0.1s; }
+    .chart-card:nth-child(2) { animation-delay: 0.2s; }
+    .chart-card:nth-child(3) { animation-delay: 0.3s; }
+    .chart-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .chart-card:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        transform: translateY(-5px);
+    }
+
+    .chart-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .chart-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .chart-header h3 i {
+        color: #14b8a6;
+    }
+
+    .chart-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .chart-action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background-color: #f1f5f9;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .chart-action-btn:hover {
+        background-color: #14b8a6;
+        color: white;
+    }
+
+    .chart-body {
+        padding: 20px;
+        flex-grow: 1;
+        min-height: 300px;
+        position: relative;
+    }
+
+    /* Animations */
+    @keyframes cardFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes chartGrow {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    canvas, #registrationsReportChart, #counselorGrowthChart {
+        animation: chartGrow 0.5s ease forwards;
+        animation-delay: 0.3s;
+        opacity: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .reports-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .chart-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chart-actions {
+            align-self: flex-end;
+        }
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
+    // Interests Report Chart
     fetch('/popular_interests')
         .then(response => response.json())
         .then(data => {
@@ -124,6 +296,8 @@
                         }]
                     },
                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
                         scales: {
                             y: {
                                 beginAtZero: true
@@ -135,17 +309,10 @@
                 console.error(data.message);
             }
         });
-</script>
 
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script>
-
+    // Counselor Growth Chart
     fetch('/counselor_report').then(res => res.json()).then(data => {
-
-        var colors = ['#33b2df', '#546E7A', '#d4526e', '#13d8aa'];
+        var colors = ['#14b8a6', '#0891b2', '#0e7490', '#0369a1'];
 
         var options = {
             series: [{
@@ -153,7 +320,11 @@
             }],
             chart: {
                 type: 'bar',
-                height: 350
+                height: 300,
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                toolbar: {
+                    show: false
+                }
             },
             plotOptions: {
                 bar: {
@@ -170,89 +341,176 @@
                 categories: data.labels,
             },
             colors: colors,
+            tooltip: {
+                theme: 'light',
+                style: {
+                    fontFamily: 'system-ui, -apple-system, sans-serif'
+                }
+            }
         };
 
         var chart = new ApexCharts(document.querySelector("#counselorGrowthChart"), options);
         chart.render();
     }).catch(error => console.error("Fetch error:", error));
 
+    // Registrations Chart
     fetch('/students_counselors_count').then(res => res.json()).then(data => {
-
-
-        var colors = ['#d4526e', '#13d8aa'];
+        var colors = ['#14b8a6', '#0891b2'];
 
         var options = {
             series: data.data,
             chart: {
-                width: 380,
+                height: 300,
                 type: 'donut',
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                toolbar: {
+                    show: false
+                }
             },
             labels: data.labels,
+            colors: colors,
             plotOptions: {
                 pie: {
                     startAngle: -90,
-                    endAngle: 270
+                    endAngle: 270,
+                    donut: {
+                        size: '70%',
+                        labels: {
+                            show: true,
+                            name: {
+                                show: true
+                            },
+                            value: {
+                                show: true,
+                                fontSize: '22px',
+                                fontWeight: 600
+                            },
+                            total: {
+                                show: true,
+                                label: 'Total Users',
+                                formatter: function (w) {
+                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                }
+                            }
+                        }
+                    }
                 }
             },
             fill: {
                 type: 'gradient',
+                gradient: {
+                    shade: 'light',
+                    type: 'horizontal',
+                    shadeIntensity: 0.2,
+                    gradientToColors: ['#38b2ac', '#0694a2'],
+                    inverseColors: false,
+                    opacityFrom: 1,
+                    opacityTo: 1
+                }
             },
             legend: {
                 formatter: function (val, opts) {
                     return val + " - " + opts.w.globals.series[opts.seriesIndex]
                 }
             },
+            tooltip: {
+                theme: 'light',
+                style: {
+                    fontFamily: 'system-ui, -apple-system, sans-serif'
+                }
+            },
             responsive: [{
                 breakpoint: 480,
                 options: {
                     chart: {
-                        width: 200
+                        height: 250
                     },
                     legend: {
                         position: 'bottom'
                     }
                 }
-            }],
+            }]
         };
 
         var chart = new ApexCharts(document.querySelector("#registrationsReportChart"), options);
         chart.render();
     }).catch(error => console.error("Fetch error:", error));
 
+    // Appointment Status Chart
     document.addEventListener("DOMContentLoaded", function () {
-    fetch("/overall_appointment_chart")
-        .then(response => response.json())
-        .then(data => {
-            const ctx = document.getElementById("overallAppointmentStatusChart").getContext("2d");
+        fetch("/overall_appointment_chart")
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById("overallAppointmentStatusChart").getContext("2d");
 
-            new Chart(ctx, {
-                type: "polarArea", // Set the chart type to Polar Area
-                data: {
-                    labels: data.labels, // Status labels
-                    datasets: [{
-                        data: data.data, // Status counts
-                        backgroundColor: ["blue", "green", "red", "gray", "purple"], // Colors for each status
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: "top" },
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    return tooltipItem.label + ": " + tooltipItem.raw + " appointments";
+                new Chart(ctx, {
+                    type: "polarArea", 
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.data,
+                            backgroundColor: [
+                                "rgba(14, 165, 233, 0.7)",
+                                "rgba(34, 197, 94, 0.7)",
+                                "rgba(239, 68, 68, 0.7)",
+                                "rgba(148, 163, 184, 0.7)",
+                                "rgba(168, 85, 247, 0.7)"
+                            ],
+                            borderColor: [
+                                "rgba(14, 165, 233, 1)",
+                                "rgba(34, 197, 94, 1)",
+                                "rgba(239, 68, 68, 1)",
+                                "rgba(148, 163, 184, 1)",
+                                "rgba(168, 85, 247, 1)"
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { 
+                                position: "right",
+                                labels: {
+                                    font: {
+                                        family: 'system-ui, -apple-system, sans-serif'
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return tooltipItem.label + ": " + tooltipItem.raw + " appointments";
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
-        })
-        .catch(error => console.error("Error loading chart data:", error));
-});
+                });
+            })
+            .catch(error => console.error("Error loading chart data:", error));
+    });
 
+    // Refresh button functionality
+    document.querySelectorAll('.chart-action-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const card = this.closest('.chart-card');
+            const chartBody = card.querySelector('.chart-body');
+            
+            // Add a spinning animation to the refresh icon
+            this.querySelector('i').classList.add('fa-spin');
+            
+            // Add a loading overlay effect
+            chartBody.style.opacity = '0.5';
+            
+            // Simulate refresh after 1 second
+            setTimeout(() => {
+                chartBody.style.opacity = '1';
+                this.querySelector('i').classList.remove('fa-spin');
+            }, 1000);
+        });
+    });
 </script>
 {% endblock %}
 

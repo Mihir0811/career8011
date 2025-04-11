@@ -1,64 +1,133 @@
 {% extends 'admin/base.html' %}
 {% block title %}Manage Counselor - Admin Panel{% endblock %}
 {% block content %}
-    <h2 class="section-title">Manage Counselors</h2>
-    <div class="table-actions">
-        <div class="search-filters">
+<style>
+    .custom-modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5); /* Overlay effect */
+        }
+
+        .custom-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+            text-decoration: none;
+        }
+</style>
+<div id="customModal" class="custom-modal">
+    <div class="custom-modal-content">
+        <span class="close-btn" id="closeModal">&times;</span>
+        <h2>Counselor Details</h2>
+        <p><strong>Full Name:</strong> <span id="modalFullName"></span></p>
+        <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+        <p><strong>Contact Number:</strong> <span id="modalContactNumber"></span></p>
+        <p><strong>Specialization:</strong> <span id="modalSpecialization"></span></p>
+        <p><strong>Bio:</strong> <span id="modalBio"></span></p>
+        <p><strong>Approval Status:</strong> <span id="modalApprovalStatus"></span></p>
+    </div>
+</div>
+<script>
+    // Modal functionality
+const modal = document.getElementById('customModal');
+const closeBtn = document.getElementById('closeModal');
+
+// Attach click event to all counselor buttons
+document.querySelectorAll('.view-btn').forEach(button => {
+    button.addEventListener('click', async () => {
+        const counselorId = button.getAttribute('data-id'); // Get dynamic ID
+
+        try {
+            // Fetch counselor details from the server
+            const response = await fetch(`/view_counselor_details/${counselorId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                // Populate modal content
+                document.getElementById('modalFullName').textContent = data.full_name;
+                document.getElementById('modalEmail').textContent = data.email;
+                document.getElementById('modalContactNumber').textContent = data.contact_number;
+                document.getElementById('modalSpecialization').textContent = data.specialization;
+                document.getElementById('modalBio').textContent = data.bio;
+                document.getElementById('modalApprovalStatus').textContent = data.approval_status;
+
+                // Display the modal
+                modal.style.display = 'block';
+            } else {
+                alert(data.error || 'Unable to fetch details.');
+            }
+        } catch (error) {
+            console.error('Error fetching counselor details:', error);
+            alert('Failed to load details. Please try again.');
+        }
+    });
+});
+
+// Close the modal when clicking on the close button
+closeBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
+
+// Close the modal when clicking outside the modal content
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
+
+</script>
+<div class="manage-counselors-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Manage Counselors</h1>
+            <p>View and manage counselor profiles and approval status</p>
+        </div>
+        <div class="header-actions">
             <div class="search-box">
                 <i class="fas fa-search"></i>
                 <input type="text" placeholder="Search counselors...">
             </div>
-            <select class="filter-select">
-                <option value="">All Specializations</option>
-                <option value="career">Career Development</option>
-                <option value="academic">Academic Advising</option>
-                <option value="personal">Personal Growth</option>
-            </select>
-            <select class="filter-select">
-                <option value="">Approval Status</option>
-                <option value="approved">Approved</option>
-                <option value="pending">Pending</option>
-                <option value="rejected">Rejected</option>
-            </select>
+            <div class="filter-container">
+                <select class="filter-select specialization-filter">
+                    <option value="">All Specializations</option>
+                    <option value="career">Career Development</option>
+                    <option value="academic">Academic Advising</option>
+                    <option value="personal">Personal Growth</option>
+                </select>
+                <select class="filter-select status-filter">
+                    <option value="">Approval Status</option>
+                    <option value="approved">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
         </div>
     </div>
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const searchInput = document.querySelector(".search-box input");
-    const specializationFilter = document.querySelectorAll(".filter-select")[0];
-    const approvalFilter = document.querySelectorAll(".filter-select")[1];
-    const tableRows = document.querySelectorAll(".data-table tbody tr");
 
-    function filterTable() {
-        const searchValue = searchInput.value.toLowerCase();
-        const specializationValue = specializationFilter.value.toLowerCase();
-        const approvalValue = approvalFilter.value.toLowerCase();
-
-        tableRows.forEach(row => {
-            const name = row.querySelector("td:nth-child(1) span").textContent.toLowerCase();
-            const specialization = row.querySelector("td:nth-child(3) .tag").textContent.toLowerCase();
-            const approval = row.querySelector("td:nth-child(4) .status-tag").textContent.toLowerCase();
-
-            const matchesSearch = name.includes(searchValue);
-            const matchesSpecialization = !specializationValue || specialization.includes(specializationValue);
-            const matchesApproval = !approvalValue || approval.includes(approvalValue);
-
-            if (matchesSearch && matchesSpecialization && matchesApproval) {
-                row.style.display = "table-row";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
-
-    searchInput.addEventListener("input", filterTable);
-    specializationFilter.addEventListener("change", filterTable);
-    approvalFilter.addEventListener("change", filterTable);
-});
-
-    </script>
-
-    <div class="table-container">
+    <div class="counselor-table-container">
         <table class="data-table">
             <thead>
                 <tr>
@@ -71,86 +140,484 @@
             </thead>
             <tbody>
                 {% for counselor in counselors %}
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                <img src="https://ui-avatars.com/api/?name={{ counselor.full_name | urlencode }}" 
-                                     alt="{{ counselor.full_name }}" 
-                                     class="counselor-profile" 
-                                     data-profile="{{ counselor.profile_picture }}">
-                                <span>{{ counselor.full_name }}</span>
-                            </div>
-                        </td>
-                        <td>{{ counselor.email }}</td>
-                        <td>
-                            <div class="interest-tags">
-                                <span class="tag">{{ counselor.specialization }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="status-tag {{ 'approved' if counselor.approval_status == 'approved' else ('rejected' if counselor.approval_status == 'rejected' else 'pending') }}">
-                                {{ counselor.approval_status | capitalize }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                {% if counselor.approval_status == 'pending' %}
-                                    <button class="approve-btn" data-id="{{ counselor.id }}"><i class="fas fa-check"></i> Approve</button>
-                                    <button class="reject-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i> Reject</button>
-                                {% elif counselor.approval_status == 'approved' %}
-                                    <button disabled class="approved-btn"><i class="fas fa-check-circle"></i> Approved</button>
-                                {% elif counselor.approval_status == 'rejected' %}
-                                    <button disabled class="rejected-btn"><i class="fas fa-times-circle"></i> Rejected</button>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <img src="https://ui-avatars.com/api/?name={{ counselor.full_name | urlencode }}&background=random&color=fff" 
+                                 alt="{{ counselor.full_name }}" 
+                                 class="counselor-profile" 
+                                 data-profile="{{ counselor.profile_picture }}">
+                            <span>{{ counselor.full_name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ counselor.email }}</td>
+                    <td>
+                        <div class="interest-tags">
+                            <span class="tag">{{ counselor.specialization }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-tag {{ 'approved' if counselor.approval_status == 'approved' else ('rejected' if counselor.approval_status == 'rejected' else 'pending') }}">
+                            {{ counselor.approval_status | capitalize }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            {% if counselor.approval_status == 'pending' %}
+                            <button class="approve-btn" data-id="{{ counselor.id }}"><i class="fas fa-check"></i> Approve</button>
+                            <button class="reject-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i> Reject</button>
+                            <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-eye"></i> View</button>
+                            {% elif counselor.approval_status == 'approved' %}
+                            <button disabled class="approved-btn"><i class="fas fa-check-circle"></i> Approved</button>
+                            <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i> View</button>
+                            {% elif counselor.approval_status == 'rejected' %}
+                            <button disabled class="rejected-btn"><i class="fas fa-times-circle"></i> Rejected</button>
+                            <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i> View</button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+</div>
 
-    <script>
-        const counselorProfiles = document.querySelectorAll('.counselor-profile');
-        counselorProfiles.forEach(profile => {
-            profile.addEventListener('click', function () {
-                const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${this.alt}`;
-                const profilePictureUrl = this.getAttribute('data-profile');
-    
-                if (this.src === defaultAvatarUrl) {
-                    this.src = profilePictureUrl;
+<style>
+    /* Main Container */
+    .manage-counselors-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    /* Page Header */
+    .page-header {
+        position: relative;
+        background-image: url('https://img.freepik.com/free-vector/gradient-network-connection-background_23-2148865392.jpg?w=1380&t=st=1695238090~exp=1695238690~hmac=a4da8a1d53b84344d7d6c4e7bca7d1d2ca9bf7a1feaad1df5fa4f33d20547084');
+        background-size: cover;
+        background-position: center;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.9) 0%, rgba(45, 39, 149, 0.8) 100%);
+        z-index: 0;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-content h1 {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .header-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    /* Search Box */
+    .search-box {
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        min-width: 250px;
+    }
+
+    .search-box:focus-within {
+        background-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-box i {
+        color: white;
+    }
+
+    .search-box input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: white;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .search-box input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Filter Container */
+    .filter-container {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    /* Filter Select */
+    .filter-select {
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: calc(100% - 15px) center;
+        padding-right: 40px;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        font-size: 14px;
+        min-width: 180px;
+    }
+
+    .filter-select:focus {
+        outline: none;
+        background-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-select option {
+        background-color: #4F46E5;
+        color: white;
+    }
+
+    /* Table Container */
+    .counselor-table-container {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        background-color: #f8fafc;
+        color: #4b5563;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 16px 20px;
+        text-align: left;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1e293b;
+        vertical-align: middle;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f1f5f9;
+    }
+
+    /* User Info */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .counselor-profile {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        border: 2px solid #4F46E5;
+    }
+
+    .counselor-profile:hover {
+        transform: scale(1.1);
+    }
+
+    /* Interest Tags */
+    .interest-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 500;
+        background-color: #4F46E5;
+        color: white;
+        box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3);
+    }
+
+    /* Status Tag */
+    .status-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-tag.approved {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .status-tag.rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    .status-tag.pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .approve-btn, .reject-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .approve-btn {
+        background-color: #10b981;
+        color: white;
+    }
+
+    .reject-btn {
+        background-color: #ef4444;
+        color: white;
+    }
+
+    .approve-btn:hover, .reject-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .approved-btn, .rejected-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .approved-btn {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .rejected-btn {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-actions {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .search-box, .filter-container {
+            width: 100%;
+        }
+
+        .filter-container {
+            flex-direction: column;
+        }
+
+        .filter-select {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .data-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .approve-btn, .reject-btn, .approved-btn, .rejected-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .manage-counselors-container {
+        animation: fadeIn 0.5s ease;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.querySelector(".search-box input");
+        const specializationFilter = document.querySelector(".specialization-filter");
+        const approvalFilter = document.querySelector(".status-filter");
+        const tableRows = document.querySelectorAll(".data-table tbody tr");
+
+        function filterTable() {
+            const searchValue = searchInput.value.toLowerCase();
+            const specializationValue = specializationFilter.value.toLowerCase();
+            const approvalValue = approvalFilter.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const name = row.querySelector("td:nth-child(1) span").textContent.toLowerCase();
+                const specialization = row.querySelector("td:nth-child(3) .tag").textContent.toLowerCase();
+                const approval = row.querySelector("td:nth-child(4) .status-tag").textContent.toLowerCase();
+
+                const matchesSearch = name.includes(searchValue);
+                const matchesSpecialization = !specializationValue || specialization.includes(specializationValue);
+                const matchesApproval = !approvalValue || approval.includes(approvalValue);
+
+                if (matchesSearch && matchesSpecialization && matchesApproval) {
+                    row.style.display = "table-row";
                 } else {
-                    this.src = defaultAvatarUrl;
+                    row.style.display = "none";
                 }
             });
+        }
+
+        searchInput.addEventListener("input", filterTable);
+        specializationFilter.addEventListener("change", filterTable);
+        approvalFilter.addEventListener("change", filterTable);
+    });
+
+    // Profile picture toggle
+    const counselorProfiles = document.querySelectorAll('.counselor-profile');
+    counselorProfiles.forEach(profile => {
+        profile.addEventListener('click', function () {
+            const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${this.alt}&background=random&color=fff`;
+            const profilePictureUrl = this.getAttribute('data-profile');
+
+            if (this.src === defaultAvatarUrl) {
+                this.src = profilePictureUrl;
+            } else {
+                this.src = defaultAvatarUrl;
+            }
         });
+    });
 
-        // Approve and Reject buttons
-        document.querySelectorAll('.approve-btn, .reject-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const counselorId = this.getAttribute('data-id');
-                const action = this.classList.contains('approve-btn') ? 'approve' : 'reject';
+    // Approve and Reject buttons
+    document.querySelectorAll('.approve-btn, .reject-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const counselorId = this.getAttribute('data-id');
+            const action = this.classList.contains('approve-btn') ? 'approve' : 'reject';
 
-                fetch('/approve_counselor', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ counselor_id: counselorId, action: action }),
+            fetch('/approve_counselor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ counselor_id: counselorId, action: action }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Counselor ${action}d successfully.`);
+                        location.reload();
+                    } else {
+                        alert(`Error: ${data.error}`);
+                    }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(`Counselor ${action}d successfully.`);
-                            location.reload();
-                        } else {
-                            alert(`Error: ${data.error}`);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
+                .catch(error => {
+                    console.error('Error:', error);
                 });
-            });
         });
-    </script>
+    });
+</script>
 {% endblock %}

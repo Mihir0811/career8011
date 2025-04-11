@@ -1,0 +1,399 @@
+{% extends 'student/stud-base.html' %}
+{% block title %}Student Feedback{% endblock %}
+{% block content %}
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<!-- Pricing Section -->
+<section class="pricing-section">
+    <div class="container py-5">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="display-4 fw-bold text-primary mb-3">Choose Your Plan</h2>
+            <p class="text-muted lead">Select the perfect package for your career growth journey</p>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <!-- Basic Plan -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="pricing-card h-100">
+                    <div class="pricing-header text-center p-4">
+                        <div class="pricing-label mb-3">
+                            <span class="badge bg-light text-primary px-3 py-2">BASIC</span>
+                        </div>
+                        <h3 class="price-title mb-0">
+                            <span class="currency">₹</span>49
+                            <span class="period">/month</span>
+                        </h3>
+                    </div>
+                    <div class="pricing-features p-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                1 Career Counseling Session
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Resume Review
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Access to Webinar Library
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Basic Resource Access
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer p-4 text-center">
+                        <button onclick="makePayment('basic', 4900)" class="btn btn-outline-primary btn-lg w-100 hover-lift">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="pricing-card premium h-100">
+                    <div class="popular-badge">
+                        <span>MOST POPULAR</span>
+                    </div>
+                    <div class="pricing-header text-center p-4">
+                        <div class="pricing-label mb-3">
+                            <span class="badge bg-primary px-3 py-2">PREMIUM</span>
+                        </div>
+                        <h3 class="price-title mb-0">
+                            <span class="currency">₹</span>99
+                            <span class="period">/month</span>
+                        </h3>
+                    </div>
+                    <div class="pricing-features p-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                3 Career Counseling Sessions
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Resume & Cover Letter Review
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Access to All Webinars
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Full Resource Access
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                1 Mock Interview
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Mentorship Matching
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer p-4 text-center">
+                        <button onclick="makePayment('premium', 9900)" class="btn btn-primary btn-lg w-100 hover-lift">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ultimate Plan -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="pricing-card h-100">
+                    <div class="pricing-header text-center p-4">
+                        <div class="pricing-label mb-3">
+                            <span class="badge bg-light text-primary px-3 py-2">ULTIMATE</span>
+                        </div>
+                        <h3 class="price-title mb-0">
+                            <span class="currency">₹</span>149
+                            <span class="period">/month</span>
+                        </h3>
+                    </div>
+                    <div class="pricing-features p-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Unlimited Career Counseling
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Priority Resume & Cover Letter Review
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                VIP Access to All Events
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Premium Resource Access
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Unlimited Mock Interviews
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Priority Mentorship Matching
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Mental Health Support Sessions
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer p-4 text-center">
+                        <button onclick="makePayment('ultimate', 14900)" class="btn btn-outline-primary btn-lg w-100 hover-lift">
+                            Get Started
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="400">
+            <p class="text-muted mb-2">All plans include 7-day free trial. Cancel anytime.</p>
+            <p class="text-muted">Need a custom solution? <a href="/contact" class="text-primary">Contact us</a> for enterprise pricing.</p>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Modern Pricing Cards Styling */
+    .pricing-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 80px 0;
+    }
+    
+    .pricing-card {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .pricing-card.premium {
+        border: 2px solid #4A90E2;
+        transform: scale(1.05);
+    }
+    
+    .pricing-card.premium:hover {
+        transform: translateY(-10px) scale(1.05);
+    }
+    
+    .popular-badge {
+        position: absolute;
+        top: 20px;
+        right: -35px;
+        transform: rotate(45deg);
+        background: #4A90E2;
+        color: white;
+        padding: 8px 40px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 1;
+    }
+    
+    .price-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2C3E50;
+    }
+    
+    .price-title .currency {
+        font-size: 1.5rem;
+        font-weight: 600;
+        vertical-align: super;
+    }
+    
+    .price-title .period {
+        font-size: 1rem;
+        color: #6c757d;
+        font-weight: normal;
+    }
+    
+    .pricing-header {
+        padding: 20px;
+        background-color: #f7f8fa;
+        border-radius: 20px 20px 0 0;
+        text-align: center;
+    }
+    
+    .pricing-features {
+        padding: 20px;
+        background-color: #ffffff;
+        flex-grow: 1;
+    }
+    
+    .pricing-features ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .pricing-features li {
+        font-size: 1.1rem;
+        padding: 12px 0;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+    }
+    
+    .pricing-features i {
+        font-size: 1.2rem;
+        margin-right: 10px;
+        color: #28a745;
+    }
+    
+    .pricing-footer {
+        background-color: #f7f8fa;
+        padding: 20px;
+        text-align: center;
+        border-radius: 0 0 20px 20px;
+    }
+    
+    .pricing-footer button {
+        padding: 12px 25px;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .pricing-footer .btn-outline-primary {
+        border: 2px solid #4A90E2;
+        color: #4A90E2;
+    }
+    
+    .pricing-footer .btn-primary {
+        background-color: #4A90E2;
+        color: #fff;
+    }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Popular Plan Highlight */
+    .pricing-card.premium {
+        border: 3px solid #4A90E2;
+        background-color: #f0f8ff;
+    }
+    
+    .pricing-card.premium:hover {
+        background-color: #e6f1ff;
+    }
+    
+    @media (max-width: 992px) {
+        .pricing-card.premium {
+            transform: scale(1);
+        }
+        
+        .pricing-card.premium:hover {
+            transform: translateY(-10px) scale(1);
+        }
+    }
+    
+    /* Footer section styles */
+    .text-muted {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+    
+    .text-muted a {
+        text-decoration: none;
+        color: #4A90E2;
+    }
+    
+    .text-muted a:hover {
+        text-decoration: underline;
+    }
+    
+    .section-header h2 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    
+    .section-header p {
+        font-size: 1.1rem;
+        color: #6c757d;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    </style>
+    
+
+<script>
+AOS.init({
+    duration: 1000,
+    once: true,
+    offset: 100
+});
+
+function makePayment(plan, amount) {
+    var options = {
+        "key": "rzp_test_pUXJB2ZJXV0sMk",
+        "amount": amount,
+        "currency": "INR",
+        "name": "CareerConnect",
+        "description": plan.charAt(0).toUpperCase() + plan.slice(1) + " Plan Subscription",
+        "image": "your_logo_url",
+        "handler": function (response){
+            alert('Payment Successful! Payment ID: ' + response.razorpay_payment_id);
+        },
+        "prefill": {
+            "name": "",
+            "email": "",
+            "contact": ""
+        },
+        "theme": {
+            "color": "#4A90E2"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+}
+
+window.addEventListener('razorpay.payment.failed', function(e) {
+    alert('Payment failed. Please try again. Error: ' + e.detail.error.description);
+});
+</script>
+
+{% endblock %}

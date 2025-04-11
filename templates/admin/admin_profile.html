@@ -1,259 +1,429 @@
 {% extends 'admin/base.html' %}
 {% block title %}Admin Profile - Admin Panel{% endblock %}
 {% block content %}
+<div class="profile-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Account Profile</h1>
+            <p>Manage your personal information and account settings</p>
+        </div>
+    </div>
 
-<style>
-    /* General Styles */
-.profile {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;  /* Light background for the profile section */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);  /* Lighter shadow */
-}
-
-.tm-content-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px;
-    flex-wrap: wrap;
-}
-
-/* Alert Styles */
-.alert {
-    margin: 20px auto;
-    padding: 15px;
-    border-radius: 5px;
-    width: 90%;
-    max-width: 600px;
-    text-align: center;
-}
-
-.alert-success {
-    background-color: #eafaf1;  /* Lighter green for success */
-    color: #2e7d32;
-    border: 1px solid #c8e6c9;
-}
-
-.alert-error {
-    background-color: #fbe9e7;  /* Lighter red for error */
-    color: #c62828;
-    border: 1px solid #f8d7da;
-}
-
-/* Avatar Section */
-.tm-block-avatar {
-    background-color: #ffffff;  /* Lighter background for the avatar block */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-.tm-block-avatar .title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.tm-block-avatar h2 {
-    color: #333;
-    font-size: 24px;
-}
-
-.tm-block-avatar a {
-    padding: 10px;
-    background-color: #3498db;  /* Lighter blue for buttons */
-    border-radius: 5px;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.tm-block-avatar .avatar-img {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.tm-block-avatar .avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #fff;
-}
-
-/* Account Settings Section */
-.tm-block-settings {
-    background-color: #ffffff;  /* Lighter background for settings block */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-}
-
-.tm-block-settings .form-group {
-    margin-bottom: 15px;
-}
-
-.tm-block-settings label {
-    color: #333;
-    font-weight: 600;
-    font-size: 16px;
-}
-
-.tm-block-settings input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-}
-
-.tm-block-settings input:focus {
-    border-color: #3498db;
-    background-color: #fff;
-    outline: none;
-}
-
-.tm-block-settings button {
-    margin-top: 20px;
-    width: 100%;
-    padding: 12px;
-    background-color: #3498db;
-    border: none;
-    color: #fff;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.tm-block-settings button:hover {
-    background-color: #2980b9;
-}
-
-/* Delete Account Button Styles */
-#deleteAccountBtn {
-    width: 100%;
-    padding: 12px;
-    background-color: #e74c3c; /* Red background for danger */
-    border: none;
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-/* Hover effect */
-#deleteAccountBtn:hover {
-    background-color: #c0392b; /* Darker red on hover */
-    /* transform: scale(1.05); Slightly enlarge on hover */
-}
-
-/* Focus effect */
-#deleteAccountBtn:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(231, 76, 60, 0.5); /* Red outline on focus */
-}
-
-/* Disabled button style */
-#deleteAccountBtn:disabled {
-    background-color: #e0e0e0;
-    color: #b0b0b0;
-    cursor: not-allowed;
-}
-
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .tm-content-row {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .tm-block-col {
-        width: 100%;
-        padding: 15px;
-    }
-
-    .avatar {
-        width: 100px;
-        height: 100px;
-    }
-}
-
-</style>
-
-<!-- <div class="profile container">
-    <div class="row tm-content-row">
-        <div class="tm-block-col tm-col-avatar">
-            <div class="tm-bg-primary-dark tm-block tm-block-avatar">
-                <div class="title">
-                    <h2 class="tm-block-title mb-0">Change Avatar</h2>
-                    <a href="javascript:void(0)" onclick="document.getElementById('fileInput').click()">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height: 25px;">
-                            <path fill="#fff" d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zM-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0"/>
-                        </svg>
-                    </a>
-                    <input id="fileInput" type="file" name="avatar" style="display: none;">
-                </div>
-                <div class="avatar-img">
+    <div class="profile-content">
+        <div class="profile-card">
+            <div class="card-header">
+                <h3><i class="fas fa-user-shield"></i> Admin Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="profile-avatar">
                     {% if admin.profile_picture %}
-                        <img src="{{ url_for('static', filename='img/admin_uploads/' + admin.profile_picture) }}" alt="Avatar" class="avatar">
+                        <img src="{{ url_for('static', filename='img/admin_uploads/' + admin.profile_picture) }}" alt="Avatar" class="avatar-img">
                     {% else %}
-                        <img src="{{ url_for('static', filename='img/admin_uploads/default-avatar.png') }}" alt="Avatar" class="avatar">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=0D8ABC&color=fff&size=200" alt="Avatar" class="avatar-img">
                     {% endif %}
+                    <div class="avatar-overlay">
+                        <button class="change-avatar-btn" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h2>{{ admin.username }}</h2>
+                    <p>{{ admin.email }}</p>
                 </div>
             </div>
-        </div> -->
+        </div>
 
-        <!-- Account Settings Section -->
-        <div class="tm-block-col tm-col-settings">
-            <div class="tm-bg-primary-dark tm-block tm-block-settings">
-                <form action="{{ url_for('admin_profile') }}" method="POST" enctype="multipart/form-data">
-                    <h2 class="tm-block-title mb-0">Account Settings</h2>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" name="username" class="form-control" value="{{ admin.username }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" class="form-control" value="{{ admin.email }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="pno">Phone Number</label>
-                        <input type="text" name="pno" class="form-control" value="{{ admin.contact_number }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="oldPass">Old Password</label>
-                        <input type="password" name="oldPass" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="newPass">New Password</label>
-                        <input type="password" name="newPass" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
-                    <button type="button" id="deleteAccountBtn" class="btn btn-danger btn-block" data-id="{{ admin.id }}">Delete Account</button>
-                </form>
-                <div id="responseMessage" class="alert" style="display: none;"></div>
+        <div class="settings-card">
+            <div class="card-header">
+                <h3><i class="fas fa-cog"></i> Account Settings</h3>
             </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin_profile') }}" method="POST" enctype="multipart/form-data">
+                    <input id="fileInput" type="file" name="avatar" style="display: none;">
+                    <div class="settings-grid">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" value="{{ admin.username }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" value="{{ admin.email }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="pno">Phone Number</label>
+                            <input type="text" name="pno" id="pno" class="form-control" value="{{ admin.contact_number }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="oldPass">Current Password</label>
+                            <input type="password" name="oldPass" id="oldPass" class="form-control" placeholder="Enter to change password">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPass">New Password</label>
+                            <input type="password" name="newPass" id="newPass" class="form-control" placeholder="Enter new password">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+
+                <div class="danger-zone">
+                    <h4>Danger Zone</h4>
+                    <p>Once you delete your account, there is no going back. Please be certain.</p>
+                    <button id="deleteAccountBtn" class="delete-btn" data-id="{{ admin.id }}">
+                        <i class="fas fa-trash-alt"></i> Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Message -->
+    <div id="responseMessage" class="alert-message">
+        <div class="alert-content">
+            <i class="fas fa-check-circle alert-icon"></i>
+            <span id="alertText">Profile updated successfully!</span>
         </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+    /* Main Container */
+    .profile-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
 
+    /* Page Header */
+    .page-header {
+        position: relative;
+        background-image: url('https://img.freepik.com/free-photo/business-concept-with-graphic-holography_23-2149160932.jpg?w=1380&t=st=1695393023~exp=1695393623~hmac=55bf8c87f4f7f34bc9290f2e8f7b51679ec88f01d689f478602ce2cce3c7812c');
+        background-size: cover;
+        background-position: center;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.85) 0%, rgba(6, 182, 212, 0.9) 100%);
+        z-index: 0;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-content h1 {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin: 0;
+    }
+
+    /* Profile Content */
+    .profile-content {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 24px;
+    }
+
+    /* Card Design */
+    .profile-card, .settings-card {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    .card-header {
+        padding: 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .card-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .card-header h3 i {
+        color: #0ea5e9;
+    }
+
+    .card-body {
+        padding: 20px;
+        flex-grow: 1;
+    }
+
+    /* Profile Avatar */
+    .profile-avatar {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        border: 4px solid white;
+    }
+
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 8px 0;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .profile-avatar:hover .avatar-overlay {
+        opacity: 1;
+    }
+
+    .change-avatar-btn {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .profile-info {
+        text-align: center;
+    }
+
+    .profile-info h2 {
+        margin: 0 0 5px;
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    .profile-info p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    /* Settings Form */
+    .settings-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        color: #1e293b;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #1e293b;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+    }
+
+    /* Form Actions */
+    .form-actions {
+        margin-top: 24px;
+    }
+
+    .save-btn {
+        background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .save-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(14, 165, 233, 0.3);
+    }
+
+    .save-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Danger Zone */
+    .danger-zone {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px dashed #e2e8f0;
+    }
+
+    .danger-zone h4 {
+        color: #ef4444;
+        font-weight: 600;
+        margin: 0 0 10px;
+    }
+
+    .danger-zone p {
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .delete-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+    }
+
+    .delete-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Alert Message */
+    .alert-message {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        transform: translateY(100px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .alert-message.show {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .alert-content {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .alert-icon {
+        font-size: 20px;
+        color: #10b981;
+    }
+
+    .alert-message.error .alert-icon {
+        color: #ef4444;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .profile-content {
+            grid-template-columns: 1fr;
+        }
+
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Avatar upload handler
+        // Avatar preview
         $('#fileInput').change(function () {
             var fileInput = $(this)[0];
             if (fileInput.files && fileInput.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    $('.avatar-img img').attr('src', e.target.result);
+                    $('.avatar-img').attr('src', e.target.result);
                 }
                 reader.readAsDataURL(fileInput.files[0]);
             }
@@ -272,21 +442,21 @@
                 contentType: false,  // Do not set content type
                 success: function (response) {
                     if (response.status === 'success') {
-                        $('#responseMessage').removeClass('alert-error').addClass('alert-success').text(response.message).show();
-                        window.location.reload();  // Reload to reflect changes
+                        showAlert(response.message, 'success');
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1500);
                     } else {
-                        $('#responseMessage').removeClass('alert-success').addClass('alert-error').text('Error: ' + response.message).show();
+                        showAlert('Error: ' + response.message, 'error');
                     }
                 },
                 error: function () {
-                    $('#responseMessage').removeClass('alert-success').addClass('alert-error').text('An error occurred while updating your profile.').show();
+                    showAlert('An error occurred while updating your profile.', 'error');
                 }
             });
         });
-    });
-</script>
-<script>
-    $(document).ready(function () {
+
+        // Delete account button
         $('#deleteAccountBtn').click(function () {
             var adminId = $(this).data('id');  // Get the admin ID from the button
 
@@ -303,20 +473,43 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Your account has been deleted successfully.');
-                        window.location.href = '/admin_login';  // Redirect to login page
+                        showAlert('Your account has been deleted successfully.', 'success');
+                        setTimeout(function() {
+                            window.location.href = '/admin_login';
+                        }, 1500);
                     } else {
-                        alert(data.message);  // Show error message if account deletion failed
+                        showAlert(data.message, 'error');
                     }
                 })
                 .catch(error => {
-                    alert('An error occurred. Please try again.');
+                    showAlert('An error occurred. Please try again.', 'error');
                     console.error('Error:', error);
                 });
             }
         });
+
+        // Helper function to show alerts
+        function showAlert(message, type) {
+            const alertMessage = $('#responseMessage');
+            const alertText = $('#alertText');
+            const alertIcon = $('.alert-icon');
+            
+            alertText.text(message);
+            
+            if (type === 'error') {
+                alertMessage.addClass('error');
+                alertIcon.removeClass('fa-check-circle').addClass('fa-exclamation-circle');
+            } else {
+                alertMessage.removeClass('error');
+                alertIcon.removeClass('fa-exclamation-circle').addClass('fa-check-circle');
+            }
+            
+            alertMessage.addClass('show');
+            
+            setTimeout(function() {
+                alertMessage.removeClass('show');
+            }, 3000);
+        }
     });
 </script>
-
-
 {% endblock %}

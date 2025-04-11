@@ -1,53 +1,91 @@
 {% extends 'admin/base.html' %}
 {% block title %}Add Interest - Admin Panel{% endblock %}
 {% block content %}
-    <div class="form-container">
-        <h2 class="section-title">Add Interest</h2>
-        <form id="form-container">
-            <p id="msg" style="color: green;"></p>
-            <br>
-            <div class="form-group">
-                <label for="interest_name">Interest Name</label>
-                <input type="text" id="interest_name" name="interest_name" placeholder="Enter the interest name" required>
+<div class="add-interest-container">
+    <div class="form-header">
+        <div class="header-content">
+            <h2>Add New Interest</h2>
+            <p>Create interest categories for students and counselors</p>
+        </div>
+        <div class="header-image">
+            <img src="https://cdn-icons-png.flaticon.com/512/2821/2821739.png" alt="Interests Icon">
+        </div>
+    </div>
+
+    <div class="alert-message" id="msg"></div>
+
+    <form id="form-container">
+        <div class="form-card">
+            <div class="form-section">
+                <h3><i class="fas fa-tag"></i> Interest Details</h3>
+                <p class="form-description">Add new interest categories to help match students with counselors</p>
+                
+                <div class="form-group">
+                    <label for="interest_name">Interest Name</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lightbulb"></i>
+                        <input type="text" id="interest_name" name="interest_name" placeholder="Enter the interest name" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <div class="select-with-icon">
+                        <i class="fas fa-layer-group"></i>
+                        <select id="category" name="category" required>
+                            <option value="" disabled selected>Select a category</option>
+                            <option value="academic">Academic</option>
+                            <option value="career">Career</option>
+                            <option value="hobby">Hobby</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <br>
-            <div class="form-group">
-                <label for="category">Category</label>
-                <select id="category" name="category" required>
-                    <option value="" disabled selected>Select a category</option>
-                    <option value="academic">Academic</option>
-                    <option value="career">Career</option>
-                    <option value="hobby">Hobby</option>
-                </select>
-            </div>
-            <br><br>
-            <div class="form-actions">
-                <a type="button" class="cancel-btn" name="cancel-btn">Cancel</a>
-                <button type="submit" class="submit-btn" name="submit-btn" id="submitBtn">Add Interest</button>
-            </div>
-        </form>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="cancel-btn" name="cancel-btn">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button type="submit" class="submit-btn" name="submit-btn" id="submitBtn">
+                <i class="fas fa-plus-circle"></i> Add Interest
+            </button>
+        </div>
+    </form>
+</div>
 
-        <script>
-           document.getElementById('submitBtn').addEventListener('click', (event) => {
-    event.preventDefault(); // Prevent page reload
+<script>
+    document.querySelector('.cancel-btn').addEventListener('click', () => {
+        window.location.href = '/interests'; // Redirect to interests page
+    });
 
-    const interestName = document.getElementById('interest_name').value.trim();
-    const category = document.getElementById('category').value;
+    document.getElementById('submitBtn').addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent page reload
 
-    if (!interestName || !category) {
-        alert('Both fields are required!');
-        return;
-    }
+        const interestName = document.getElementById('interest_name').value.trim();
+        const category = document.getElementById('category').value;
 
-    const interestData = { interest_name: interestName, category: category };
+        if (!interestName || !category) {
+            const msgElement = document.getElementById('msg');
+            msgElement.textContent = 'Both fields are required!';
+            msgElement.classList.add('error');
+            msgElement.classList.remove('success');
+            msgElement.style.display = 'block';
+            
+            // Scroll to the message
+            msgElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
 
-    fetch('http://localhost:5000/add_interest', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(interestData),
-    })
+        const interestData = { interest_name: interestName, category: category };
+
+        fetch('http://localhost:5000/add_interest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(interestData),
+        })
         .then((response) => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -55,16 +93,298 @@
             return response.json();
         })
         .then((data) => {
-            alert(data.msg);
-            document.querySelector('#msg')
-            document.querySelector('#msg').innerHTML = data.msg;
+            const msgElement = document.getElementById('msg');
+            msgElement.textContent = data.msg;
+            msgElement.classList.remove('error');
+            msgElement.classList.add('success');
+            msgElement.style.display = 'block';
+            
+            // Clear the form
+            document.getElementById('interest_name').value = '';
+            document.getElementById('category').selectedIndex = 0;
+            
+            // Scroll to the message
+            msgElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred. Please try again.');
+            
+            const msgElement = document.getElementById('msg');
+            msgElement.textContent = 'An error occurred. Please try again.';
+            msgElement.classList.add('error');
+            msgElement.classList.remove('success');
+            msgElement.style.display = 'block';
+            
+            // Scroll to the message
+            msgElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
-});
+    });
+</script>
 
-        </script>
-    </div>
+<style>
+    /* Main Container */
+    .add-interest-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Form Header */
+    .form-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 25px 30px;
+        background-image: url('https://images.unsplash.com/photo-1462899006636-339e08d1844e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(15,69,130,0.9) 0%, rgba(15,69,130,0.7) 50%, rgba(15,69,130,0.4) 100%);
+        z-index: 1;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+        color: white;
+    }
+
+    .header-content h2 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .header-content p {
+        font-size: 16px;
+        opacity: 0.9;
+    }
+
+    .header-image {
+        margin-left: auto;
+        position: relative;
+        z-index: 2;
+    }
+
+    .header-image img {
+        width: 100px;
+        height: 100px;
+        filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+    }
+
+    /* Alert Message */
+    .alert-message {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        font-size: 15px;
+        font-weight: 500;
+        display: none;
+    }
+
+    .alert-message.error {
+        background-color: #fee2e2;
+        border-left: 4px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    .alert-message.success {
+        background-color: #dcfce7;
+        border-left: 4px solid #10b981;
+        color: #047857;
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin-bottom: 25px;
+    }
+
+    /* Form Sections */
+    .form-section {
+        padding: 30px;
+        background-color: white;
+    }
+
+    .form-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-section h3 i {
+        color: #3b82f6;
+    }
+
+    .form-description {
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+
+    .input-with-icon, .select-with-icon {
+        position: relative;
+    }
+
+    .input-with-icon i, .select-with-icon i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+    }
+
+    .input-with-icon input {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 15px;
+        color: #334155;
+        transition: all 0.2s ease;
+    }
+
+    .select-with-icon select {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 15px;
+        color: #334155;
+        background-color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: calc(100% - 15px) center;
+    }
+
+    .input-with-icon input:focus, .select-with-icon select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .select-with-icon select option {
+        padding: 10px;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 30px;
+    }
+
+    .form-actions button {
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .cancel-btn {
+        background-color: #f1f5f9;
+        color: #64748b;
+    }
+
+    .cancel-btn:hover {
+        background-color: #e2e8f0;
+    }
+
+    .submit-btn {
+        background-color: #3b82f6;
+        color: white;
+    }
+
+    .submit-btn:hover {
+        background-color: #2563eb;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-card {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .form-header {
+            flex-direction: column;
+            text-align: center;
+            padding: 25px 20px;
+        }
+
+        .header-image {
+            margin: 20px auto 0;
+        }
+
+        .form-section {
+            padding: 25px 20px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .add-interest-container {
+            padding: 20px 15px;
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .form-actions button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .header-content h2 {
+            font-size: 24px;
+        }
+    }
+</style>
 {% endblock %}

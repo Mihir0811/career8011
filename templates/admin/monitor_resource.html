@@ -1,38 +1,40 @@
 {% extends 'admin/base.html' %}
 {% block title %}Monitor Resources - Admin Panel{% endblock %}
 {% block content %}
+<div class="monitor-resources-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Monitor Resources</h1>
+            <p>View and manage all educational resources</p>
+        </div>
+        <div class="header-actions">
+            <div class="filter-container">
+                <!-- Search Box -->
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Search Resources">
+                </div>
 
-<div>
-    <h1 class="section-title">Monitor Resources</h1>
+                <!-- Dynamic Resource Type Dropdown -->
+                <select class="filter-select" id="resource-type-filter">
+                    <option value="">Resource Type</option>
+                    {% for resource_type in resource_types %}
+                    <option value="{{ resource_type }}">{{ resource_type }}</option>
+                    {% endfor %}
+                </select>
 
-    <div class="table-actions">
-        <div class="search-filters">
-            <!-- Search Box -->
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="search-input" placeholder="Search Resources">
+                <!-- Dynamic Managed By Dropdown -->
+                <select class="filter-select" id="managed-by-filter">
+                    <option value="">Managed By</option>
+                    {% for manager in managed_by %}
+                    <option value="{{ manager }}">{{ manager }}</option>
+                    {% endfor %}
+                </select>
             </div>
-
-            <!-- Dynamic Resource Type Dropdown -->
-            <select class="filter-select" id="resource-type-filter">
-                <option value="">Resource Type</option>
-                {% for resource_type in resource_types %}
-                <option value="{{ resource_type }}">{{ resource_type }}</option>
-                {% endfor %}
-            </select>
-
-            <!-- Dynamic Managed By Dropdown -->
-            <select class="filter-select" id="managed-by-filter">
-                <option value="">Managed By</option>
-                {% for manager in managed_by %}
-                <option value="{{ manager }}">{{ manager }}</option>
-                {% endfor %}
-            </select>
         </div>
     </div>
 
-
-    <div class="table-container">
+    <div class="resources-table-container">
         <table class="data-table">
             <thead>
                 <tr>
@@ -45,18 +47,30 @@
                 </tr>
             </thead>
             <tbody id="resource-table-body">
-                <!-- Example Row -->
                 {% for resource in resources %}
                 <tr>
-                    <td>{{ resource.title }}</td>
-                    <td>{{ resource.category }}</td>
-                    <td>{{ resource.file_type }}</td>
-                    <td>{{ resource.counselor_name }}</td>
-                    <td>{{ resource.date_uploaded.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <div class="resource-info">
+                            <div class="resource-icon">
+                                <i class="fas {% if resource.file_type == 'PDF' %}fa-file-pdf{% elif resource.file_type == 'Video' %}fa-video{% elif resource.file_type == 'Website' %}fa-globe{% else %}fa-file-alt{% endif %}"></i>
+                            </div>
+                            <span>{{ resource.title }}</span>
+                        </div>
+                    </td>
+                    <td><span class="category-badge">{{ resource.category }}</span></td>
+                    <td><span class="type-badge {{ resource.file_type | lower }}">{{ resource.file_type }}</span></td>
+                    <td>
+                        <div class="counselor-info">
+                            <div class="avatar" data-initial="{{ resource.counselor_name[0] }}">
+                                <img src="https://ui-avatars.com/api/?name={{ resource.counselor_name | urlencode }}&background=random&color=fff" alt="{{ resource.counselor_name }}">
+                            </div>
+                            <span>{{ resource.counselor_name }}</span>
+                        </div>
+                    </td>
+                    <td><span class="date-text">{{ resource.date_uploaded.strftime('%Y-%m-%d') }}</span></td>
                     <td>
                         <div class="action-buttons">
-                            <!-- <button class="edit-btn"><i class="fas fa-edit"></i></button> -->
-                            <button class="delete-btn"><i class="fas fa-trash" data-id="{{ resource.id }}"></i></button>
+                            <button class="delete-btn" title="Delete Resource"><i class="fas fa-trash" data-id="{{ resource.id }}"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -65,12 +79,520 @@
         </table>
     </div>
 </div>
+
+<div id="confirmDeleteModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Confirm Deletion</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this resource?</p>
+            <p class="modal-warning">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button id="cancelDelete" class="cancel-btn">Cancel</button>
+            <button id="confirmDelete" class="confirm-btn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Main Container */
+    .monitor-resources-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    /* Page Header */
+    .page-header {
+        position: relative;
+        background-image: url('https://img.freepik.com/free-photo/arrangement-with-books-wooden-background_23-2148898331.jpg?w=1380&t=st=1695260489~exp=1695261089~hmac=3a82f8277bd67cec54b5c47d6d3d3efdb238c2f8fbbe922c68e2f9be08e0c77e');
+        background-size: cover;
+        background-position: center;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(214, 126, 0, 0.85) 0%, rgba(242, 153, 74, 0.9) 100%);
+        z-index: 0;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-content h1 {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .header-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    /* Search Box */
+    .search-box {
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        min-width: 240px;
+    }
+
+    .search-box:focus-within {
+        background-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-box i {
+        color: white;
+    }
+
+    .search-box input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: white;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .search-box input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Filter Select */
+    .filter-select {
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: calc(100% - 15px) center;
+        padding-right: 40px;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        font-size: 14px;
+        min-width: 180px;
+    }
+
+    .filter-select:focus {
+        outline: none;
+        background-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-select option {
+        background-color: #D67E00;
+        color: white;
+    }
+
+    /* Table Container */
+    .resources-table-container {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        background-color: #f8fafc;
+        color: #4b5563;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 16px 20px;
+        text-align: left;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1e293b;
+        vertical-align: middle;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f1f5f9;
+    }
+
+    /* Resource Info */
+    .resource-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .resource-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: rgba(214, 126, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #D67E00;
+        font-size: 18px;
+        transition: all 0.3s ease;
+    }
+
+    .resource-info span {
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    /* Counselor Info */
+    .counselor-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #64748b;
+        position: relative;
+        border: 2px solid #D67E00;
+        transition: all 0.3s ease;
+    }
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .counselor-info span {
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    /* Category Badge */
+    .category-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #1e293b;
+        background-color: #f1f5f9;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Type Badge */
+    .type-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 500;
+        color: black;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .type-badge.pdf {
+        background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    }
+
+    .type-badge.video {
+        background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    }
+
+    .type-badge.website {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    }
+
+    .type-badge.document, .type-badge.file, .type-badge.image {
+        background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    }
+
+    /* Date Text */
+    .date-text {
+        display: inline-block;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .delete-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+
+    .delete-btn:hover {
+        background-color: #ef4444;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Modal */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+        animation: fadeIn 0.2s ease;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 0;
+        border-radius: 12px;
+        width: 400px;
+        max-width: 90%;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        animation: slideIn 0.3s ease;
+    }
+
+    .modal-header {
+        background-color: #f8fafc;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: #1e293b;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .modal-body {
+        padding: 24px;
+        text-align: center;
+    }
+
+    .modal-body p {
+        margin: 0 0 12px;
+        color: #4b5563;
+        font-size: 16px;
+    }
+
+    .modal-warning {
+        color: #ef4444;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .modal-footer {
+        padding: 16px 24px;
+        background-color: #f8fafc;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .cancel-btn, .confirm-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .cancel-btn {
+        background-color: #e2e8f0;
+        color: #4b5563;
+    }
+
+    .confirm-btn {
+        background-color: #ef4444;
+        color: white;
+    }
+
+    .cancel-btn:hover {
+        background-color: #cbd5e1;
+    }
+
+    .confirm-btn:hover {
+        background-color: #dc2626;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -60%);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    .monitor-resources-container {
+        animation: fadeIn 0.5s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-actions {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .filter-container {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .search-box, .filter-select {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .data-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .counselor-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .avatar {
+            margin: 0 auto;
+        }
+
+        .counselor-info span {
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
+        }
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('search-input');
         const resourceTypeFilter = document.getElementById('resource-type-filter');
         const managedByFilter = document.getElementById('managed-by-filter');
         const tableBody = document.getElementById('resource-table-body');
+        const modal = document.getElementById('confirmDeleteModal');
+        const confirmDeleteBtn = document.getElementById('confirmDelete');
+        const cancelDeleteBtn = document.getElementById('cancelDelete');
+        let resourceIdToDelete = null;
 
         function filterRows() {
             const searchValue = searchInput.value.toLowerCase();
@@ -95,33 +617,40 @@
         searchInput.addEventListener('input', filterRows);
         resourceTypeFilter.addEventListener('change', filterRows);
         managedByFilter.addEventListener('change', filterRows);
-    });
-</script>
 
-<script>
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', async function () {
+        // Set up delete buttons
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                resourceIdToDelete = this.querySelector("i").getAttribute("data-id");
+                modal.style.display = 'block';
+            });
+        });
 
-            const resourceId = this.querySelector("i").getAttribute("data-id");
-
-            if (confirm('Are you sure you want to delete this resource?')) {
+        // Set up modal buttons
+        confirmDeleteBtn.addEventListener('click', async function() {
+            if (resourceIdToDelete) {
                 try {
-                    const response = await fetch(`/delete_resource/${resourceId}`, {
+                    const response = await fetch(`/delete_resource/${resourceIdToDelete}`, {
                         method: 'DELETE',
                     });
 
                     if (!response.ok) {
                         const error = await response.json();
                         alert(`Error: ${error.error}`);
-                        return;
+                    } else {
+                        location.reload();
                     }
-
-                    location.reload();
                 } catch (error) {
                     console.error('Error deleting resource:', error);
                     alert('An unexpected error occurred while deleting the resource.');
                 }
             }
+            modal.style.display = 'none';
+        });
+
+        cancelDeleteBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+            resourceIdToDelete = null;
         });
     });
 </script>

@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Career Guidance Platform{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/logo.png') }}" type="image/png">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/student/dashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     {% block head %}{% endblock %}
@@ -491,12 +494,12 @@
             display: inline-block;
         }
 
-        .typing-text::after {
+        /* .typing-text::after {
             content: '|';
             position: absolute;
             right: -8px;
             animation: blink 0.7s infinite;
-        }
+        } */
 
         @keyframes blink {
 
@@ -618,6 +621,13 @@
                         <a href="{{ url_for('feedback') }}" class="{% if active_page == 'feedback' %}active{% endif %}"
                             data-section="feedback">
                             <i class="fas fa-comment"></i> <span>Feedback</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('premium') }}" class="{% if active_page == 'premium' %}active{% endif %}"
+                            data-section="premium">
+                            <i class="fas fa-crown"></i> <span>premium</span>
+ 
                         </a>
                     </li>
                     <li>

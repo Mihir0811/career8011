@@ -1,45 +1,396 @@
-<aside class="sidebar">
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <img src="{{ url_for('static',filename='img/logo.png')  }}" alt="Logo" class="logo">
-        <h1>ADMIN</h1>
-        <button class="mobile-menu-btn">
-            <i class="fas fa-bars"></i>
+        <img src="https://img.icons8.com/color/96/000000/admin-settings-male.png" alt="Logo" class="logo">
+        <h1>ADMIN PANEL</h1>
+        <button id="sidebarToggle" class="sidebar-toggle">
+            <i class="fas fa-times"></i>
         </button>
     </div>
+
     <nav class="sidebar-nav">
-        <a href="{{ url_for('dashboard') }}" class="{% if active_page == 'dashboard' %}active{% endif %}" data-section="dashboard">
-            <i class="fas fa-home"></i> Dashboard
-        </a>
-        <a href="{{ url_for('students') }}" class="{% if active_page == 'students' %}active{% endif %}" data-section="students">
-            <i class="fas fa-user-graduate"></i> Manage Students
-        </a>
-        <a href="{{ url_for('counselors') }}" class="{% if active_page == 'counselors' %}active{% endif %}" data-section="counselors">
-            <i class="fas fa-user-tie"></i> Manage Counselors
-        </a>
-        <a href="{{ url_for('interests') }}" class="{% if active_page == 'interests' %}active{% endif %}" data-section="interests">
-            <i class="fas fa-star"></i> Manage Interests
-        </a>
-        <a href="{{ url_for('appointments') }}" class="{% if active_page == 'appointments' %}active{% endif %}" data-section="appointments">
-            <i class="fas fa-calendar-check"></i> Monitor Appointments
-        </a>
-        <a href="{{ url_for('monitor_resources') }}" class="{% if active_page == 'monitor_resources' %}active{% endif %}" data-section="monitor_resources">
-            <i class="fas fa-book"></i> Monitor Resources
-        </a>
-        <a href="{{ url_for('monitor_feedbacks') }}" class="{% if active_page == 'monitor_feedbacks' %}active{% endif %}" data-section="monitor_feedbacks">
-            <i class="fas fa-comment-alt"></i> Monitor Feedbacks
-        </a>
-        <a href="{{ url_for('reports') }}" class="{% if active_page == 'reports' %}active{% endif %}" data-section="reports">
-            <i class="fas fa-chart-bar"></i> Reports
-        </a>
-        <a href="{{ url_for('notifications') }}" class="{% if active_page == 'notifications' %}active{% endif %}" data-section="notifications">
-            <i class="fas fa-bell"></i> Notifications
-        </a>
-        <a href="{{ url_for('admin_profile') }}" class="{% if active_page == 'admin_profile' %}active{% endif %}" data-section="admin_profile">
-            <i class="fas fa-user-shield"></i> Your Profile
-        </a>
-        <a href="{{ url_for('admin_logout') }}" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
+        <ul>
+            <li>
+                <a href="{{ url_for('dashboard') }}" class="{% if active_page == 'dashboard' %}active{% endif %}" data-section="dashboard">
+                    <i class="fas fa-home"></i> <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('students') }}" class="{% if active_page == 'students' %}active{% endif %}" data-section="students">
+                    <i class="fas fa-user-graduate"></i> <span>Manage Students</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('counselors') }}" class="{% if active_page == 'counselors' %}active{% endif %}" data-section="counselors">
+                    <i class="fas fa-user-tie"></i> <span>Manage Counselors</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('interests') }}" class="{% if active_page == 'interests' %}active{% endif %}" data-section="interests">
+                    <i class="fas fa-star"></i> <span>Manage Interests</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('appointments') }}" class="{% if active_page == 'appointments' %}active{% endif %}" data-section="appointments">
+                    <i class="fas fa-calendar-check"></i> <span>Monitor Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('monitor_resources') }}" class="{% if active_page == 'monitor_resources' %}active{% endif %}" data-section="monitor_resources">
+                    <i class="fas fa-book"></i> <span>Monitor Resources</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('monitor_feedbacks') }}" class="{% if active_page == 'monitor_feedbacks' %}active{% endif %}" data-section="monitor_feedbacks">
+                    <i class="fas fa-comment-alt"></i> <span>Monitor Feedbacks</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('reports') }}" class="{% if active_page == 'reports' %}active{% endif %}" data-section="reports">
+                    <i class="fas fa-chart-bar"></i> <span>Reports</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('notifications') }}" class="{% if active_page == 'notifications' %}active{% endif %}" data-section="notifications">
+                    <i class="fas fa-bell"></i> <span>Notifications</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('admin_profile') }}" class="{% if active_page == 'admin_profile' %}active{% endif %}" data-section="admin_profile">
+                    <i class="fas fa-user-shield"></i> <span>Your Profile</span>
+                </a>
+            </li>
+            <li class="logout-item">
+                <a href="{{ url_for('admin_logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </li>
+        </ul>
     </nav>
 </aside>
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    :root {
+        --primary-color: #e74c3c;
+        --primary-dark: #c0392b;
+        --primary-light: #ff6b6b;
+        --surface-color: #ffffff;
+        --text-primary: #333333;
+        --text-secondary: #666666;
+        --border-color: rgba(0, 0, 0, 0.1);
+        --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --transition-speed: 0.3s;
+    }
+
+    /* Overlay for mobile */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 999;
+        display: none;
+        transition: all 0.3s ease;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        background-color: var(--surface-color);
+        color: var(--text-primary);
+        width: 280px;
+        transition: all var(--transition-speed) ease;
+        z-index: 1000;
+        height: 100vh;
+        position: fixed;
+        overflow-y: auto;
+        box-shadow: var(--card-shadow);
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) #f5f5f5;
+    }
+
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+        background: #f5f5f5;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background-color: var(--primary-color);
+        border-radius: 6px;
+    }
+
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        position: relative;
+        border-bottom: 1px solid var(--border-color);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%), 
+                    url('https://img.freepik.com/premium-vector/abstract-red-geometric-shape-background_177428-138.jpg');
+        background-blend-mode: overlay;
+        background-size: cover;
+        color: white;
+    }
+
+    .logo {
+        width: 45px;
+        height: 45px;
+        margin-right: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        background-color: white;
+        padding: 2px;
+    }
+
+    .sidebar-header h1 {
+        color: white !important;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.2;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        display: none;
+    }
+
+    .sidebar-nav {
+        padding: 15px 0;
+    }
+
+    .sidebar-nav ul {
+        list-style: none;
+        padding: 0 10px;
+    }
+
+    .sidebar-nav li {
+        margin: 5px 0;
+    }
+
+    .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        padding: 14px 20px;
+        color: var(--text-primary);
+        text-decoration: none;
+        transition: all var(--transition-speed) ease;
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sidebar-nav a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.05);
+        transition: width var(--transition-speed) ease;
+        z-index: -1;
+    }
+
+    .sidebar-nav a:hover::before {
+        width: 100%;
+    }
+
+    .sidebar-nav a i {
+        margin-right: 15px;
+        font-size: 18px;
+        width: 22px;
+        text-align: center;
+        transition: transform var(--transition-speed) ease;
+        color: var(--primary-color);
+    }
+
+    .sidebar-nav a:hover i {
+        transform: translateX(3px);
+    }
+
+    .sidebar-nav a:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--primary-color);
+    }
+
+    .sidebar-nav a.active {
+        font-weight: 600;
+        background: rgba(231, 76, 60, 0.1);
+        color: var(--primary-color);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-nav a.active i {
+        transform: translateX(3px);
+    }
+
+    .logout-item {
+        margin-top: 20px !important;
+    }
+
+    .logout-btn {
+        background: linear-gradient(135deg, #ff9a9e 0%, #e74c3c 100%) !important;
+        color: white !important;
+        box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+    }
+
+    .logout-btn i, 
+    .logout-btn span {
+        color: white !important;
+    }
+
+    .logout-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4) !important;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .sidebar-nav li {
+        animation: fadeIn 0.5s ease forwards;
+        animation-delay: calc(0.1s * var(--i));
+        opacity: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .sidebar {
+            width: 80px;
+        }
+
+        .sidebar-header h1 {
+            display: none;
+        }
+
+        .sidebar-nav a span {
+            display: none;
+        }
+
+        .sidebar-nav a {
+            padding: 15px;
+            justify-content: center;
+        }
+
+        .sidebar-nav a i {
+            margin-right: 0;
+            font-size: 22px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 0;
+            transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+            width: 70%;
+            max-width: 300px;
+            transform: translateX(0);
+        }
+
+        .sidebar.active .sidebar-header h1,
+        .sidebar.active .sidebar-nav a span {
+            display: inline-block;
+        }
+
+        .sidebar.active .sidebar-nav a {
+            padding: 14px 20px;
+            justify-content: flex-start;
+        }
+
+        .sidebar.active .sidebar-nav a i {
+            margin-right: 15px;
+        }
+
+        .sidebar-toggle {
+            display: block;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation delay to nav items
+        const navItems = document.querySelectorAll('.sidebar-nav li');
+        navItems.forEach((item, index) => {
+            item.style.setProperty('--i', index);
+        });
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : 'auto';
+        }
+
+        // Event listeners
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', toggleSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', toggleSidebar);
+        }
+
+        // Check for mobile toggle button in other templates
+        const mobileToggle = document.getElementById('mobileToggle');
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', toggleSidebar);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    });
+</script>
 

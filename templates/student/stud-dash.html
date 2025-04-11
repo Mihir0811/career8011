@@ -459,14 +459,13 @@
                 <i class="fas fa-user-check"></i>
             </div>
             <div class="card-content">
-                <!-- <div class="progress-circle" data-progress="75">
-                    <span class="progress-number">75%</span>
-                </div> -->
                 <div>
-                    <h1>{{ session['student_name'] }}</h1>
+                    <h1>{{ student.name }}</h1><br>
+                    <span><strong>Email:</strong><br> {{ student.email }}</p>
+                    <span><strong>Contact:</strong> <br>{{ student.contact_number }}</p>
+                    <span><strong>Interests:</strong> <br>{{ student.interests or 'Not provided' }}</p>
                 </div>
-                <p>Complete your profile to get personalized career recommendations</p>
-                <!-- <button class="btn-primary">Complete Profile</button> -->
+                <!-- <p>Complete your profile to get personalized career recommendations</p> -->
             </div>
         </div>
 
@@ -476,18 +475,25 @@
                 <i class="fas fa-calendar"></i>
             </div>
             <div class="card-content">
-                <div class="appointment-info">
-                    <h4>Career Planning Session</h4>
-                    <p><i class="fas fa-user"></i> Dr. Sarah Smith</p>
-                    <p><i class="fas fa-clock"></i> Tomorrow, 2:00 PM</p>
-                    <p><i class="fas fa-video"></i> Google Meet</p>
-                </div>
-                <div class="appointment-actions">
-                    <button class="btn-secondary">Join Meeting</button>
-                    <button class="btn-outline">Reschedule</button>
-                </div>
+                {% if next_appointment %}
+                    <div class="appointment-info">
+                        <h4>{{ next_appointment.title }}</h4>
+                        <p><i class="fas fa-user"></i> {{ next_appointment.counselor_name }}</p>
+                        <p><i class="fas fa-clock"></i> {{ next_appointment.date_time.strftime('%A, %I:%M %p') }}</p>
+                        <p><i class="fas fa-video"></i> {{ next_appointment.location }}</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn-secondary">Join Meeting</button>
+                        <button class="btn-outline">Reschedule</button>
+                    </div>
+                {% else %}
+                    <div class="appointment-info">
+                        <p>No upcoming appointments found.</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
+        
 
         <div class="card career-progress">
             <div class="card-header">

@@ -436,9 +436,15 @@
                     <p class="find-specialization">{{ counselor.specialization }} Specialist</p>
                     
                     <div class="counselor-tags">
-                        <span class="counselor-tag">{{ counselor.interests}}</span>
-                        <span class="counselor-tag">Career Planning</span>
-                        <span class="counselor-tag">Mentoring</span>
+                        <div class="counselor-tags">
+                            {% if counselor.interests %}
+                                {% for interest in counselor.interests %}
+                                    <span class="counselor-tag">{{ interest }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <p>No interests found</p>
+                            {% endif %}
+                        </div>
                     </div>
                     
                     <div class="find-rating">

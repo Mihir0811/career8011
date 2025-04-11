@@ -1,88 +1,413 @@
 {% extends 'admin/base.html' %}
 {% block title %}Manage Students - Admin Panel{% endblock %}
 {% block content %}
-<h2 class="section-title">Manage Students</h2>
-<!-- <a href="https://app-na2.hubspot.com/payment-links/242275070/preview/215787336/test">Pay</a> -->
-<div class="table-actions">
-    <div class="search-filters">
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search students...">
+<div class="manage-students-container">
+    <div class="page-header">
+        <div class="header-content">
+            <h1>Manage Students</h1>
+            <p>View and manage all student accounts</p>
+        </div>
+        <div class="header-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search students...">
+            </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const searchInput = document.querySelector(".search-box input");
-            const tableRows = document.querySelectorAll(".data-table tbody tr");
-    
-            searchInput.addEventListener("keyup", function () {
-                const searchText = searchInput.value.toLowerCase();
-    
-                tableRows.forEach(row => {
-                    const studentName = row.querySelector("td:first-child span")?.textContent.toLowerCase() || "";
-                    const studentEmail = row.querySelector("td:nth-child(2)")?.textContent.toLowerCase() || "";
-                    const interests = row.querySelector(".interest-tags")?.textContent.toLowerCase() || "";
-    
-                    if (studentName.includes(searchText) || studentEmail.includes(searchText) || interests.includes(searchText)) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-            });
-        });
-    </script>
-    
+
+    <div class="student-table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Interests</th>
+                    <th>Registered Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if students %}
+                {% for student in students %}
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <img src="https://ui-avatars.com/api/?name={{ student.name | urlencode }}&background=random&color=fff" 
+                                 alt="{{ student.name }}"
+                                 class="student-avatar">
+                            <span>{{ student.name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ student.email }}</td>
+                    <td>
+                        <div class="interest-tags">
+                            {% for interest in student.interests.split(',') %}
+                            <span class="tag">{{ interest }}</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td>{{ student.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="edit-btn" onclick="window.location.href='/edit_stud/{{ student.id }}'">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-btn" onclick="deleteStudent('{{ student.id }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr class="empty-row">
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <img src="https://img.freepik.com/free-vector/no-data-concept-illustration_114360-536.jpg?w=740&t=st=1695234692~exp=1695235292~hmac=d3ef078b81a40a97f71c279629f8148b8fe505b9af42574d79f268e101f0a686" alt="No Records Found">
+                            <h3>No Students Found</h3>
+                            <p>There are no student records in the system.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div class="table-container">
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Interests</th>
-                <th>Registered Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if students %}
-            {% for student in students %}
-            <tr>
-                <td>
-                    <div class="user-info">
-                        <img src="https://ui-avatars.com/api/?name={{ student.name | urlencode }}" alt="{{ student.name }}">
-                        <span>{{ student.name }}</span>
-                    </div>
-                </td>
-                <td>{{ student.email }}</td>
-                <td>
-                    <div class="interest-tags">
-                        {% for interest in student.interests.split(',') %}
-                        <span class="tag">{{ interest }}</span>
-                        {% endfor %}
-                    </div>
-                </td>
-                <td>{{ student.created_at.strftime('%Y-%m-%d') }}</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="edit-btn" onclick="window.location.href='/edit_stud/{{ student.id }}'"><i class="fas fa-edit"></i></button>
-                        <button class="delete-btn" onclick="deleteStudent('{{ student.id }}')"><i class="fas fa-trash"></i></button>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-            {% else %}
-            <tr>
-                <td colspan="5" >No Records Found</td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
-</div>
-    <script>
-        function deleteStudent(studentId){
+<style>
+    /* Main Container */
+    .manage-students-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    /* Page Header */
+    .page-header {
+        position: relative;
+        background-image: url('https://img.freepik.com/free-vector/abstract-technology-particle-background_52683-25766.jpg?w=1380&t=st=1695240052~exp=1695240652~hmac=d48d36e7a56133b6a364eff6c560e91a7623c6dad3e492d37398128e1c48ef2d');
+        background-size: cover;
+        background-position: center;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(5, 150, 105, 0.95) 100%);
+        z-index: 0;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-content h1 {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .header-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    /* Search Box */
+    .search-box {
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        min-width: 300px;
+    }
+
+    .search-box:focus-within {
+        background-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-box i {
+        color: white;
+    }
+
+    .search-box input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: white;
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .search-box input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Table Container */
+    .student-table-container {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        background-color: #f8fafc;
+        color: #4b5563;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 16px 20px;
+        text-align: left;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1e293b;
+        vertical-align: middle;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f1f5f9;
+    }
+
+    /* User Info */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .student-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border: 2px solid #10b981;
+        transition: transform 0.3s ease;
+    }
+
+    .student-avatar:hover {
+        transform: scale(1.1);
+    }
+
+    /* Interest Tags */
+    .interest-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 500;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .edit-btn, .delete-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        position: relative;
+    }
+
+    .edit-btn {
+        color: #10b981;
+        background-color: rgba(16, 185, 129, 0.1);
+    }
+
+    .delete-btn {
+        color: #ef4444;
+        background-color: rgba(239, 68, 68, 0.1);
+    }
+
+    .edit-btn:hover {
+        background-color: #10b981;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .delete-btn:hover {
+        background-color: #ef4444;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .empty-state img {
+        width: 200px;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: #64748b;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .search-box {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .data-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .data-table th:nth-child(3),
+        .data-table td:nth-child(3) {
+            display: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .data-table th:nth-child(4),
+        .data-table td:nth-child(4) {
+            display: none;
+        }
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .manage-students-container {
+        animation: fadeIn 0.5s ease;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.querySelector(".search-box input");
+        const tableRows = document.querySelectorAll(".data-table tbody tr:not(.empty-row)");
+    
+        searchInput.addEventListener("keyup", function () {
+            const searchText = searchInput.value.toLowerCase();
+    
+            tableRows.forEach(row => {
+                const studentName = row.querySelector("td:first-child span")?.textContent.toLowerCase() || "";
+                const studentEmail = row.querySelector("td:nth-child(2)")?.textContent.toLowerCase() || "";
+                const interests = row.querySelector(".interest-tags")?.textContent.toLowerCase() || "";
+    
+                if (studentName.includes(searchText) || studentEmail.includes(searchText) || interests.includes(searchText)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    });
+
+    function deleteStudent(studentId){
+        if(confirm("Are you sure you want to delete this student?")) {
             fetch(`http://localhost:5000/delete_stud/${studentId}`,{
                 method: 'DELETE',
                 headers: {
@@ -100,8 +425,9 @@
             })
             .catch((err)=>{
                 console.log(err);
+                alert('An error occurred while deleting the student.');
             })
         }
-    </script>
-</div>  
+    }
+</script>
 {% endblock %}

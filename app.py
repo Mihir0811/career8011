@@ -5,7 +5,7 @@ from flask import *
 from flask_cors import CORS
 import humanize
 import requests
-from sqlalchemy import and_, func, or_
+from sqlalchemy import and_, func, or_, text
 from model import db,Student,Interest,Notification,Counselor,CounselorSchedule,Feedback,Resource,Payment,Admin,Appointment,AdminLogActivity,CounselorLogActivity
 from datetime import datetime, timedelta,timezone
 from apscheduler.schedulers.background import BackgroundScheduler 
@@ -412,6 +412,24 @@ def delete_stud(student_id):
 def counselors():
     counselors = Counselor.query.all()
     return render_template('admin/manage_counselor.html', active_page='counselors',counselors=counselors)
+
+@app.route('/view_counselor_details/<int:id>', methods=['GET'])
+def view_counselor_details(id):
+    counselor = Counselor.query.get(id)
+    if counselor:
+        return jsonify({
+            'id': counselor.id,
+            'full_name': counselor.full_name,
+            'email': counselor.email,
+            'contact_number': counselor.contact_number,
+            'specialization': counselor.specialization,
+            'bio': counselor.bio,
+            'profile_picture': counselor.profile_picture,
+            'interests': counselor.interests,
+            'approval_status': counselor.approval_status,
+            'created_at': counselor.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+        })
+    return jsonify({'error': 'Counselor not found'}), 404
 
 @app.route('/approve_counselor', methods=['POST'])
 def approve_counselor():
@@ -1004,13 +1022,40 @@ def stud_dash():
             or_(*[Counselor.interests.ilike(f"%{interest}%") for interest in student_interests])
         ).limit(3).all()
 
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"Current datetime: {now}")
+
+
+    appointments = Appointment.query.filter_by(student_id=student.id).all()
+    for appt in appointments:
+        print(f"Appointment ID: {appt.id}, Date: {appt.date}, Time Slot: {appt.time_slot}")
+
+    # Fetch the next appointment
+    query = text("""
+        SELECT *
+        FROM appointments
+        WHERE student_id = :student_id
+        AND datetime(date || ' ' || time_slot) > :current_time
+        ORDER BY date ASC, time_slot ASC
+        LIMIT 1
+    """)
+    next_appointment = db.session.execute(query, {"student_id": student.id, "current_time": now}).fetchone()
+
+    if next_appointment:
+        print(f"Next Appointment: {next_appointment}")
+    else:
+        print("No upcoming appointments found.")
+
+
     recent_resources = Resource.query.order_by(Resource.date_uploaded.desc()).limit(3).all()
     
     return render_template(
         'student/stud-dash.html',
         active_page='stud_dash',
         recent_resources=recent_resources,
-        counselors=counselors
+        counselors=counselors,
+        student=student,
+        next_appointment=next_appointment
     )
 
 @app.route('/find_counselors')
@@ -1018,7 +1063,24 @@ def find_counselors():
     if 'student_name' not in session:
         return redirect(url_for('student_login'))
     counselors = Counselor.query.filter_by(approval_status='approved')
-    return render_template('student/find_counselors.html',active_page='find_counselors',counselors=counselors)
+
+    counselors_data = []
+    for counselor in counselors:
+        try:
+            interests = json.loads(counselor.interests) if counselor.interests else []
+        except json.JSONDecodeError:
+            interests = [counselor.interests] if counselor.interests else []
+        
+        counselors_data.append({
+            "id": counselor.id,
+            "full_name": counselor.full_name,
+            "specialization": counselor.specialization,
+            "profile_picture": counselor.profile_picture,
+            "interests": interests,
+            "approval_status": counselor.approval_status.title(),
+        })
+
+    return render_template('student/find_counselors.html',active_page='find_counselors',counselors=counselors_data)
 
 @app.route('/schedule', methods=['GET', 'POST'])
 def schedule():
@@ -1280,6 +1342,9 @@ def feedback():
 
         return jsonify({'message':'Feedback Submitted Successfully!'}), 201
     
+@app.route('/premium')
+def premium():
+    return render_template('student/premium.html',active_page='premium')
 
 @app.route('/stud_prof')
 def stud_prof():
@@ -1449,6 +1514,48 @@ def verify_login():
         return jsonify({"status": "success", "message": "Verification successful!"}), 200
     else:
         return jsonify({"status": "error", "message": "Invalid verification code."}), 401
+
+@app.route('/resend_verification_code', methods=['POST'])
+def resend_verification_code():
+    data = request.get_json()
+    email = data.get('email')
+
+    if not email:
+        return jsonify({'success': False, 'error': 'Email is required.'}), 400
+
+    # Fetch the counselor using the provided email
+    counselor = Counselor.query.filter_by(email=email).first()
+
+    if not counselor:
+        return jsonify({'success': False, 'error': 'Email not found in the system.'}), 404
+
+    # Generate a new verification code
+    verification_code = random.randint(100000, 999999)
+    counselor.verification_code = verification_code
+
+    try:
+        # Commit the new verification code to the database
+        db.session.commit()
+
+        msg = Message(
+            'Resend Verification Code',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
+        msg.body = (
+            f"Dear {counselor.full_name},\n\n"
+            f"Here is your new verification code: {verification_code}\n\n"
+            f"Best regards,\nYour App Team"
+        )
+        mail.send(msg)
+
+        return jsonify({'success': True, 'message': 'Verification code resent successfully.'}), 200
+
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error: {str(e)}")
+        return jsonify({'success': False, 'error': 'Failed to resend verification code. Please try again.'}), 500
+
 
 
 @app.route('/counselor_dash')
@@ -1940,36 +2047,41 @@ def coun_profile():
         interests=interests
     )
 
-@app.route('/update_coun_profile', methods=['POST'])
-def update_coun_profile():
-    # Ensure you are receiving the form data correctly
-    full_name = request.form.get('full_name')
-    email = request.form.get('email')
-    contact_number = request.form.get('contact_number')
-    specialization = request.form.get('specialization')
-    bio = request.form.get('bio')
+@app.route('/edit_coun_profile', methods=['GET', 'POST'])
+def edit_coun_profile():
+    if 'counselor_name' not in session:
+        return redirect(url_for('counselor_login'))
 
-    # Validate the form data
-    if not full_name or not email or not contact_number or not specialization:
-        return jsonify({"success": False, "message": "All fields are required."})
+    # Fetch counselor's data from the database using session info
+    counselor = Counselor.query.filter_by(id=session['counselor_id']).first()
+    if not counselor:
+        return "Counselor not found", 404
 
-    # Perform the database update
-    try:
-        # Assuming you have a 'Counselor' model with an 'id' attribute to identify the counselor
-        counselor = Counselor.query.filter_by(id=session['counselor_id']).first()
-        counselor.full_name = full_name
-        counselor.email = email
-        counselor.contact_number = contact_number
-        counselor.specialization = specialization
-        counselor.bio = bio
+    if request.method == 'POST':
+        # Update counselor's profile with form data
+        counselor.full_name = request.form.get('full_name')
+        counselor.email = request.form.get('email')
+        counselor.contact_number = request.form.get('contact_number')
+        counselor.specialization = request.form.get('specialization')
+        counselor.bio = request.form.get('bio')
+        try:
+            db.session.commit()
+            return redirect(url_for('find_counselors'))  # Redirect back to profile
+        except Exception as e:
+            db.session.rollback()
+            return str(e), 500
 
-        # Commit the changes to the database
-        db.session.commit()
+    # Pass current data to the edit profile page
+    counselor_data = {
+        "id": counselor.id,
+        "full_name": counselor.full_name,
+        "email": counselor.email,
+        "contact_number": counselor.contact_number,
+        "specialization": counselor.specialization,
+        "bio": counselor.bio,
+    }
+    return render_template('counselor/edit_coun_profile.html', counselor_data=counselor_data)
 
-        return jsonify({"success": True})
-    except Exception as e:
-        print(e)
-        return jsonify({"success": False, "message": "Failed to update profile."})
 
 @app.route('/counselor_notifications', methods=['GET'])
 def counselor_notifications():

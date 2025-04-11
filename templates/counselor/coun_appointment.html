@@ -1,148 +1,541 @@
 {% extends 'counselor/counselor_base.html' %}
 {% block coun_content %}
-    <div class="section-header">
-        <h1>Manage Appointments</h1>
-        <h2>{{ id }}</h2>
-    </div>
+<style>
+    /* Appointment Page Specific Styles */
+    :root {
+        --primary-color: #4361ee;
+        --primary-dark: #3a0ca3;
+        --secondary-color: #4cc9f0;
+        --success-color: #2ecc71;
+        --warning-color: #ff9f1c;
+        --danger-color: #e63946;
+        --text-dark: #2b2d42;
+        --text-light: #8d99ae;
+        --white: #ffffff;
+        --gray-light: #f8f9fa;
+        --gray-medium: #e9ecef;
+        --transition: all 0.3s ease;
+    }
     
-    <div class="filter-container">
-        <!-- <div class="filter-group">
-            <label for="appointment-status">Status:</label>
-            <select id="appointment-status" class="filter-select">
-                <option value="all">All</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="completed">Completed</option>
-            </select>
-        </div> -->
+    /* Header Section */
+    .section-header {
+        background-image: url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        color: var(--white);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(46, 204, 113, 0.9), rgba(27, 94, 32, 0.85));
+        z-index: 1;
+    }
+    
+    .section-header h1 {
+        position: relative;
+        z-index: 2;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+    
+    .section-header h2 {
+        position: relative;
+        z-index: 2;
+        font-size: 1.3rem;
+        font-weight: 500;
+        opacity: 0.9;
+    }
+    
+    /* Filter Container */
+    .filter-container {
+        background-color: var(--white);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--gray-medium);
+    }
+    
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    
+    .filter-group label {
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 1rem;
+    }
+    
+    .search-input {
+        position: relative;
+        width: 300px;
+    }
+    
+    .search-input input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.5rem;
+        border: 1px solid var(--gray-medium);
+        border-radius: 12px;
+        font-size: 0.95rem;
+        transition: var(--transition);
+    }
+    
+    .search-input input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+    
+    .search-input i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+    }
+    
+    /* Table Container */
+    .view-container {
+        background-color: var(--white);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--gray-medium);
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 1.2rem 1.5rem;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-medium);
+    }
+    
+    .data-table th {
+        background-color: var(--gray-light);
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .data-table tr:hover {
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+    
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Status Badges */
+    .status-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-badge.pending {
+        background-color: rgba(255, 159, 28, 0.15);
+        color: var(--warning-color);
+    }
+    
+    .status-badge.approved {
+        background-color: rgba(46, 204, 113, 0.15);
+        color: var(--success-color);
+    }
+    
+    .status-badge.rejected {
+        background-color: rgba(230, 57, 70, 0.15);
+        color: var(--danger-color);
+    }
+    
+    .status-badge.canceled {
+        background-color: rgba(45, 52, 54, 0.15);
+        color: #2d3436;
+    }
+    
+    .status-badge.completed {
+        background-color: rgba(58, 12, 163, 0.15);
+        color: var(--primary-dark);
+    }
+    
+    /* Action Buttons */
+    .action-cell {
+        display: flex;
+        gap: 0.8rem;
+    }
+    
+    .action-icon {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: none;
+        background-color: var(--gray-light);
+        color: var(--text-dark);
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.9rem;
+    }
+    
+    .action-icon:hover {
+        transform: translateY(-3px);
+    }
+    
+    .action-icon.approve {
+        background-color: rgba(46, 204, 113, 0.15);
+        color: var(--success-color);
+    }
+    
+    .action-icon.approve:hover {
+        background-color: var(--success-color);
+        color: var(--white);
+    }
+    
+    .action-icon.reject,
+    .action-icon.cancel {
+        background-color: rgba(230, 57, 70, 0.15);
+        color: var(--danger-color);
+    }
+    
+    .action-icon.reject:hover,
+    .action-icon.cancel:hover {
+        background-color: var(--danger-color);
+        color: var(--white);
+    }
+    
+    .action-icon.view {
+        background-color: rgba(67, 97, 238, 0.15);
+        color: var(--primary-color);
+    }
+    
+    .action-icon.view:hover {
+        background-color: var(--primary-color);
+        color: var(--white);
+    }
+    
+    /* Modal Styling */
+    #student-details-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+    }
+    
+    .modal-content {
+        background-color: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        width: 450px;
+        max-width: 90%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+        animation: modalFadeIn 0.3s ease-out;
+    }
+    
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-content h3 {
+        margin: 0 0 1.5rem 0;
+        font-size: 1.5rem;
+        color: var(--text-dark);
+        text-align: center;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+    
+    .modal-content h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 1.2rem;
+        right: 1.2rem;
+        font-size: 1.5rem;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    
+    .modal-close:hover {
+        color: var(--danger-color);
+    }
+    
+    .modal-content p {
+        margin: 1rem 0;
+        font-size: 1rem;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+    }
+    
+    .modal-content p strong {
+        min-width: 100px;
+        display: inline-block;
+        color: var(--text-light);
+    }
+    
+    #modal-close-button {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        border: none;
+        border-radius: 12px;
+        background-color: var(--primary-color);
+        color: var(--white);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    
+    #modal-close-button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    /* Empty State */
+    .empty-state {
+        padding: 3rem;
+        text-align: center;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--text-light);
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        color: var(--text-light);
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+        .filter-container {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+        }
         
-            <div class="filter-group">
-                <label for="appointment-search">Search:</label>
-                <div class="search-input">
-                    <input type="text" id="appointment-search" placeholder="Search by student name">
-                    <i class="fas fa-search"></i>
-                </div>
-            </div>
-            <script>
-                document.getElementById('appointment-search').addEventListener('input', function () {
-                    const searchQuery = this.value.toLowerCase();
-                    const tableRows = document.querySelectorAll('#appointments-table-body tr');
-            
-                    tableRows.forEach(row => {
-                        const studentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                        if (studentName.includes(searchQuery)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                });
-            </script>
-        </div>
+        .search-input {
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .section-header {
+            padding: 2rem 1.5rem;
+        }
         
-        <div class="view-container" id="table-view">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Date & Time</th>
-                        <th>Student Name</th>
-                        <th>Topic</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="appointments-table-body">
-                    {% for appointment in appointments %}
-                    <tr data-appointment-id="{{ appointment.id }}">
-                        <td>{{ appointment.date_time }}</td>
-                        <td>{{ appointment.student_name }}</td>
-                        <td>{{ appointment.topic }}</td>
-                        <td>
-                            <span class="status-badge {{ appointment.counselor_status | lower }}">
-                                {{ appointment.counselor_status.capitalize() }}
-                            </span>
-                        </td>
-                        <td class="action-cell">
-                            {% if appointment.counselor_status == 'Pending' %}
-                                <button class="action-icon approve" title="Approve">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="action-icon reject" title="Reject">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                <!-- <button class="action-icon reschedule" title="Reschedule">
-                                    <i class="fas fa-clock"></i>
-                                </button> -->
-                            {% elif appointment.counselor_status == 'Approved' %}
-                                <button class="action-icon view" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <!-- <button class="action-icon reschedule" title="Reschedule">
-                                    <i class="fas fa-clock"></i>
-                                </button> -->
-                                <button class="action-icon cancel" title="Cancel">
-                                    <i class="fas fa-ban"></i>
-                                </button>
-                            {% elif appointment.counselor_status == 'Rejected' %}
-                                <button class="action-icon view" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <!-- <button class="action-icon reschedule" title="Reschedule">
-                                    <i class="fas fa-clock"></i>
-                                </button> -->
-                            {% elif appointment.counselor_status == 'Canceled' %}
-                                <button class="action-icon view" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <!-- <button class="action-icon reschedule" title="Reschedule">
-                                    <i class="fas fa-clock"></i>
-                                </button> -->
-                            {% elif appointment.counselor_status == 'Completed' %}
-                                <button class="action-icon view" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <!-- <button class="action-icon feedback" title="Add Feedback">
-                                    <i class="fas fa-comment"></i>
-                                </button> -->
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div id="student-details-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <!-- <span id="modal-close-button" class="modal-close">&times;</span> -->
-                <h3>Student Details</h3>
-                <p><strong>Name:</strong> <span id="modal-student-name"></span></p>
-                <p><strong>Email:</strong> <span id="modal-student-email"></span></p>
-                <p><strong>Phone:</strong> <span id="modal-student-phone"></span></p>
-                <p><strong>Interests:</strong> <span id="modal-student-interests"></span></p>
-                <p><strong>Purpose:</strong> <span id="modal-appointment-purpose"></span></p>
-                <p><strong>Date:</strong> <span id="modal-appointment-date"></span></p>
-                <p><strong>Time Slot:</strong> <span id="modal-appointment-time-slot"></span></p>
-                <button id="modal-close-button">Close</button>
-            </div>
-        </div>
+        .section-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .data-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+        }
+    }
     
-    <!-- Calendar View -->
-    
-<script>
-   document.addEventListener('click', function (event) {
-    if (event.target.closest('.action-icon.approve')) {
-    
-        const row = event.target.closest('tr');
-        const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+    @media (max-width: 576px) {
+        .action-cell {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+    }
+</style>
 
-        if (appointmentId) {
-            
-            fetch(`/approve_appointment/${appointmentId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
+<div class="section-header">
+    <h1>Manage Appointments</h1>
+    <h2>{{ id }}</h2>
+</div>
+
+<div class="filter-container">
+    <div class="filter-group">
+        <label for="appointment-search">Search:</label>
+        <div class="search-input">
+            <i class="fas fa-search"></i>
+            <input type="text" id="appointment-search" placeholder="Search by student name">
+        </div>
+    </div>
+</div>
+
+<div class="view-container" id="table-view">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date & Time</th>
+                <th>Student Name</th>
+                <th>Topic</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="appointments-table-body">
+            {% for appointment in appointments %}
+            <tr data-appointment-id="{{ appointment.id }}">
+                <td>{{ appointment.date_time }}</td>
+                <td>{{ appointment.student_name }}</td>
+                <td>{{ appointment.topic }}</td>
+                <td>
+                    <span class="status-badge {{ appointment.counselor_status | lower }}">
+                        {{ appointment.counselor_status.capitalize() }}
+                    </span>
+                </td>
+                <td class="action-cell">
+                    {% if appointment.counselor_status == 'Pending' %}
+                        <button class="action-icon approve" title="Approve">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="action-icon reject" title="Reject">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    {% elif appointment.counselor_status == 'Approved' %}
+                        <button class="action-icon view" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-icon cancel" title="Cancel">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                    {% elif appointment.counselor_status == 'Rejected' %}
+                        <button class="action-icon view" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    {% elif appointment.counselor_status == 'Canceled' %}
+                        <button class="action-icon view" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    {% elif appointment.counselor_status == 'Completed' %}
+                        <button class="action-icon view" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3>No Appointments Found</h3>
+                        <p>There are no appointments to display at this time.</p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Student Details Modal -->
+<div id="student-details-modal" class="modal">
+    <div class="modal-content">
+        <h3>Student Details</h3>
+        <p><strong>Name:</strong> <span id="modal-student-name"></span></p>
+        <p><strong>Email:</strong> <span id="modal-student-email"></span></p>
+        <p><strong>Phone:</strong> <span id="modal-student-phone"></span></p>
+        <p><strong>Interests:</strong> <span id="modal-student-interests"></span></p>
+        <p><strong>Purpose:</strong> <span id="modal-appointment-purpose"></span></p>
+        <p><strong>Date:</strong> <span id="modal-appointment-date"></span></p>
+        <p><strong>Time Slot:</strong> <span id="modal-appointment-time-slot"></span></p>
+        <button id="modal-close-button">Close</button>
+    </div>
+</div>
+
+<script>
+    // Search functionality
+    document.getElementById('appointment-search').addEventListener('input', function () {
+        const searchQuery = this.value.toLowerCase();
+        const tableRows = document.querySelectorAll('#appointments-table-body tr');
+
+        tableRows.forEach(row => {
+            if (row.querySelector('td:nth-child(2)')) {
+                const studentName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                if (studentName.includes(searchQuery)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+    });
+
+    // Action button event handlers
+    document.addEventListener('click', function (event) {
+        // Approve appointment
+        if (event.target.closest('.action-icon.approve')) {
+            const row = event.target.closest('tr');
+            const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+
+            if (appointmentId) {
+                fetch(`/approve_appointment/${appointmentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
@@ -156,22 +549,23 @@
                     console.error('Error:', error);
                     alert('An error occurred while approving the appointment.');
                 });
-        } else {
-            alert('Invalid appointment ID.');
+            } else {
+                alert('Invalid appointment ID.');
+            }
         }
-    }
 
-    if (event.target.closest('.action-icon.reject')) {
-        const row = event.target.closest('tr');
-        const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+        // Reject appointment
+        if (event.target.closest('.action-icon.reject')) {
+            const row = event.target.closest('tr');
+            const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
 
-        if (appointmentId) {
-            fetch(`/reject_appointment/${appointmentId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
+            if (appointmentId) {
+                fetch(`/reject_appointment/${appointmentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
@@ -185,25 +579,26 @@
                     console.error('Error:', error);
                     alert('An error occurred while rejecting the appointment.');
                 });
-        } else {
-            alert('Invalid appointment ID.');
+            } else {
+                alert('Invalid appointment ID.');
+            }
         }
-    }
 
-    if (event.target.closest('.action-icon.cancel')) {
-        const row = event.target.closest('tr');
-        const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+        // Cancel appointment
+        if (event.target.closest('.action-icon.cancel')) {
+            const row = event.target.closest('tr');
+            const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
 
-        if (appointmentId) {
-            const confirmCancel = confirm('Are you sure you want to cancel this appointment?');
+            if (appointmentId) {
+                const confirmCancel = confirm('Are you sure you want to cancel this appointment?');
 
-            if (confirmCancel) {
-                fetch(`/cancel_appointment/${appointmentId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
+                if (confirmCancel) {
+                    fetch(`/cancel_appointment/${appointmentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.success) {
@@ -217,124 +612,48 @@
                         console.error('Error:', error);
                         alert('An error occurred while canceling the appointment.');
                     });
+                }
+            } else {
+                alert('Invalid appointment ID.');
             }
-        } else {
-            alert('Invalid appointment ID.');
         }
-    }
 
-    if (event.target.closest('.action-icon.view')) {
-        const row = event.target.closest('tr');
-        const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
+        // View student details
+        if (event.target.closest('.action-icon.view')) {
+            const row = event.target.closest('tr');
+            const appointmentId = row ? row.getAttribute('data-appointment-id') : null;
 
-        if (appointmentId) {
-            fetch(`/view_student_details/${appointmentId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('modal-student-name').textContent = data.student_name;
-                        document.getElementById('modal-student-email').textContent = data.email;
-                        document.getElementById('modal-student-phone').textContent = data.phone;
-                        document.getElementById('modal-student-interests').textContent = data.interests;
-                        document.getElementById('modal-appointment-purpose').textContent = data.purpose;
-                        document.getElementById('modal-appointment-date').textContent = data.date;
-                        document.getElementById('modal-appointment-time-slot').textContent = data.time_slot;
+            if (appointmentId) {
+                fetch(`/view_student_details/${appointmentId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('modal-student-name').textContent = data.student_name;
+                            document.getElementById('modal-student-email').textContent = data.email;
+                            document.getElementById('modal-student-phone').textContent = data.phone;
+                            document.getElementById('modal-student-interests').textContent = data.interests;
+                            document.getElementById('modal-appointment-purpose').textContent = data.purpose;
+                            document.getElementById('modal-appointment-date').textContent = data.date;
+                            document.getElementById('modal-appointment-time-slot').textContent = data.time_slot;
 
-                        const modal = document.getElementById('student-details-modal');
-                        modal.style.display = 'flex';
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to fetch details.');
-                });
+                            const modal = document.getElementById('student-details-modal');
+                            modal.style.display = 'flex';
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to fetch details.');
+                    });
+            }
         }
-    }
 
-    if (event.target.id === 'modal-close-button' || event.target.closest('.modal-close')) {
-        const modal = document.getElementById('student-details-modal');
-        modal.style.display = 'none';
-    }
-});
+        // Close modal
+        if (event.target.id === 'modal-close-button' || event.target.closest('.modal-close')) {
+            const modal = document.getElementById('student-details-modal');
+            modal.style.display = 'none';
+        }
+    });
 </script>
-<style>
-/* Modal background styling */
-#student-details-modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Dark transparent overlay */
-    z-index: 1000; /* Ensure it appears above all content */
-    display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-}
-
-/* Modal content styling */
-.modal-content {
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 20px;
-    width: 400px;
-    max-width: 90%; /* Responsive for smaller screens */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    position: relative; /* For close button positioning */
-}
-
-/* Modal header styling */
-.modal-content h3 {
-    margin-top: 0;
-    font-size: 20px;
-    color: #333;
-    text-align: center;
-}
-
-/* Close button styling */
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 18px;
-    color: #333;
-    cursor: pointer;
-    border: none;
-    background: none;
-}
-
-/* Close button hover effect */
-.modal-close:hover {
-    color: #000;
-}
-
-/* Button styling */
-#modal-close-button {
-    display: block;
-    margin: 20px auto 0;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: red;
-    color: #ffffff;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-/* Button hover effect */
-#modal-close-button:hover {
-    background-color: #0056b3;
-}
-
-/* Modal body text styling */
-.modal-content p {
-    margin: 10px 0;
-    font-size: 14px;
-    color: #555;
-}
-</style>
 {% endblock %}

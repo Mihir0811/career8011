@@ -1,165 +1,375 @@
 {% extends 'counselor/counselor_base.html' %}
 {% block coun_content %}
-<div class="edit-profile-container">
-    <div class="edit-profile-header">
-        Edit Profile
+<div class="edit-profile-wrapper">
+    <div class="edit-profile-container">
+        <div class="edit-profile-header">
+            <h1>Edit Your Profile</h1>
+            <div class="header-decoration"></div>
+        </div>
+        
+        <div class="edit-profile-main">
+            <div class="profile-photo-section">
+                <div class="photo-container">
+                    <img src="{{ counselor_data.profile_picture if counselor_data.profile_picture else 'https://ui-avatars.com/api/?name=' + session['counselor_name'] | urlencode }}" alt="Profile Picture" class="profile-image">
+                    <div class="photo-edit-overlay">
+                        <button class="photo-edit-btn">
+                            <i class="fas fa-camera"></i>
+                            Upload Photo
+                        </button>
+                    </div>
+                </div>
+                <p class="photo-hint">Click to change your photo</p>
+            </div>
+            
+            <form class="profile-edit-form" method="POST" action="{{ url_for('edit_coun_profile') }}">
+                <div class="form-section personal-info">
+                    <h2 class="section-title">Personal Information</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="full_name">Full Name</label>
+                            <input type="text" id="full_name" name="full_name" value="{{ counselor_data.full_name }}" required>
+                            <!-- <span class="field-icon"><i class="fas fa-user"></i></span> -->
+                        </div>
+                        
+                        <div class="form-field">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" value="{{ counselor_data.email }}" required>
+                            <!-- <span class="field-icon"><i class="fas fa-envelope"></i></span> -->
+                        </div>
+                        
+                        <div class="form-field">
+                            <label for="contact_number">Phone Number</label>
+                            <input type="text" id="contact_number" name="contact_number" value="{{ counselor_data.contact_number }}" required>
+                            <!-- <span class="field-icon"><i class="fas fa-phone"></i></span> -->
+                        </div>
+                        
+                        <div class="form-field">
+                            <label for="specialization">Specialization</label>
+                            <input type="text" id="specialization" name="specialization" value="{{ counselor_data.specialization }}" required>
+                            <!-- <span class="field-icon"><i class="fas fa-certificate"></i></span> -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section professional-info">
+                    <h2 class="section-title">Professional Details</h2>
+                    
+                    <div class="form-field">
+                        <label for="interests">Areas of Interest <span class="field-tip">(separate with commas)</span></label>
+                        <textarea id="interests" name="interests" placeholder="e.g. Career guidance, Stress management, Academic counseling">{{ ', '.join(counselor_data.interests) if counselor_data.interests else '' }}</textarea>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="bio">Professional Biography</label>
+                        <textarea id="bio" name="bio" placeholder="Share your professional background, expertise, and counseling approach...">{{ counselor_data.bio }}</textarea>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel">Discard Changes</button>
+                    <button type="submit" class="btn-save">Save Profile</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="upload-photo-container">
-        <img src="{{ counselor_data.profile_picture if counselor_data.profile_picture else 'https://ui-avatars.com/api/?name=' + session['counselor_name'] | urlencode }}" alt="Profile Picture">
-        <button class="change-photo-btn">Change Photo</button>
-    </div>
-    <form class="edit-profile-form" method="POST" action="{{ url_for('edit_coun_profile') }}">
-        <div class="form-group">
-            <label for="full_name">Full Name</label>
-            <input type="text" id="full_name" name="full_name" value="{{ counselor_data.full_name }}" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="{{ counselor_data.email }}" required>
-        </div>
-        <div class="form-group">
-            <label for="contact_number">Phone</label>
-            <input type="text" id="contact_number" name="contact_number" value="{{ counselor_data.contact_number }}" required>
-        </div>
-        <div class="form-group">
-            <label for="specialization">Specialization</label>
-            <input type="text" id="specialization" name="specialization" value="{{ counselor_data.specialization }}" required>
-        </div>
-        <div class="form-group">
-            <label for="interests">Interests</label>
-            <textarea id="interests" name="interests">{{ ', '.join(counselor_data.interests) if counselor_data.interests else '' }}</textarea>
-        </div>
-        <div class="form-group">
-            <label for="bio">Bio</label>
-            <textarea id="bio" name="bio">{{ counselor_data.bio }}</textarea>
-        </div>
-        <button type="submit" class="edit-profile-btn">Save Changes</button>
-    </form>
 </div>
+
 <style>
-
-.edit-profile-container {
-    background: #ffffff;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    width: 400px;
-    padding: 30px 20px;
-    margin: auto;
-
-}
-
-.edit-profile-header {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333333;
-    text-align: center;
-}
-
-.edit-profile-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.edit-profile-form .form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.edit-profile-form label {
-    font-size: 14px;
-    color: #666666;
-    margin-bottom: 5px;
-}
-
-.edit-profile-form input[type="text"],
-.edit-profile-form input[type="email"],
-.edit-profile-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    font-size: 14px;
-    color: #333333;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.edit-profile-form input:focus,
-.edit-profile-form textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
-}
-
-.edit-profile-form textarea {
-    resize: none;
-    height: 80px;
-}
-
-.edit-profile-form .form-group-specializations {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-}
-
-.edit-profile-form .tag {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: #ffffff;
-    border-radius: 20px;
-    font-size: 12px;
-}
-
-.edit-profile-btn {
-    background: #007bff;
-    color: #ffffff;
-    font-size: 16px;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.edit-profile-btn:hover {
-    background: #0056b3;
-}
-
-.change-photo-btn {
-    background: #6c757d;
-    color: #ffffff;
-    font-size: 14px;
-    border: none;
-    padding: 8px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.change-photo-btn:hover {
-    background: #5a6268;
-}
-
-.upload-photo-container {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.upload-photo-container img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-    object-fit: cover;
-    border: 2px solid #cccccc;
-}
-
-.upload-photo-container .change-photo-btn {
-    margin-top: 10px;
-}
-
+    /* Reset and Base Styles */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Main Container Styles */
+    .edit-profile-wrapper {
+        min-height: 100vh;
+        padding: 40px 20px;
+        background-image: url('https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        font-family: 'Poppins', 'Segoe UI', sans-serif;
+    }
+    
+    .edit-profile-container {
+        width: 100%;
+        max-width: 900px;
+        background-color: rgba(255, 255, 255, 0.92);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 30px;
+    }
+    
+    /* Header Styles */
+    .edit-profile-header {
+        background-image: url('https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 35px 20px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .edit-profile-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(25, 118, 210, 0.9), rgba(32, 167, 172, 0.9));
+        z-index: 1;
+    }
+    
+    .edit-profile-header h1 {
+        position: relative;
+        z-index: 2;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+    
+    .header-decoration {
+        position: relative;
+        z-index: 2;
+        height: 4px;
+        width: 60px;
+        background-color: white;
+        margin: 0 auto;
+        border-radius: 2px;
+    }
+    
+    /* Main Content Styles */
+    .edit-profile-main {
+        padding: 40px;
+    }
+    
+    /* Profile Photo Section */
+    .profile-photo-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+    
+    .photo-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        overflow: hidden;
+        border: 5px solid white;
+    }
+    
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.3s ease;
+    }
+    
+    .photo-edit-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 8px 0;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .photo-container:hover .photo-edit-overlay {
+        opacity: 1;
+    }
+    
+    .photo-container:hover .profile-image {
+        filter: brightness(0.8);
+    }
+    
+    .photo-edit-btn {
+        background: transparent;
+        color: white;
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .photo-edit-btn i {
+        margin-right: 6px;
+    }
+    
+    .photo-hint {
+        font-size: 14px;
+        color: #666;
+        margin-top: 5px;
+    }
+    
+    /* Form Styles */
+    .profile-edit-form {
+        width: 100%;
+        display: contents !important;
+    }
+    
+    .form-section {
+        margin-bottom: 35px;
+        padding: 25px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .section-title {
+        color: #1976D2;
+        font-size: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .form-field {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .form-field label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+        font-size: 14px;
+    }
+    
+    .field-tip {
+        font-size: 12px;
+        color: #777;
+        font-weight: 400;
+    }
+    
+    .form-field input, 
+    .form-field textarea {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        color: #333;
+        transition: all 0.2s ease;
+    }
+    
+    .form-field textarea {
+        min-height: 120px;
+        padding-left: 15px;
+        resize: vertical;
+    }
+    
+    .form-field input:focus, 
+    .form-field textarea:focus {
+        border-color: #1976D2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        outline: none;
+    }
+    
+    .field-icon {
+        position: absolute;
+        left: 15px;
+        top: 40px;
+        color: #777;
+    }
+    
+    /* Button Styles */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .btn-cancel, 
+    .btn-save {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-cancel {
+        background-color: #f2f2f2;
+        color: #555;
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, #1976D2, #20a7ac);
+        color: white;
+        box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
+    }
+    
+    .btn-cancel:hover {
+        background-color: #e8e8e8;
+    }
+    
+    .btn-save:hover {
+        background: linear-gradient(135deg, #1565C0, #0d8991);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(25, 118, 210, 0.4);
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .edit-profile-main {
+            padding: 25px 20px;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .photo-container {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .photo-edit-overlay {
+            opacity: 1;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+            gap: 10px;
+        }
+        
+        .btn-cancel, .btn-save {
+            width: 100%;
+        }
+    }
 </style>
 {% endblock %}

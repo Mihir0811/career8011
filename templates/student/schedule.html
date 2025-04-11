@@ -1,48 +1,118 @@
 {% extends 'student/stud-base.html' %}
 {% block title %}Student Dashboard{% endblock %}
 {% block content %}
-<div class="schedule-container">
-    <div class="calendar-section">
-        <div class="calendar" id="appointmentCalendar"></div>
-        <!-- <input type="hidden" id="appointmentDate" name="appointment_date"> -->
+<div class="schedule-page-wrapper">
+    <div class="schedule-page-header">
+        <div class="schedule-header-content">
+            <h1>Schedule a Counseling Session</h1>
+            <p>Choose your preferred date, time and counselor</p>
+        </div>
     </div>
-    <div class="booking-section">
-        <h3>Book Appointment</h3>
-        <form id="bookingForm" class="booking-form" method="post">
-            <div class="form-group">
-                <label>Select Counselor</label>
-                <select name="counselor_id" id="counselorDropdown" required>
-                    <option value="">Choose a counselor</option>
-                    {% for counselor in counselors %}
-                        <option value="{{ counselor.id }}">{{ counselor.full_name }}</option>
-                    {% endfor %}
-                </select>
+
+    <div class="schedule-main-container">
+        <div class="schedule-calendar-section">
+            <div class="schedule-section-heading">
+                <div class="schedule-heading-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </div>
+                <h2>Select Date</h2>
             </div>
-            <div class="form-group">
-                <label>Date</label>
-                <input type="date" name="date" id="appointmentDate" readonly>
+            <div class="schedule-calendar-wrapper">
+                <div class="calendar" id="appointmentCalendar"></div>
             </div>
-            <div class="form-group">
-                <label>Time Slot</label>
-                <select name="time_slot" id="timeSlotDropdown" required>
-                    <option value="">Select time</option>
-                </select>
+        </div>
+        <div class="schedule-booking-section">
+            <div class="schedule-section-heading">
+                <div class="schedule-heading-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <h2>Appointment Details</h2>
             </div>
-            <div class="form-group">
-                <label>Purpose (Optional)</label>
-                <textarea name="purpose" placeholder="Briefly describe the purpose of your appointment"></textarea>
+            <form id="bookingForm" class="schedule-booking-form" method="post">
+                <div class="schedule-form-group">
+                    <label for="counselorDropdown">Select Counselor</label>
+                    <div class="schedule-input-wrapper">
+                        <div class="schedule-input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <select name="counselor_id" id="counselorDropdown" required>
+                            <option value="">Choose a counselor</option>
+                            {% for counselor in counselors %}
+                                <option value="{{ counselor.id }}">{{ counselor.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="schedule-form-group">
+                    <label for="appointmentDate">Session Date</label>
+                    <div class="schedule-input-wrapper">
+                        <div class="schedule-input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        </div>
+                        <input type="date" name="date" id="appointmentDate" readonly>
+                    </div>
+                </div>
+                
+                <div class="schedule-form-group">
+                    <label for="timeSlotDropdown">Available Time</label>
+                    <div class="schedule-input-wrapper">
+                        <div class="schedule-input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <select name="time_slot" id="timeSlotDropdown" required>
+                            <option value="">Select time</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="schedule-form-group">
+                    <label for="purpose">Purpose of Meeting</label>
+                    <div class="schedule-input-wrapper schedule-textarea-wrapper">
+                        <div class="schedule-input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        </div>
+                        <textarea name="purpose" id="purpose" placeholder="Briefly describe the purpose of your appointment"></textarea>
+                    </div>
+                </div>
+                
+                <div class="schedule-form-actions">
+                    <button type="submit" class="schedule-book-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Confirm Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="schedule-booking-info">
+        <div class="schedule-info-card">
+            <div class="schedule-info-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             </div>
-            <button type="submit" class="btn btn-primary confirm-booking-btn" style="background-color: var(--primary-color);color: white; border-radius: 8px !important;transition: all 0.2s linear;">Confirm Booking</button>
-        </form>
+            <div class="schedule-info-content">
+                <h3>How Scheduling Works</h3>
+                <p>Select a date from the calendar, choose your counselor and pick an available time slot. Your appointment will be confirmed instantly.</p>
+            </div>
+        </div>
+        <div class="schedule-info-card">
+            <div class="schedule-info-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+            </div>
+            <div class="schedule-info-content">
+                <h3>Meeting Preparation</h3>
+                <p>Take a moment to consider what you'd like to discuss. This helps your counselor prepare for a more productive session.</p>
+            </div>
+        </div>
     </div>
 </div>
+
 <script>
     document.getElementById('bookingForm').addEventListener('submit', async function (event) {
         event.preventDefault(); 
 
         const formData = new FormData(this); 
-
-
         const data = Object.fromEntries(formData.entries());
 
         try {
@@ -69,4 +139,305 @@
     });
 </script>
 
+<style>
+    /* Scoped styles to prevent conflicts - using unique prefixes */
+    .schedule-page-wrapper {
+        min-height: 100vh;
+        background-image: url('https://images.pexels.com/photos/7176026/pexels-photo-7176026.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        padding: 40px 20px;
+        font-family: 'Poppins', 'Segoe UI', sans-serif;
+    }
+    
+    /* Header */
+    .schedule-page-header {
+        text-align: center;
+        margin-bottom: 40px;
+        background-image: url('https://images.pexels.com/photos/3183153/pexels-photo-3183153.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        padding: 60px 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .schedule-page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(40, 83, 107, 0.85), rgba(69, 127, 202, 0.85));
+        z-index: 1;
+    }
+    
+    .schedule-header-content {
+        position: relative;
+        z-index: 2;
+        color: white;
+    }
+    
+    .schedule-header-content h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .schedule-header-content p {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+    
+    /* Main Container */
+    .schedule-main-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    .schedule-calendar-section, 
+    .schedule-booking-section {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Section Headings */
+    .schedule-section-heading {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+        gap: 15px;
+    }
+    
+    .schedule-heading-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #28536B, #457FCA);
+        color: white;
+    }
+    
+    .schedule-section-heading h2 {
+        font-size: 22px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    /* Calendar Styles */
+    .schedule-calendar-wrapper {
+        background-color: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    }
+    
+    /* Form Styles */
+    .schedule-booking-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .schedule-form-group {
+        position: relative;
+    }
+    
+    .schedule-form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+        font-size: 15px;
+    }
+    
+    .schedule-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .schedule-input-icon {
+        position: absolute;
+        left: 15px;
+        color: #28536B;
+        z-index: 2;
+    }
+    
+    .schedule-input-wrapper select,
+    .schedule-input-wrapper input,
+    .schedule-input-wrapper textarea {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        background-color: white;
+        font-size: 15px;
+        color: #333;
+        transition: all 0.2s ease;
+    }
+    
+    .schedule-input-wrapper select:focus,
+    .schedule-input-wrapper input:focus,
+    .schedule-input-wrapper textarea:focus {
+        border-color: #28536B;
+        box-shadow: 0 0 0 3px rgba(40, 83, 107, 0.1);
+        outline: none;
+    }
+    
+    .schedule-textarea-wrapper textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    /* Button Styles */
+    .schedule-form-actions {
+        margin-top: 10px;
+    }
+    
+    .schedule-book-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        padding: 14px 20px;
+        background: linear-gradient(135deg, #28536B, #457FCA);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(40, 83, 107, 0.2);
+    }
+    
+    .schedule-book-button:hover {
+        background: linear-gradient(135deg, #24495d, #3a6ca9);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(40, 83, 107, 0.3);
+    }
+    
+    .schedule-book-button:active {
+        transform: translateY(0);
+    }
+    
+    /* Info Section */
+    .schedule-booking-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .schedule-info-card {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 25px;
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(10px);
+    }
+    
+    .schedule-info-icon {
+        flex-shrink: 0;
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(40, 83, 107, 0.1), rgba(69, 127, 202, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #28536B;
+    }
+    
+    .schedule-info-content h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    .schedule-info-content p {
+        color: #666;
+        line-height: 1.5;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .schedule-main-container,
+        .schedule-booking-info {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .schedule-page-header {
+            padding: 40px 20px;
+        }
+        
+        .schedule-header-content h1 {
+            font-size: 24px;
+        }
+        
+        .schedule-header-content p {
+            font-size: 16px;
+        }
+        
+        .schedule-section-heading {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            text-align: center;
+        }
+        
+        .schedule-calendar-section, 
+        .schedule-booking-section {
+            padding: 20px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .schedule-page-wrapper {
+            padding: 20px 15px;
+        }
+        
+        .schedule-info-card {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+    }
+
+    /* Override any conflicting styles */
+    #appointmentCalendar {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 300px !important;
+    }
+    
+    /* Override global form styles if necessary */
+    .schedule-input-wrapper select,
+    .schedule-input-wrapper input,
+    .schedule-input-wrapper textarea {
+        appearance: auto !important;
+        -webkit-appearance: auto !important;
+        -moz-appearance: auto !important;
+    }
+</style>
 {% endblock %}

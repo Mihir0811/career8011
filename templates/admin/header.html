@@ -28,7 +28,7 @@
 
         <div class="profile-dropdown">
             <button class="profile-btn" id="profileBtn">
-                <img src="https://ui-avatars.com/api/?name={{ session['admin_name'] }}&background=e74c3c&color=fff" alt="Profile" class="profile-img">
+                <img src="{{ url_for('static', filename='img/admin_uploads/' + admin.profile_picture) }}" alt="Profile" class="profile-img">
                 <span class="profile-name">{{ session['admin_name'] }}</span>
                 <i class="fas fa-chevron-down"></i>
             </button>

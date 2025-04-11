@@ -1,179 +1,720 @@
 {% extends 'counselor/counselor_base.html' %}
 {% block coun_content %}
+
+<div class="resources-container">
+    <!-- Header Section -->
 <div class="section-header">
-    <h1>View Students</h1>
-</div>
-
-<div class="filter-container">
-    <div class="filter-group">
-        <label for="student-search">Search:</label>
-        <div class="search-input">
-            <input type="text" id="student-search" placeholder="Search by name or email">
-            <i class="fas fa-search"></i>
-        </div>
-        <script>
-            document.getElementById('student-search').addEventListener('input', function () {
-                const searchQuery = this.value.toLowerCase();
-                const studentCards = document.querySelectorAll('.student-card');
-        
-                studentCards.forEach(card => {
-                    const name = card.getAttribute('data-name');
-                    const email = card.getAttribute('data-email');
-                    if (name.includes(searchQuery) || email.includes(searchQuery)) {
-                        card.style.display = '';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        </script>
+        <h1 style="color:white !important">Resources </h1>
+        <p>Upload and manage career resources for students</p>
     </div>
+
+    <!-- Upload Form -->
+    <div class="upload-section">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-upload"></i> Upload New Resource</h2>
+            </div>
+            <div class="card-body">
+                <form id="resourceForm" class="upload-form">
+                    <div class="form-group">
+                        <label for="resourceTitle">Resource Title</label>
+                        <input type="text" id="resourceTitle" name="title" placeholder="Enter resource title" required>
 </div>
 
-<div class="students-grid" id="students-grid">
-    {% for entry in students_with_sessions %}
-    <div class="student-card" data-name="{{ entry.student.name | lower }}" data-email="{{ entry.student.email | lower }}">
-        <div class="student-header">
-            <img src="https://ui-avatars.com/api/?name={{ entry.student.name | urlencode }}" alt="{{ entry.student.name }}" class="student-avatar">
-            <div class="student-info">
-                <h3>{{ entry.student.name }}</h3>
-                <p>{{ entry.student.interests }}</p>
+                    <div class="form-group">
+                        <label for="categoryDropdown">Category</label>
+        <select name="category" id="categoryDropdown" required>
+            <option value="" disabled selected>Select Category</option>
+            <option value="Career Tips">Career Tips</option>
+            <option value="Interview">Interview</option>
+            <option value="Resume">Resume</option>
+        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="resource-desc">Description</label>
+                        <textarea name="description" id="resource-desc" placeholder="Provide a detailed description" required></textarea>
+                    </div>
+                    
+                    <div class="form-group file-upload">
+                        <label for="resourceFile">Upload File</label>
+                        <input type="file" id="resourceFile" name="file" required>
+                        <div class="file-upload-preview">
+                            <p>No file selected</p>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn"><i class="fas fa-cloud-upload-alt"></i> Upload Resource</button>
+    </form>
             </div>
         </div>
-        <div class="student-details">
-            <div class="detail-item">
-                <i class="fas fa-envelope"></i>
-                <span>{{ entry.student.email }}</span>
+</div>
+
+    <!-- Resources Table -->
+    <div class="resources-list">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-book"></i> Available Resources</h2>
             </div>
-            <div class="detail-item">
-                <i class="fas fa-phone"></i>
-                <span>{{ entry.student.contact_number }}</span>
+            <div class="card-body">
+                <div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Resource Title</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>File Size</th>
+                <th>Date Uploaded</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if resources %}
+            {% for resource in resources %}
+            <tr>
+                <td>{{ resource.title }}</td>
+                                <td>
+                                    <span class="category-badge {% if resource.category == 'Career Tips' %}career-tips{% elif resource.category == 'Interview' %}interview{% elif resource.category == 'Resume' %}resume{% endif %}">
+                                        {{ resource.category }}
+                                    </span>
+                                </td>
+                <td>{{ resource.file_type }}</td>
+                <td>{{ resource.file_size }}</td>
+                <td>{{ resource.date_uploaded.strftime('%B %d, %Y') }}</td>
+                <td class="action-cell">
+                                    <button class="action-btn view-resource" title="View Resource" data-id="{{ resource.id }}">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                                    <button class="action-btn delete" title="Delete Resource" data-id="{{ resource.id }}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                                <td colspan="6" class="no-data">
+                                    <div class="empty-state">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486754.png" alt="No Resources" class="empty-icon">
+                                        <p>No resources available</p>
+                                        <p class="empty-message">Upload your first resource using the form above</p>
+                                    </div>
+                                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+                </div>
             </div>
-            <div class="detail-item">
-                <i class="fas fa-calendar-check"></i>
-                <span>{{ entry.session_count }} Sessions</span>
-            </div>
-        </div>
-        <div class="student-actions">
-            <button class="btn btn-primary view-details-btn" 
-            data-appointment-id="{{ entry.appointment_id }}" 
-            title="View Details">
-                <i class="fas fa-eye"></i> View Details
-            </button>
         </div>
     </div>
-    {% endfor %}
-</div>
 
-<div id="studentDetailsModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h3>Student Details</h3>
-        <div id="modal-body">
+    <!-- Resource Details Modal -->
+    <div id="viewResourceModal" class="resource-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Resource Details</h2>
+            <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="resource-icon">
+                    <img id="resourceTypeIcon" src="https://cdn-icons-png.flaticon.com/512/5968/5968517.png" alt="Resource">
+                </div>
+                <div class="resource-info">
+                    <div class="info-item">
+                        <span class="label">Title:</span>
+                        <span id="resourceTitle" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Category:</span>
+                        <span id="resourceCategory" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">File Type:</span>
+                        <span id="resourceType" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">File Size:</span>
+                        <span id="resourceSize" class="value"></span>
+                    </div>
+                    <div class="info-item description">
+                        <span class="label">Description:</span>
+                        <span id="resourceDescription" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Downloads:</span>
+                        <span id="resourceDownloads" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Date Uploaded:</span>
+                        <span id="resourceDate" class="value"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-download"><i class="fas fa-download"></i> Download Resource</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const modal = document.getElementById('studentDetailsModal');
-    const modalBody = document.getElementById('modal-body');
-    const closeModalBtn = document.querySelector('.close-btn');
+    // Handle Resource Upload
+    document.querySelector('#resourceForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-    modal.style.display = 'none';
+        const form = event.target;
+        const title = form.querySelector('input[name="title"]').value;
+        const description = form.querySelector('textarea[name="description"]').value;
+        const category = form.querySelector('#categoryDropdown').value;
+        const fileInput = form.querySelector('input[name="file"]');
+        const file = fileInput.files[0];
 
-    document.querySelectorAll('.view-details-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const appointmentId = this.getAttribute('data-appointment-id');
+        if (!title || !description || !file || !category) {
+            alert('Please fill out all fields and upload a file.');
+            return;
+        }
 
-            fetch(`/view_student_details/${appointmentId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        modalBody.innerHTML = `
-                            <p><strong>Name:</strong> ${data.student_name}</p>
-                            <p><strong>Email:</strong> ${data.email}</p>
-                            <p><strong>Phone:</strong> ${data.phone}</p>
-                            <p><strong>Interests:</strong> ${data.interests}</p>
-                            <p><strong>Purpose:</strong> ${data.purpose}</p>
-                            <p><strong>Status:</strong> ${data.status}</p>
-                            <p><strong>Date:</strong> ${data.date}</p>
-                            <p><strong>Time Slot:</strong> ${data.time_slot}</p>
-                        `;
-                    } else {
-                        modalBody.innerHTML = `<p>${data.message}</p>`;
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('category', category);
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/manage_resources', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                alert(`Error: ${error.error}`);
+                return;
+            }
+
+            const result = await response.json();
+            alert(`Resource uploaded successfully: ${result.title}`);
+            location.reload();
+        } catch (error) {
+            console.error('Error uploading resource:', error);
+            alert('An unexpected error occurred while uploading the resource.');
+        }
+    });
+
+    // Handle Delete
+    document.querySelectorAll('.action-btn.delete').forEach(button => {
+        button.addEventListener('click', async function () {
+            const resourceId = this.getAttribute('data-id');
+
+            if (confirm('Are you sure you want to delete this resource?')) {
+                try {
+                    const response = await fetch(`/delete_resource/${resourceId}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        alert(`Error: ${error.error}`);
+                        return;
                     }
-                    modal.style.display = 'flex';
-                })
-                .catch(error => {
-                    modalBody.innerHTML = `<p>Error fetching details: ${error.message}</p>`;
-                    modal.style.display = 'flex';
-                });
+
+                    location.reload();
+                } catch (error) {
+                    console.error('Error deleting resource:', error);
+                    alert('An unexpected error occurred while deleting the resource.');
+                }
+            }
         });
     });
 
-    closeModalBtn.addEventListener('click', () => {
+    // Handle View Resource Modal
+    const modal = document.querySelector('.resource-modal');
+    const closeModal = modal.querySelector('.close');
+
+    document.querySelectorAll('.view-resource').forEach(button => {
+        button.addEventListener('click', async function () {
+            const resourceId = this.getAttribute('data-id');
+
+            try {
+                const response = await fetch(`/get_resource/${resourceId}`);
+                if (!response.ok) throw new Error('Failed to fetch resource details');
+
+                const resource = await response.json();
+
+                document.getElementById('resourceTitle').innerText = resource.title;
+                document.getElementById('resourceCategory').innerText = resource.category;
+                document.getElementById('resourceType').innerText = resource.file_type;
+                document.getElementById('resourceSize').innerText = resource.file_size;
+                document.getElementById('resourceDescription').innerText = resource.description;
+                document.getElementById('resourceDownloads').innerText = resource.downloads;
+                document.getElementById('resourceDate').innerText = `${new Date(resource.date_uploaded).getDate()}-${new Date(resource.date_uploaded).getMonth() + 1}-${new Date(resource.date_uploaded).getFullYear()}`;
+                
+                // Set appropriate icon based on file type
+                let iconUrl = "https://cdn-icons-png.flaticon.com/512/5968/5968517.png"; // Default icon
+                
+                if (resource.file_type.includes("pdf")) {
+                    iconUrl = "https://cdn-icons-png.flaticon.com/512/337/337946.png";
+                } else if (resource.file_type.includes("word") || resource.file_type.includes("doc")) {
+                    iconUrl = "https://cdn-icons-png.flaticon.com/512/888/888883.png";
+                } else if (resource.file_type.includes("excel") || resource.file_type.includes("xls")) {
+                    iconUrl = "https://cdn-icons-png.flaticon.com/512/888/888850.png";
+                } else if (resource.file_type.includes("image") || resource.file_type.includes("jpg") || resource.file_type.includes("png")) {
+                    iconUrl = "https://cdn-icons-png.flaticon.com/512/1829/1829552.png";
+                }
+                
+                document.getElementById('resourceTypeIcon').src = iconUrl;
+
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching resource details:', error);
+                alert('Failed to fetch resource details.');
+            }
+        });
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', () => {
         modal.style.display = 'none';
     });
 
-    window.addEventListener('click', (event) => {
-        if (event.target == modal) {
+    window.addEventListener('click', event => {
+        if (event.target === modal) {
             modal.style.display = 'none';
         }
+    });
+    
+    // File upload preview
+    document.getElementById('resourceFile').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'No file selected';
+        const filePreview = document.querySelector('.file-upload-preview p');
+        filePreview.textContent = fileName;
     });
 </script>
 
 <style>
-/* Modal styling */
-.modal {
+    /* General Styles */
+    .resources-container {
+        font-family: 'Poppins', sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
+    }
+    
+    /* Background Image */
+    body {
+        background-image: url('https://img.freepik.com/free-vector/abstract-white-shapes-background_79603-1362.jpg');
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    
+    /* Header Section */
+    .section-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        border-radius: 10px;
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-header h1 {
+        font-size: 2.2rem;
+        margin-bottom: 5px;
+    }
+    
+    .section-header p {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    /* Card Styles */
+    .card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        color: #444;
+        display: flex;
+        align-items: center;
+    }
+    
+    .card-header h2 i {
+        margin-right: 10px;
+        color: #6e8efb;
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+    
+    /* Upload Form */
+    .upload-section .card {
+        border-top: 4px solid #6e8efb;
+    }
+    
+    .upload-form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #555;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 15px;
+        transition: border 0.3s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #6e8efb;
+        outline: none;
+    }
+    
+    .form-group textarea {
+        height: 120px;
+        resize: vertical;
+    }
+    
+    .file-upload {
+        grid-column: span 2;
+    }
+    
+    .file-upload input[type="file"] {
+        margin-top: 10px;
+    }
+    
+    .file-upload-preview {
+        margin-top: 8px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    
+    .submit-btn {
+        max-width:min-content !important;
+        grid-column: span 2;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Table Styles */
+    .resources-list .card {
+        border-top: 4px solid #a777e3;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .data-table th {
+        background: #f8f9fa;
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #555;
+        border-bottom: 2px solid #eee;
+    }
+    
+    .data-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+    
+    .data-table tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .category-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+    }
+    
+    .category-badge.career-tips {
+        background-color: #e7f5ff;
+        color: #1c7ed6;
+    }
+    
+    .category-badge.interview {
+        background-color: #fff3bf;
+        color: #e67700;
+    }
+    
+    .category-badge.resume {
+        background-color: #d3f9d8;
+        color: #2b8a3e;
+    }
+    
+    .action-cell {
+        white-space: nowrap;
+    }
+    
+    .action-btn {
+        background: transparent;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+        color: #555;
+        margin: 0 2px;
+    }
+    
+    .action-btn:hover {
+        background: #f1f1f1;
+    }
+    
+    .action-btn.view-resource:hover {
+        color: #1c7ed6;
+    }
+    
+    .action-btn.delete:hover {
+        color: #e03131;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+    }
+    
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        opacity: 0.5;
+        margin-bottom: 15px;
+    }
+    
+    .empty-state p {
+        margin: 5px 0;
+        color: #777;
+    }
+    
+    .empty-message {
+        font-size: 14px;
+        opacity: 0.7;
+    }
+    
+    /* Modal Styles */
+    .resource-modal {
     display: none;
     position: fixed;
-    z-index: 1;
-    top: 0;
+    z-index: 1000;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+        animation: fadeIn 0.3s;
 }
 
 .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 40%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease;
-    position: relative;
+        background-color: white;
+        margin: 5% auto;
+        width: 600px;
+        max-width: 90%;
+        border-radius: 10px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+    }
+    
+    .modal-header {
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-header h2 {
+        margin: 0;
+        font-size: 1.6rem;
 }
 
-.close-btn {
-    color: #aaa;
-    font-size: 28px;
+.close {
+        color: white;
+        font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 15px;
+        transition: color 0.2s;
 }
 
-.close-btn:hover,
-.close-btn:focus {
-    color: #000;
-    text-decoration: none;
+    .close:hover {
+    color: #ff0000;
+}
+
+    .modal-body {
+        padding: 25px;
+        display: flex;
+        gap: 25px;
+    }
+    
+    .resource-icon {
+        flex: 0 0 100px;
+    text-align: center;
+}
+
+    .resource-icon img {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .resource-info {
+        flex: 1;
+    }
+    
+    .info-item {
+        margin-bottom: 10px;
+        display: flex;
+    }
+    
+    .info-item .label {
+        font-weight: 600;
+        width: 120px;
+    color: #555;
+    }
+    
+    .info-item .value {
+        flex: 1;
+    }
+    
+    .info-item.description {
+        flex-direction: column;
+    }
+    
+    .info-item.description .value {
+        margin-top: 5px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        line-height: 1.5;
+    }
+    
+    .modal-footer {
+        padding: 15px 25px;
+        background: #f8f9fa;
+        text-align: right;
+        border-top: 1px solid #eee;
+    }
+    
+    .btn-download {
+        background: #1c7ed6;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-download:hover {
+        background: #0b69c3;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: scale(0.9);
     }
     to {
         opacity: 1;
-        transform: scale(1);
+        }
     }
-}
+    
+    /* Responsive layout */
+    @media (max-width: 768px) {
+        .upload-form {
+            grid-template-columns: 1fr;
+        }
+        
+        .file-upload {
+            grid-column: 1;
+        }
+        
+        .submit-btn {
+            grid-column: 1;
+        }
+        
+        .modal-body {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .info-item {
+            flex-direction: column;
+        }
+        
+        .info-item .label {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+    }
 </style>
 {% endblock %}

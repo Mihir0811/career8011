@@ -1,43 +1,140 @@
 {% extends 'student/stud-base.html' %}
 {% block title %}Student Profile{% endblock %}
 {% block content %}
-<div class="profile container mt-5">
-    <div class="row tm-content-row">
-        <div class="tm-block-col tm-col-account-settings" style="padding: 10px;background-color: white;border-radius: 8px;">
-            <div class="tm-bg-primary-dark tm-block tm-block-settings" style="border-radius: 8px !important;">
-                <h2 class="tm-block-title">Account Settings</h2>
-                <form id="updateProfileForm" class="tm-signup-form row">
-                    <div class="form-group col-lg-6">
-                        <label for="username">Username</label>
-                        <input id="username" name="username" type="text" class="form-control validate" value="{{ student.name }}"/>
+<div class="student-profile-page">
+    <div class="profile-header">
+        <div class="header-content">
+            <h1>My Profile</h1>
+            <p>Update your personal information and account settings</p>
+        </div>
+    </div>
+    
+    <div class="profile-container">
+        <div class="profile-sidebar">
+            <div class="profile-avatar">
+                <div class="avatar-image">
+                    <img src="https://ui-avatars.com/api/?name={{ student.name }}&background=random&color=fff&size=200" alt="{{ student.name }}">
+                </div>
+                <h2>{{ student.name }}</h2>
+                <p class="profile-role">Student</p>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Email</span>
+                            <span class="stat-value">{{ student.email }}</span>
+                        </div>
                     </div>
-                    <div class="form-group col-lg-6">
-                        <label for="email">Account Email</label>
-                        <input id="email" name="email" type="email" class="form-control validate" value="{{ student.email }}"/>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Phone</span>
+                            <span class="stat-value">{{ student.contact_number }}</span>
+                        </div>
                     </div>
-                    <div class="form-group col-lg-6">
-                        <label for="oldPass">Old Password</label>
-                        <input id="oldPass" name="oldPass" type="password" class="form-control validate" />
+                </div>
+            </div>
+            <div class="profile-tips">
+                <div class="tip-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <span>Tips</span>
+                </div>
+                <ul class="tip-list">
+                    <li>Use a strong password with a mix of letters, numbers, and symbols</li>
+                    <li>Keep your contact details updated for important notifications</li>
+                    <li>Change your password regularly for better security</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="profile-main">
+            <div class="profile-card">
+                <div class="card-header">
+                    <h2>Account Settings</h2>
+                    <p>Update your profile information and password</p>
+                </div>
+                <form id="updateProfileForm" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <div class="input-wrapper">
+                                <div class="input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                                <input id="username" name="username" type="text" value="{{ student.name }}" placeholder="Your name"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <div class="input-wrapper">
+                                <div class="input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                </div>
+                                <input id="email" name="email" type="email" value="{{ student.email }}" placeholder="Your email"/>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group col-lg-6">
-                        <label for="newPass">New Password</label>
-                        <input id="newPass" name="newPass" type="password" class="form-control validate" />
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="oldPass">Current Password</label>
+                            <div class="input-wrapper">
+                                <div class="input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                </div>
+                                <input id="oldPass" name="oldPass" type="password" placeholder="Enter current password"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPass">New Password</label>
+                            <div class="input-wrapper">
+                                <div class="input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                </div>
+                                <input id="newPass" name="newPass" type="password" placeholder="Enter new password"/>
+                            </div>
+                            <p class="field-hint">Leave blank if you don't want to change</p>
+                        </div>
                     </div>
-                    <div class="form-group col-lg-6">
-                        <label for="pno">Phone</label>
-                        <input id="pno" name="pno" type="tel" class="form-control validate" value="{{ student.contact_number }}"/>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pno">Phone Number</label>
+                            <div class="input-wrapper">
+                                <div class="input-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                </div>
+                                <input id="pno" name="pno" type="tel" value="{{ student.contact_number }}" placeholder="Your phone number"/>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group col-lg-6 pb-4">
-                        <label class="tm-hide-sm">&nbsp;</label>
-                        <button type="button" class="btn btn-primary btn-block text-uppercase update-profile-btn">
-                            Update Your Profile
+                    
+                    <div class="form-actions">
+                        <button type="button" class="update-profile-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                            Save Changes
                         </button>
                     </div>
                 </form>
             </div>
+            
+            <div class="security-notice">
+                <div class="notice-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <div class="notice-text">
+                    <h3>Keeping your account secure</h3>
+                    <p>Your privacy matters to us. We recommend updating your password regularly and never sharing your login details with others.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 <script>
 document.querySelector('.update-profile-btn').addEventListener('click', async function () {
     const data = {
@@ -60,4 +157,428 @@ document.querySelector('.update-profile-btn').addEventListener('click', async fu
     }
 });
 </script>
+
+<style>
+    /* Base Styles */
+    .student-profile-page {
+        font-family: 'Poppins', 'Segoe UI', sans-serif;
+        color: #333;
+        background-image: url('https://images.pexels.com/photos/733852/pexels-photo-733852.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+    
+    /* Header Styles */
+    .profile-header {
+        text-align: center;
+        margin-bottom: 40px;
+        background-image: url('https://images.pexels.com/photos/5417678/pexels-photo-5417678.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        padding: 50px 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.85), rgba(37, 99, 235, 0.85));
+        z-index: 1;
+    }
+    
+    .header-content {
+        position: relative;
+        z-index: 2;
+        color: white;
+    }
+    
+    .header-content h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-content p {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+    
+    /* Main Container */
+    .profile-container {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    /* Sidebar Styles */
+    .profile-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .profile-avatar {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .avatar-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-bottom: 20px;
+        border: 5px solid white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .avatar-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-avatar h2 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #333;
+    }
+    
+    .profile-role {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .profile-stats {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f1f1f1;
+    }
+    
+    .stat-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background-color: rgba(59, 130, 246, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #3b82f6;
+    }
+    
+    .stat-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: #6b7280;
+    }
+    
+    .stat-value {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        word-break: break-word;
+        text-align: left;
+    }
+    
+    .profile-tips {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    .tip-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        color: #3b82f6;
+        font-weight: 600;
+    }
+    
+    .tip-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .tip-list li {
+        padding: 10px 0;
+        border-bottom: 1px dashed #f1f1f1;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #4b5563;
+    }
+    
+    .tip-list li:last-child {
+        border-bottom: none;
+    }
+    
+    /* Main Content Styles */
+    .profile-main {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .profile-card {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    .card-header {
+        margin-bottom: 25px;
+    }
+    
+    .card-header h2 {
+        font-size: 22px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .card-header p {
+        color: #6b7280;
+        font-size: 15px;
+    }
+    
+    .profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .form-group {
+        position: relative;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+        font-size: 15px;
+    }
+    
+    .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        color: #3b82f6;
+        z-index: 2;
+    }
+    
+    .input-wrapper input {
+        width: 100%;
+        padding: 12px 15px 12px 45px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        background-color: white;
+        font-size: 15px;
+        color: #333;
+        transition: all 0.2s ease;
+    }
+    
+    .input-wrapper input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+    
+    .field-hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 5px;
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 15px;
+    }
+    
+    .update-profile-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+    }
+    
+    .update-profile-btn:hover {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+    }
+    
+    .update-profile-btn:active {
+        transform: translateY(0);
+    }
+    
+    /* Security Notice */
+    .security-notice {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    
+    .notice-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #3b82f6;
+        flex-shrink: 0;
+    }
+    
+    .notice-text h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    .notice-text p {
+        color: #4b5563;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .profile-sidebar {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        
+        .profile-avatar, .profile-tips {
+            flex: 1;
+            min-width: 300px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .profile-header {
+            padding: 40px 20px;
+        }
+        
+        .header-content h1 {
+            font-size: 24px;
+        }
+        
+        .header-content p {
+            font-size: 16px;
+        }
+        
+        .profile-sidebar {
+            flex-direction: column;
+        }
+        
+        .profile-avatar, .profile-tips {
+            width: 100%;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .security-notice {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .student-profile-page {
+            padding: 20px 15px;
+        }
+        
+        .profile-card, .profile-avatar, .profile-tips, .security-notice {
+            padding: 20px;
+        }
+        
+        .avatar-image {
+            width: 120px;
+            height: 120px;
+        }
+    }
+</style>
 {% endblock %}

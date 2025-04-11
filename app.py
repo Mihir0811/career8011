@@ -17,7 +17,7 @@ import json
 from config import Config
 import stripe
 import time
-from werkzeug.security import hmac
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
@@ -325,6 +325,8 @@ def dashboard():
     
     activities = AdminLogActivity.query.order_by(AdminLogActivity.created_at.desc()).limit(3).all()
 
+    admin = Admin.query.get_or_404(session['admin_id'])
+
     formatted_activities = [{
         "type": activity.activity_type,
         "description": activity.activity_desc,
@@ -333,7 +335,7 @@ def dashboard():
     } for activity in activities]
 
 
-    return render_template('admin/dashboard.html', active_page='dashboard', activities=formatted_activities)
+    return render_template('admin/dashboard.html', active_page='dashboard', activities=formatted_activities,admin=admin)
 
 
 @app.route('/students',methods=['GET'])
@@ -344,14 +346,17 @@ def students():
         else:
             return redirect(url_for('admin_login'))
         students = Student.query.all()
-        return render_template('admin/manage_stud.html', active_page='students',students=students)
+        admin = Admin.query.get_or_404(session['admin_id'])
+
+        return render_template('admin/manage_stud.html', active_page='students',students=students,admin=admin)
 
 @app.route('/edit_stud/<int:student_id>', methods=['GET', 'PUT'])
 def edit_stud(student_id):
     student = db.session.get(Student, student_id)
+    admin = Admin.query.get_or_404(session['admin_id'])
     if request.method == 'GET':
         interests = Interest.query.all()
-        return render_template('admin/edit_stud.html', active_page='students', student=student, interests=interests)
+        return render_template('admin/edit_stud.html', active_page='students', student=student, interests=interests,admin=admin)
 
     if request.method == 'PUT':
         data = request.get_json()
@@ -394,6 +399,8 @@ def delete_stud(student_id):
     
     Feedback.query.filter_by(student_id=student_id).delete()
     Appointment.query.filter_by(student_id=student_id).delete()
+    admin = Admin.query.get_or_404(session['admin_id'])
+
 
     db.session.delete(student)
     db.session.commit()
@@ -411,7 +418,8 @@ def delete_stud(student_id):
 @app.route('/counselors')
 def counselors():
     counselors = Counselor.query.all()
-    return render_template('admin/manage_counselor.html', active_page='counselors',counselors=counselors)
+    admin = Admin.query.get_or_404(session['admin_id'])
+    return render_template('admin/manage_counselor.html', active_page='counselors',counselors=counselors,admin=admin)
 
 @app.route('/view_counselor_details/<int:id>', methods=['GET'])
 def view_counselor_details(id):
@@ -438,6 +446,7 @@ def approve_counselor():
     action = data.get('action')
 
     counselor = Counselor.query.get_or_404(counselor_id)
+
 
     if action == 'approve':
         if counselor.approval_status == 'approved':
@@ -483,20 +492,34 @@ def approve_counselor():
 
     return jsonify({'success': False, 'error': 'Invalid action.'})
 
+@app.route('/reject_counselor/<int:counselor_id>', methods=['POST'])
+def reject_counselor(counselor_id):
+    counselor = Counselor.query.get(counselor_id)
+    if not counselor:
+        return jsonify({'error': 'Counselor not found'}), 404
+
+    counselor.approval_status = 'rejected'
+    counselor.verification_code = 0
+    db.session.commit()
+
+    return jsonify({'message': f"Counselor {counselor.full_name}'s status updated to rejected."}), 200
+
 # ---------------------------------- Interests -----------------------------------
 
 
 @app.route('/interests')
 def interests():
     all_interest = Interest.query.all()
-    return render_template('admin/interests.html',interests=all_interest, active_page='interests')
+    admin = Admin.query.get_or_404(session['admin_id'])
+    return render_template('admin/interests.html',interests=all_interest, active_page='interests',admin=admin)
 
 #-------------- Add Interests
 
 @app.route('/add_interest', methods=['GET', 'POST'])
 def add_interest():
+    admin = Admin.query.get_or_404(session['admin_id'])
     if request.method == 'GET':
-        return render_template('admin/add_interest.html',active_page='interests')
+        return render_template('admin/add_interest.html',active_page='interests',admin=admin)
     
     if request.method == 'POST':
             data = request.get_json()
@@ -533,7 +556,6 @@ def add_interest():
 @app.route('/delete_interest/<int:interest_id>', methods=['DELETE'])
 def delete_interest(interest_id):
     interest = Interest.query.get(interest_id)
-
     if not interest:
         return jsonify({'msg' : 'Interest Not Found!'}), 404
     
@@ -545,17 +567,21 @@ def delete_interest(interest_id):
 
 @app.route('/appointments')
 def appointments():
+    admin = Admin.query.get_or_404(session['admin_id'])
+    
     appointments = (
         db.session.query(Appointment)
         .join(Student, Appointment.student_id == Student.id)
         .join(Counselor, Appointment.counselor_id == Counselor.id)
         .all()
     )
-    return render_template('admin/appointments.html', active_page='appointments',appointments=appointments)
+    return render_template('admin/appointments.html', active_page='appointments',appointments=appointments,admin=admin)
 
 @app.route('/monitor_resources')
 def monitor_resources():
-
+    admin = Admin.query.get_or_404(session['admin_id'])
+    if not admin:
+        return redirect(url_for('login'))
     resources = Resource.query.all()    
     counselor_names = {
         counselor.id: counselor.full_name
@@ -582,11 +608,13 @@ def monitor_resources():
         resources=resources_with_counselor,
         resource_types=resource_types,
         managed_by=managed_by,
-        active_page='monitor_resources'
+        active_page='monitor_resources',
+        admin=admin
     )
 
 @app.route('/monitor_feedbacks', methods=['GET'])
 def monitor_feedbacks():
+    admin = Admin.query.get_or_404(session['admin_id'])
     rating = request.args.get('rating')
     if rating and rating.isdigit():
         feedbacks = Feedback.query.filter(Feedback.rating == int(rating)).all()
@@ -599,13 +627,14 @@ def monitor_feedbacks():
             'description': feedback.feedback_text,
             'rating': feedback.rating
         } for feedback in feedbacks])
-    return render_template('admin/monitor_feedbacks.html', feedbacks=feedbacks, active_page='monitor_feedbacks')
+    return render_template('admin/monitor_feedbacks.html', feedbacks=feedbacks, active_page='monitor_feedbacks',admin=admin)
 
 
 # --------------------------- Reports ------------------------------------
 @app.route('/reports')
 def reports():
-    return render_template('admin/reports.html', active_page='reports')
+    admin = Admin.query.get_or_404(session['admin_id'])
+    return render_template('admin/reports.html', active_page='reports',admin=admin)
 
 
 @app.route('/popular_interests', methods=['GET'])
@@ -704,7 +733,8 @@ def notifications():
         if 'admin_name' not in session:
             return redirect(url_for('admin_login'))
         notifications = Notification.query.order_by(Notification.created_at.desc()).all()
-        return render_template('admin/notifications.html', active_page='notifications',notifications=notifications)
+        admin = Admin.query.get_or_404(session['admin_id'])
+        return render_template('admin/notifications.html', active_page='notifications',notifications=notifications,admin=admin)
 
     if request.method == 'POST':
         data = request.get_json()
@@ -798,33 +828,42 @@ def admin_profile():
     admin_id = session.get('admin_id')
     if not admin_id:
         return redirect(url_for('admin_login'))  # Redirect to login if not logged in
-    
+
     # Fetch the admin data from the database
     admin = Admin.query.get_or_404(admin_id)
 
     if request.method == 'POST':
-        # Handle avatar image update (upload a new avatar)
+        # Handle avatar upload
         avatar = request.files.get('avatar')
-        
         if avatar:
-            # Remove the old image if a new one is uploaded
-            if admin.profile_picture and os.path.exists(os.path.join('static/img/admin_uploads', admin.profile_picture)):
-                os.remove(os.path.join('static/img/admin_uploads', admin.profile_picture))
-            
-            # Ensure the uploaded filename is unique to avoid collisions
-            avatar_filename = f"{admin_id}_{avatar.filename}"
-            avatar_path = os.path.join('static/img/admin_uploads', avatar_filename)
-            avatar.save(avatar_path)
-            admin.profile_picture = avatar_filename  # Update the profile picture in the database
+            # Define upload folder (relative to the project directory)
+            upload_folder = os.path.join('static', 'img', 'admin_uploads')
+            os.makedirs(upload_folder, exist_ok=True)  # Ensure directory exists
 
-        # Handle account settings update
+            # Remove old profile picture if it exists
+            if admin.profile_picture:
+                old_avatar_path = os.path.join(upload_folder, admin.profile_picture)
+                if os.path.exists(old_avatar_path):
+                    os.remove(old_avatar_path)
+
+            # Save the avatar without sanitizing the filename
+            avatar_filename = f"{admin_id}_{avatar.filename}"  # Use filename directly
+            avatar_path = os.path.join(upload_folder, avatar_filename)
+
+            try:
+                avatar.save(avatar_path)
+                admin.profile_picture = avatar_filename  # Save only the filename in the database
+            except Exception as e:
+                print(f"Error saving file: {e}")
+                return jsonify({'status': 'error', 'message': 'Failed to upload image'}), 500
+
+        # Handle other updates
         username = request.form.get('username')
         email = request.form.get('email')
         old_pass = request.form.get('oldPass')
         new_pass = request.form.get('newPass')
         phone = request.form.get('pno')
 
-        # Update account settings
         if username:
             admin.username = username
         if email:
@@ -832,28 +871,24 @@ def admin_profile():
         if phone:
             admin.contact_number = phone
 
-        # Update password (No hashing for now, it's plain text)
         if old_pass and new_pass:
-            if old_pass == admin.password:  # Check if old password matches
-                admin.password = new_pass  # Update with the new password
+            if old_pass == admin.password:
+                admin.password = new_pass
             else:
-                return jsonify({
-                    'status': 'error',
-                    'message': 'Old password is incorrect'
-                })
+                return jsonify({'status': 'error', 'message': 'Old password is incorrect'})
 
-        # Commit the changes to the database
+        # Save updates to the database
         db.session.commit()
 
-        # Return JSON response with updated profile info
         return jsonify({
             'status': 'success',
-            'message': 'Profile and account settings updated successfully',
+            'message': 'Profile updated successfully',
             'profile_picture': admin.profile_picture
         })
 
-    # Render the admin profile page with current details
+    # Render the profile template
     return render_template('admin/admin_profile.html', admin=admin)
+
 
 @app.route('/delete_account/<int:admin_id>', methods=['POST'])
 def delete_account(admin_id):
@@ -1370,6 +1405,7 @@ def update_student():
         student.email = data.get('email', student.email)
         student.contact_number = data.get('contact_number', student.contact_number)
         student.password = data.get('new_password', student.password) 
+        student.con_password = data.get('new_password', student.password) 
 
         db.session.commit()
         return jsonify({'message': 'Profile updated successfully'})
@@ -1528,6 +1564,12 @@ def resend_verification_code():
 
     if not counselor:
         return jsonify({'success': False, 'error': 'Email not found in the system.'}), 404
+    
+    if counselor.approval_status == 'rejected':
+        return jsonify({
+            'success': False,
+            'error': 'Verification code cannot be resent because Your Account has been rejected.'
+        }), 403
 
     # Generate a new verification code
     verification_code = random.randint(100000, 999999)

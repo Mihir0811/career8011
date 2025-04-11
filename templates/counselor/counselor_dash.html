@@ -1,29 +1,447 @@
 {% extends 'counselor/counselor_base.html' %}
 {% block coun_content %}
 <section id="dashboard-section" class="content-section active">
+    <style>
+        /* Dashboard Specific Styles */
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a0ca3;
+            --secondary-color: #4cc9f0;
+            --success-color: #2ecc71;
+            --warning-color: #ff9f1c;
+            --danger-color: #e63946;
+            --text-dark: #2b2d42;
+            --text-light: #8d99ae;
+            --white: #ffffff;
+            --gray-light: #f8f9fa;
+            --gray-medium: #e9ecef;
+            --transition: all 0.3s ease;
+        }
+        
+        /* Welcome Section */
+        .welcome-section {
+            background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            color: var(--white);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.9), rgba(27, 94, 32, 0.85));
+            z-index: 1;
+        }
+        
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .welcome-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            animation: fadeIn 0.5s ease-in-out 0.2s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Metrics Cards */
+        .metrics-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            border: 1px solid var(--gray-medium);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 5px;
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        
+        .metric-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        
+        .metric-header i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            opacity: 0.8;
+            padding: 0.8rem;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 12px;
+        }
+        
+        .metric-content {
+            text-align: left;
+            margin-bottom: 1.2rem;
+        }
+        
+        .metric-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+            margin-bottom: 0.3rem;
+        }
+        
+        .metric-label {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        
+        .metric-progress {
+            height: 8px;
+            background-color: var(--gray-light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-progress .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+        }
+        
+        .metric-progress.warning .progress-bar {
+            background-color: var(--warning-color);
+        }
+        
+        .metric-progress.success .progress-bar {
+            background-color: var(--success-color);
+        }
+        
+        .btn-primary, .btn-warning, .btn-success {
+            display: inline-block;
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: var(--white);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover, .btn-warning:hover, .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Quick Actions */
+        .section-container {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-medium);
+        }
+        
+        .section-header {
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--gray-medium);
+        }
+        
+        .section-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+        }
+        
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--gray-light);
+            border: 1px solid var(--gray-medium);
+            border-radius: 14px;
+            transition: var(--transition);
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+            transform: translateY(-5px);
+        }
+        
+        .action-btn:hover i {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+        }
+        
+        .action-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            padding: 1rem;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .action-btn span {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        
+        /* Activities List */
+        .activities-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        .activities-list::-webkit-scrollbar {
+            width: 6px;
+            border-radius: 10px;
+        }
+        
+        .activities-list::-webkit-scrollbar-track {
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+        
+        .activities-list::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background-color: var(--gray-light);
+            transition: var(--transition);
+        }
+        
+        .activity-item:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .activity-icon {
+            flex-shrink: 0;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background-color: rgba(67, 97, 238, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+        
+        .activity-icon i {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 0.3rem 0;
+            color: var(--text-dark);
+        }
+        
+        .activity-content p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .activity-time {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            display: block;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .stats-card {
+            background-color: var(--white);
+            border-radius: 14px;
+            padding: 1.5rem;
+            height: 300px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-medium);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .welcome-section {
+                padding: 2rem 1.5rem;
+            }
+            
+            .welcome-section h1 {
+                font-size: 2rem;
+            }
+            
+            .welcome-section p {
+                font-size: 1rem;
+            }
+            
+            .metrics-cards {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-cards, .quick-actions, .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metric-card {
+                padding: 1.2rem;
+            }
+            
+            .section-container {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .welcome-section {
+                padding: 1.5rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .welcome-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .activity-item {
+                flex-direction: column;
+            }
+            
+            .activity-icon {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+
     <div class="welcome-section">
-        <h1>Welcome Back, {{ session['counselor_name'] | title }}</h1>
-        <p>Here's an overview of your appointments and activities</p>
+        <div class="welcome-content">
+            <h1 style="color: white !important;">Welcome Back, {{ session['counselor_name'] | title }}!</h1>
+            <p style="color: white !important;">Here's an overview of your appointments and activities. Track your progress and manage your schedule efficiently.</p>
+        </div>
     </div>
 
     <!-- Key Metrics Overview -->
     <div class="metrics-cards">
         <div class="metric-card">
+            <div class="metric-decoration"></div>
             <div class="metric-header">
                 <h3>Upcoming Appointments</h3>
                 <i class="fas fa-calendar-day"></i>
             </div>
             <div class="metric-content">
                 <div class="metric-value">8</div>
-                <div class="metric-label">Today</div>
+                <div class="metric-label">Scheduled for Today</div>
                 <div class="metric-progress">
                     <div class="progress-bar" style="width: 60%"></div>
                 </div>
             </div>
-            <button class="btn-primary">View Schedule</button>
+            <button class="btn-primary" onclick="window.location.href='/coun_appointment'">View Schedule</button>
         </div>
 
         <div class="metric-card">
+            <div class="metric-decoration"></div>
             <div class="metric-header">
                 <h3>Pending Requests</h3>
                 <i class="fas fa-clock"></i>
@@ -35,10 +453,11 @@
                     <div class="progress-bar" style="width: 40%"></div>
                 </div>
             </div>
-            <button class="btn-warning">Review Requests</button>
+            <button class="btn-warning" onclick="window.location.href='/coun_appointment'">Review Requests</button>
         </div>
 
         <div class="metric-card">
+            <div class="metric-decoration"></div>
             <div class="metric-header">
                 <h3>Completed Sessions</h3>
                 <i class="fas fa-check-circle"></i>
@@ -50,7 +469,7 @@
                     <div class="progress-bar" style="width: 85%"></div>
                 </div>
             </div>
-            <button class="btn-success">View History</button>
+            <button class="btn-success" onclick="window.location.href='/coun_appointment'"> View History</button>
         </div>
     </div>
 
@@ -78,64 +497,52 @@
             </button>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".action-btn").forEach(button => {
-        button.addEventListener("click", function () {
-                const target = this.getAttribute("data-target");
-
-                if (target) {
-                    let routes = {
-                        "appointments": "/coun_appointment",
-                        "profile": "/coun_profile",
-                        "feedback": "/coun_feedback",
-                        "resources": "/manage_resources",
-                    };
-
-                    if (routes[target]) {
-                        window.location.href = routes[target];
-                    }
-                }
-            });
-        });
-    });
-    </script>
 
     <!-- Recent Activities Panel -->
-<div class="section-container">
-    <div class="section-header">
-        <h2>Recent Activities</h2>
-    </div>
-    <div class="activities-list">
-        {% for activity in recent_activities %}
-        <div class="activity-item">
-            <div class="activity-icon">
-                {% if activity.activity_type == "New Appointment Request" %}
-                    <i class="fas fa-calendar-plus"></i>
-                {% elif activity.activity_type == "New Feedback Received" %}
-                    <i class="fas fa-star"></i>
-                {% elif activity.activity_type == "Meeting Completed" %}
-                    <i class="fas fa-check-circle"></i>
-                {% elif activity.activity_type == "Notification Received" %}
-                    <i class="fas fa-bell"></i>
-                {% else %}
-                    <i class="fas fa-info-circle"></i>
-                {% endif %}
-            </div>
-            <div class="activity-content">
-                <h4>{{ activity.activity_type }}</h4>
-                <p>{{ activity.activity_desc }}</p>
-                <span class="activity-time">
-                    {{ activity.created_at.strftime('%Y-%m-%d %H:%M') }}
-                </span>
-            </div>
+    <div class="section-container">
+        <div class="section-header">
+            <h2>Recent Activities</h2>
         </div>
-        {% else %}
-        <p>No recent activities.</p>
-        {% endfor %}
+        <div class="activities-list">
+            {% for activity in recent_activities %}
+            <div class="activity-item">
+                <div class="activity-icon">
+                    {% if activity.activity_type == "New Appointment Request" %}
+                        <i class="fas fa-calendar-plus"></i>
+                    {% elif activity.activity_type == "New Feedback Received" %}
+                        <i class="fas fa-star"></i>
+                    {% elif activity.activity_type == "Meeting Completed" %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif activity.activity_type == "Notification Received" %}
+                        <i class="fas fa-bell"></i>
+                    {% else %}
+                        <i class="fas fa-info-circle"></i>
+                    {% endif %}
+                </div>
+                <div class="activity-content">
+                    <h4>{{ activity.activity_type }}</h4>
+                    <p>{{ activity.activity_desc }}</p>
+                    <span class="activity-time">
+                        {{ activity.created_at.strftime('%Y-%m-%d %H:%M') }}
+                    </span>
+                </div>
+            </div>
+            {% else %}
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>No Recent Activities</h4>
+                    <p>You don't have any recent activities to display</p>
+                    <span class="activity-time">
+                        Just now
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-</div>
-
 
     <!-- Statistics -->
     <div class="section-container">
@@ -151,5 +558,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".action-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    const target = this.getAttribute("data-target");
+
+                    if (target) {
+                        let routes = {
+                            "appointments": "/coun_appointment",
+                            "profile": "/coun_profile",
+                            "feedback": "/coun_feedback",
+                            "resources": "/manage_resources",
+                        };
+
+                        if (routes[target]) {
+                            window.location.href = routes[target];
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </section>
 {% endblock %}

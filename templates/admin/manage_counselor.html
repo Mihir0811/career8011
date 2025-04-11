@@ -2,103 +2,75 @@
 {% block title %}Manage Counselor - Admin Panel{% endblock %}
 {% block content %}
 <style>
-    .custom-modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5); /* Overlay effect */
-        }
+/* Modal container */
+.custom-modal {
+    display: none; /* Initially hidden */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scrolling if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+    align-items: center;
+    justify-content: center;
+}
 
-        .custom-modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 50%;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+/* Modal content */
+.custom-modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px; /* Adjust as needed */
+    animation: fadeIn 0.3s ease;
+}
 
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+/* Close button */
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-        .close-btn:hover,
-        .close-btn:focus {
-            color: black;
-            text-decoration: none;
-        }
+.close-btn:hover,
+.close-btn:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
 </style>
 <div id="customModal" class="custom-modal">
     <div class="custom-modal-content">
         <span class="close-btn" id="closeModal">&times;</span>
-        <h2>Counselor Details</h2>
-        <p><strong>Full Name:</strong> <span id="modalFullName"></span></p>
-        <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-        <p><strong>Contact Number:</strong> <span id="modalContactNumber"></span></p>
-        <p><strong>Specialization:</strong> <span id="modalSpecialization"></span></p>
-        <p><strong>Bio:</strong> <span id="modalBio"></span></p>
+        <h2>Counselor Details</h2><br><br>
+        <p><strong>Full Name:</strong> <span id="modalFullName"></span></p><br>
+        <p><strong>Email:</strong> <span id="modalEmail"></span></p><br>
+        <p><strong>Contact Number:</strong> <span id="modalContactNumber"></span></p><br>
+        <p><strong>Specialization:</strong> <span id="modalSpecialization"></span></p><br>
+        <p><strong>Bio:</strong> <span id="modalBio"></span></p><br>
         <p><strong>Approval Status:</strong> <span id="modalApprovalStatus"></span></p>
     </div>
 </div>
-<script>
-    // Modal functionality
-const modal = document.getElementById('customModal');
-const closeBtn = document.getElementById('closeModal');
 
-// Attach click event to all counselor buttons
-document.querySelectorAll('.view-btn').forEach(button => {
-    button.addEventListener('click', async () => {
-        const counselorId = button.getAttribute('data-id'); // Get dynamic ID
-
-        try {
-            // Fetch counselor details from the server
-            const response = await fetch(`/view_counselor_details/${counselorId}`);
-            const data = await response.json();
-
-            if (response.ok) {
-                // Populate modal content
-                document.getElementById('modalFullName').textContent = data.full_name;
-                document.getElementById('modalEmail').textContent = data.email;
-                document.getElementById('modalContactNumber').textContent = data.contact_number;
-                document.getElementById('modalSpecialization').textContent = data.specialization;
-                document.getElementById('modalBio').textContent = data.bio;
-                document.getElementById('modalApprovalStatus').textContent = data.approval_status;
-
-                // Display the modal
-                modal.style.display = 'block';
-            } else {
-                alert(data.error || 'Unable to fetch details.');
-            }
-        } catch (error) {
-            console.error('Error fetching counselor details:', error);
-            alert('Failed to load details. Please try again.');
-        }
-    });
-});
-
-// Close the modal when clicking on the close button
-closeBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
-
-// Close the modal when clicking outside the modal content
-window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        modal.style.display = 'none';
-    }
-});
-
-</script>
 <div class="manage-counselors-container">
     <div class="page-header">
         <div class="header-content">
@@ -143,10 +115,9 @@ window.addEventListener('click', (event) => {
                 <tr>
                     <td>
                         <div class="user-info">
-                            <img src="https://ui-avatars.com/api/?name={{ counselor.full_name | urlencode }}&background=random&color=fff" 
-                                 alt="{{ counselor.full_name }}" 
-                                 class="counselor-profile" 
-                                 data-profile="{{ counselor.profile_picture }}">
+                            <img src="https://ui-avatars.com/api/?name={{ counselor.full_name | urlencode }}&background=random&color=fff"
+                                alt="{{ counselor.full_name }}" class="counselor-profile"
+                                data-profile="{{ counselor.profile_picture }}">
                             <span>{{ counselor.full_name }}</span>
                         </div>
                     </td>
@@ -157,22 +128,28 @@ window.addEventListener('click', (event) => {
                         </div>
                     </td>
                     <td>
-                        <span class="status-tag {{ 'approved' if counselor.approval_status == 'approved' else ('rejected' if counselor.approval_status == 'rejected' else 'pending') }}">
+                        <span
+                            class="status-tag {{ 'approved' if counselor.approval_status == 'approved' else ('rejected' if counselor.approval_status == 'rejected' else 'pending') }}">
                             {{ counselor.approval_status | capitalize }}
                         </span>
                     </td>
                     <td>
                         <div class="action-buttons">
                             {% if counselor.approval_status == 'pending' %}
-                            <button class="approve-btn" data-id="{{ counselor.id }}"><i class="fas fa-check"></i> Approve</button>
-                            <button class="reject-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i> Reject</button>
-                            <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-eye"></i> View</button>
+                            <button class="approve-btn" data-id="{{ counselor.id }}"><i class="fas fa-check"></i>
+                                Approve</button>
+                            <button class="reject-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i>
+                                Reject</button>
+                            <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-eye"></i>
+                                View</button>
                             {% elif counselor.approval_status == 'approved' %}
-                            <button disabled class="approved-btn"><i class="fas fa-check-circle"></i> Approved</button>
-                            <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i> View</button>
+                                <button class="rejected-btn" data-id="{{ counselor.id }}"><i class="fas fa-times-circle"></i> Reject</button>
+                                <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-eye"></i>
+                                View</button>
                             {% elif counselor.approval_status == 'rejected' %}
-                            <button disabled class="rejected-btn"><i class="fas fa-times-circle"></i> Rejected</button>
-                            <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-times"></i> View</button>
+                            <!-- <button disabled class="rejected-btn"><i class="fas fa-times-circle"></i> Rejected</button> -->
+                            <button class="view-btn" data-id="{{ counselor.id }}"><i class="fas fa-eye"></i>
+                                View</button>
                             {% endif %}
                         </div>
                     </td>
@@ -437,7 +414,8 @@ window.addEventListener('click', (event) => {
         gap: 8px;
     }
 
-    .approve-btn, .reject-btn {
+    .approve-btn,
+    .reject-btn {
         padding: 8px 16px;
         border-radius: 8px;
         font-size: 13px;
@@ -460,12 +438,14 @@ window.addEventListener('click', (event) => {
         color: white;
     }
 
-    .approve-btn:hover, .reject-btn:hover {
+    .approve-btn:hover,
+    .reject-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
-    .approved-btn, .rejected-btn {
+    .approved-btn,
+    .rejected-btn {
         padding: 8px 16px;
         border-radius: 8px;
         font-size: 13px;
@@ -474,7 +454,8 @@ window.addEventListener('click', (event) => {
         display: flex;
         align-items: center;
         gap: 5px;
-        cursor: not-allowed;
+        /* cursor: not-allowed; */
+        cursor: pointer;
         opacity: 0.7;
     }
 
@@ -500,7 +481,8 @@ window.addEventListener('click', (event) => {
             flex-direction: column;
         }
 
-        .search-box, .filter-container {
+        .search-box,
+        .filter-container {
             width: 100%;
         }
 
@@ -520,7 +502,10 @@ window.addEventListener('click', (event) => {
             white-space: nowrap;
         }
 
-        .approve-btn, .reject-btn, .approved-btn, .rejected-btn {
+        .approve-btn,
+        .reject-btn,
+        .approved-btn,
+        .rejected-btn {
             padding: 6px 12px;
             font-size: 12px;
         }
@@ -532,6 +517,7 @@ window.addEventListener('click', (event) => {
             opacity: 0;
             transform: translateY(20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -619,5 +605,87 @@ window.addEventListener('click', (event) => {
                 });
         });
     });
+</script>
+<script>
+    // Modal functionality
+    const modal = document.getElementById('customModal');
+    const closeBtn = document.getElementById('closeModal');
+
+    // Attach click event to all counselor buttons
+    document.querySelectorAll('.view-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            console.log('Button clicked');
+            const counselorId = button.getAttribute('data-id');
+            console.log('Counselor ID:', counselorId);
+
+            try {
+                // Fetch counselor details from the server
+                const response = await fetch(`/view_counselor_details/${counselorId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Populate modal content
+                    document.getElementById('modalFullName').textContent = data.full_name;
+                    document.getElementById('modalEmail').textContent = data.email;
+                    document.getElementById('modalContactNumber').textContent = data.contact_number;
+                    document.getElementById('modalSpecialization').textContent = data.specialization;
+                    document.getElementById('modalBio').textContent = data.bio;
+                    document.getElementById('modalApprovalStatus').textContent = data.approval_status;
+
+                    // Display the modal
+                    modal.style.display = 'flex';
+                } else {
+                    alert(data.error || 'Unable to fetch details.');
+                }
+            } catch (error) {
+                console.error('Error fetching counselor details:', error);
+                alert('Failed to load details. Please try again.');
+            }
+        });
+    });
+
+    // Close the modal when clicking on the close button
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Close the modal when clicking outside the modal content
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const rejectButtons = document.querySelectorAll('.rejected-btn');
+
+    rejectButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const counselorId = button.getAttribute('data-id');
+
+            if (confirm('Are you sure you want to reject this counselor?')) {
+                fetch(`/reject_counselor/${counselorId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message); // Replace with better notifications in production
+                        location.reload(); // Reload the page to reflect changes
+                    } else {
+                        alert(data.error); // Show error message
+                    }
+                })
+                .catch(err => console.error('Error:', err));
+            }
+        });
+    });
+});
+
 </script>
 {% endblock %}

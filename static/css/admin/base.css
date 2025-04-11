@@ -816,7 +816,8 @@ body.dark-mode {
     border: none;
     padding: 8px 10px;
     border-radius: 8px;
-    cursor: not-allowed;
+    /* cursor: not-allowed; */
+    cursor: pointer;
     margin: 0 5px;
 }
 
@@ -826,7 +827,8 @@ body.dark-mode {
     border: none;
     padding: 8px 10px;
     border-radius: 8px;
-    cursor: not-allowed;
+    /* cursor: not-allowed; */
+    cursor: pointer;
     margin: 0 5px;
 }
 

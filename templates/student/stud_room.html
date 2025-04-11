@@ -1,589 +1,564 @@
 {% extends 'student/stud-base.html' %}
 {% block content %}
-<div class="section-header">
-    <h1>Join In Meeting</h1>
+<div class="meeting-room-page">
+    <div class="meeting-header">
+        <div class="header-content">
+            <h1>Your Scheduled Meetings</h1>
+            <p>Join your counseling sessions with one click</p>
+        </div>
 </div>
 
-<div class="view-container">
+    <div class="meetings-container">
     {% if appointments %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Purpose</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
+            <div class="appointment-list">
                 {% for appointment in appointments %}
-                <tr>
-                    <td>{{ appointment.date.strftime('%Y-%m-%d') }}</td>
-                    <td>{{ appointment.time_slot }}</td>
-                    <td>{{ appointment.purpose }}</td>
-                    <td>{{ appointment.student_status }}</td>
-                    <td>
+                <div class="appointment-card">
+                    <div class="appointment-left">
+                        <div class="appointment-date">
+                            <div class="date-badge">
+                                <div class="month">{{ appointment.date.strftime('%b') }}</div>
+                                <div class="day">{{ appointment.date.strftime('%d') }}</div>
+                                <div class="year">{{ appointment.date.strftime('%Y') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="appointment-center">
+                        <div class="appointment-info">
+                            <h3 class="appointment-title">Counseling Session</h3>
+                            <div class="appointment-details">
+                                <div class="detail-item appointment-time">
+                                    <div class="detail-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    </div>
+                                    <span>{{ appointment.time_slot }}</span>
+                                </div>
+                                <div class="detail-item appointment-purpose">
+                                    <div class="detail-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                    </div>
+                                    <span class="purpose-text">{{ appointment.purpose }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="appointment-right">
+                        <div class="status-indicator {{ 'active' if appointment.student_status == 'live' else 'inactive' }}">
+                            <div class="status-dot"></div>
+                            <span class="status-text">{{ appointment.student_status }}</span>
+                        </div>
+                        <div class="action-container">
                         {% if appointment.student_status == 'live' %}
-                            <a href="{{ url_for('join_meeting', appointment_id=appointment.id) }}" class="btn-primary">
-                                Join Meeting
+                                <a href="{{ url_for('join_meeting', appointment_id=appointment.id) }}" class="join-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l5 5-5 5"></path><path d="M4 4v7a4 4 0 0 0 4 4h12"></path></svg>
+                                    Join Now
                             </a>
                         {% else %}
-                            <span class="text-muted">Not Live</span>
+                                <span class="join-btn disabled">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                                    Not Available
+                                </span>
                         {% endif %}
-                    </td>
-                </tr>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
     {% else %}
-        <p class="text-warning">No appointments available.</p>
+            <div class="no-appointments">
+                <div class="empty-illustration">
+                    <img src="https://cdn-icons-png.flaticon.com/512/6295/6295417.png" alt="No appointments">
+                </div>
+                <h2>No Meetings Scheduled</h2>
+                <p>You don't have any upcoming counseling sessions. Check back later or contact your counselor to schedule a meeting.</p>
+            </div>
     {% endif %}
 </div>
+
+    <div class="helpful-tips">
+        <h3>Preparing for Your Meeting</h3>
+        <div class="tips-container">
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                </div>
+                <div class="tip-content">
+                    <h4>Test Your Equipment</h4>
+                    <p>Make sure your camera and microphone are working properly before joining.</p>
+                </div>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                </div>
+                <div class="tip-content">
+                    <h4>Find a Quiet Space</h4>
+                    <p>Choose a quiet, private location for your counseling session.</p>
+                </div>
+            </div>
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                <div class="tip-content">
+                    <h4>Prepare Questions</h4>
+                    <p>Write down any questions or topics you want to discuss in your session.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
-
-/* Section Header - Matching the template */
-.section-header {
-    padding: 1rem 1.5rem;
-    margin-bottom: 1.5rem;
-    background-color: var(--surface-color);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.section-header h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-color);
-    margin: 0;
-}
-
-/* Video Call Container */
-.video-call-container {
-    width: 100%;
-    height: calc(100vh - 120px); /* Adjust for header */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0 1.5rem 1.5rem;
+    /* Base Styles */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .meeting-room-page {
+        min-height: 100vh;
+        background-image: url('https://images.unsplash.com/photo-1560264280-88b68371db39?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        padding: 40px 20px;
+        font-family: 'Poppins', 'Segoe UI', sans-serif;
+    }
+    
+    /* Header */
+    .meeting-header {
+        text-align: center;
+        margin-bottom: 40px;
+        background-image: url('https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        border-radius: 16px;
+        padding: 60px 20px;
     position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-/* Notification Area */
-.notification-area {
+    .meeting-header::before {
+        content: '';
     position: absolute;
-    top: 20px;
+        top: 0;
     left: 0;
     right: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    z-index: 100;
-}
-
-.notification {
-    padding: 12px 20px;
-    border-radius: var(--border-radius);
-    color: white;
-    font-weight: 500;
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
-    box-shadow: var(--card-shadow);
-    animation: slideDown 0.3s ease-out forwards;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.notification.success {
-    background-color: var(--success-color);
-}
-
-.notification.warning {
-    background-color: var(--warning-color);
-}
-
-.notification.error {
-    background-color: var(--danger-color);
-}
-
-.notification-close {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(64, 93, 230, 0.88), rgba(88, 81, 219, 0.88));
+        z-index: 1;
     }
-    to {
-        transform: translateY(0);
-        opacity: 1;
+    
+    .header-content {
+        position: relative;
+        z-index: 2;
+    color: white;
     }
-}
-
-/* Video Call Wrapper */
-.video-call-wrapper {
+    
+    .header-content h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-content p {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+    
+    /* Meetings Container */
+    .meetings-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        margin-bottom: 30px;
+    }
+    
+    /* Appointment Cards - Improved */
+    .appointment-list {
     display: flex;
-    width: 100%;
-    max-width: 1400px;
-    height: 100%;
-    max-height: 700px;
+    flex-wrap: wrap;
+        /* flex-direction: column; */
     gap: 20px;
 }
 
-/* Video Call Card */
-.video-call-card {
-    flex: 1;
-    background-color: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
+    .appointment-card {
+    display: flex;
+        background-color: white;
+        border-radius: 12px;
+    overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+    
+    .appointment-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .appointment-left {
+        flex: 0 0 auto;
+    }
+    
+    .appointment-date {
+        width: 100px;
+        height: 100%;
+        min-height: 120px;
+        background: linear-gradient(135deg, #5b247a, #1bcedf);
+        color: white;
+    display: flex;
+        flex-direction: column;
+    align-items: center;
+        justify-content: center;
+        padding: 15px;
+    }
+    
+    .date-badge {
+        text-align: center;
+    }
+    
+    .month {
+        font-size: 16px;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+    
+    .day {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+        margin: 5px 0;
+    }
+    
+    .year {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+    
+    .appointment-center {
+        flex: 1;
+    display: flex;
+        flex-direction: column;
+    justify-content: center;
+        padding: 20px;
+        border-right: 1px solid #f0f0f0;
+    }
+    
+    .appointment-info {
+    display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .appointment-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+    
+    .appointment-details {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .detail-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background-color: rgba(91, 36, 122, 0.1);
+        color: #5b247a;
+    }
+    
+    .appointment-time span {
+        font-size: 15px;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .purpose-text {
+        font-size: 15px;
+        color: #555;
+        line-height: 1.4;
+    }
+    
+    .appointment-right {
+        flex: 0 0 180px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-}
-
-.card-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
+        justify-content: center;
     align-items: center;
-    background-color: var(--surface-color);
-}
-
-.card-header h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.session-info {
+        gap: 15px;
+        padding: 20px;
+        background-color: #f8f9fa;
+    }
+    
+    .status-indicator {
     display: flex;
     align-items: center;
-    gap: 15px;
-}
-
-.session-status {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.875rem;
-    color: var(--text-muted);
-}
-
-.status-indicator {
-    color: var(--success-color);
-    font-size: 0.625rem;
-}
-
-.session-timer {
-    font-family: monospace;
-    font-size: 0.875rem;
-    color: var(--text-muted);
-}
-
-/* Video Container */
-.video-container {
-    flex: 1;
-    background-color: #000;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 15px;
-    background-color: var(--surface-color);
-    border-top: 1px solid var(--border-color);
-}
-
-.action-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: var(--button-radius);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color var(--transition-speed), transform var(--transition-speed);
-    color: white;
-    font-size: 1.25rem;
-}
-
-.action-btn:hover {
-    transform: scale(1.05);
-}
-
-.action-btn:active {
-    transform: scale(0.95);
-}
-
-.mute-btn {
-    background-color: var(--warning-color);
-}
-
-.mute-btn:hover {
-    background-color: var(--warning-dark);
-}
-
-.mute-btn.muted {
-    background-color: var(--secondary-color);
-}
-
-.camera-btn {
-    background-color: var(--success-color);
-}
-
-.camera-btn:hover {
-    background-color: var(--success-dark);
-}
-
-.camera-btn.camera-off {
-    background-color: var(--secondary-color);
-}
-
-.share-btn {
-    background-color: var(--primary-color);
-}
-
-.share-btn:hover {
-    background-color: var(--primary-dark);
-}
-
-.end-call-btn {
-    background-color: var(--danger-color);
-}
-
-.end-call-btn:hover {
-    background-color: var(--danger-dark);
-}
-
-/* Participant List */
-.participant-list {
-    width: 300px;
-    background-color: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.participant-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--surface-color);
-}
-
-.participant-header h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.participant-count {
-    background-color: var(--primary-color);
-    color: white;
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 12px;
-}
-
-.participants {
-    list-style: none;
-    overflow-y: auto;
-    flex: 1;
-}
-
-.participant {
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.participant:last-child {
-    border-bottom: none;
-}
-
-.participant-avatar {
-    position: relative;
-    margin-right: 12px;
-}
-
-.participant-avatar img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.participant-status {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+        gap: 8px;
+    }
+    
+    .status-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: var(--text-muted);
-    border: 2px solid var(--surface-color);
-}
-
-.participant-status.active {
-    background-color: var(--success-color);
-}
-
-.participant-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.participant-name {
-    font-weight: 500;
-    font-size: 0.875rem;
-    color: var(--text-color);
-}
-
-.participant-role {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-.participant-controls {
-    display: flex;
-    gap: 10px;
-    color: var(--text-muted);
-    font-size: 0.875rem;
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal.show {
-    display: flex;
-}
-
-.modal-content {
-    background-color: var(--surface-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    width: 100%;
-    max-width: 400px;
-    animation: modalFadeIn 0.3s;
-}
-
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--surface-color);
-}
-
-.modal-header h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    line-height: 1;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: color var(--transition-speed);
-}
-
-.close-modal:hover {
-    color: var(--text-color);
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-.modal-footer {
-    padding: 15px 20px;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-/* Button styles matching the template */
-.btn {
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    border: 1px solid transparent;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    cursor: pointer;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-    border-color: var(--primary-dark);
-}
-
-.btn-secondary {
-    color: #fff;
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
-}
-
-.btn-secondary:hover {
-    background-color: #717484;
-    border-color: #6c757d;
-}
-
-.btn-danger {
-    color: #fff;
-    background-color: var(--danger-color);
-    border-color: var(--danger-color);
-}
-
-.btn-danger:hover {
-    background-color: var(--danger-dark);
-    border-color: var(--danger-dark);
-}
-
-/* Text utility classes matching the template */
-.text-muted {
-    color: var(--text-muted) !important;
-}
-
-.text-warning {
-    color: var(--warning-color) !important;
-}
-
-/* Data table styles matching the template */
-.data-table {
-    width: 100%;
-    margin-bottom: 1rem;
-    color: var(--text-color);
-    border-collapse: collapse;
-}
-
-.data-table th,
-.data-table td {
-    padding: 0.75rem;
-    vertical-align: top;
-    border-top: 1px solid var(--border-color);
-}
-
-.data-table thead th {
-    vertical-align: bottom;
-    border-bottom: 2px solid var(--border-color);
-    background-color: var(--surface-color);
-    color: var(--text-color);
-    font-weight: 700;
-}
-
-.data-table tbody tr:hover {
-    background-color: rgba(0, 0, 0, 0.075);
-}
-
-/* View container matching the template */
-.view-container {
-    background-color: var(--surface-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-/* Responsive Styles */
-@media (max-width: 992px) {
-    .video-call-wrapper {
-        flex-direction: column;
-        height: auto;
-    }
-
-    .participant-list {
-        width: 100%;
-        max-height: 300px;
-    }
-}
-
-@media (max-width: 576px) {
-    .video-call-container {
-        padding: 10px;
-    }
-
-    .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .action-buttons {
-        gap: 10px;
-    }
-
-    .action-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 1rem;
     }
     
-    .section-header h1 {
-        font-size: 1.5rem;
+    .status-indicator.active .status-dot {
+        background-color: #00c853;
+        box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.2);
+    }
+    
+    .status-indicator.inactive .status-dot {
+        background-color: #9e9e9e;
+        box-shadow: 0 0 0 3px rgba(158, 158, 158, 0.2);
+    }
+    
+    .status-text {
+        font-size: 14px;
+        text-transform: capitalize;
+    }
+    
+    .status-indicator.active .status-text {
+        color: #00c853;
+        font-weight: 600;
+    }
+    
+    .status-indicator.inactive .status-text {
+        color: #9e9e9e;
+    }
+    
+    .action-container {
+    width: 100%;
+    }
+    
+    .join-btn {
+        display: flex;
+    align-items: center;
+    justify-content: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #5b247a, #1bcedf);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    .join-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(91, 36, 122, 0.3);
+    }
+    
+    .join-btn.disabled {
+        background: #e0e0e0;
+        color: #9e9e9e;
+        cursor: not-allowed;
+    }
+    
+    .join-btn.disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    
+    /* Empty State */
+    .no-appointments {
+    display: flex;
+        flex-direction: column;
+    align-items: center;
+        text-align: center;
+        padding: 40px 20px;
+    }
+    
+    .empty-illustration {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 20px;
+    }
+    
+    .empty-illustration img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .no-appointments h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .no-appointments p {
+        font-size: 16px;
+        color: #666;
+        max-width: 500px;
+        line-height: 1.5;
+    }
+    
+    /* Tips Section */
+    .helpful-tips {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    .helpful-tips h3 {
+        color: #333;
+        font-size: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        padding-bottom: 10px;
+    }
+    
+    .helpful-tips h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(135deg, #5b247a, #1bcedf);
+        border-radius: 2px;
+    }
+    
+    .tips-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    
+    .tip-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .tip-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(91, 36, 122, 0.1), rgba(27, 206, 223, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #5b247a;
+    }
+    
+    .tip-content h4 {
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+    
+    .tip-content p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.5;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .meeting-header {
+            padding: 40px 20px;
+        }
+        
+        .header-content h1 {
+            font-size: 24px;
+        }
+        
+        .header-content p {
+            font-size: 16px;
+        }
+        
+        .appointment-card {
+            flex-direction: column;
+        }
+        
+        .appointment-left {
+            width: 100%;
+        }
+        
+        .appointment-date {
+            width: 100%;
+            height: auto;
+            min-height: auto;
+            padding: 15px;
+            flex-direction: row;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .appointment-center {
+            border-right: none;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .appointment-right {
+            width: 100%;
+            flex: auto;
+            padding: 20px;
+        }
+        
+        .tips-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .meeting-room-page {
+            padding: 20px 15px;
+        }
+        
+        .meetings-container,
+        .helpful-tips {
+            padding: 20px;
+        }
+        
+        .appointment-details {
+            gap: 8px;
+        }
+        
+        .appointment-center,
+        .appointment-right {
+            padding: 15px;
+        }
+        
+        .date-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .day {
+            margin: 0;
+            font-size: 22px;
     }
 }
 </style>
